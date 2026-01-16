@@ -6,15 +6,36 @@ import casos.package.UnifiedReturnStatus
 %% print output with current problem and setting
 printf(obj.log,'debug','------------------------------------------------------------------------------------------\n');
 printf(obj.log,'debug',['\t\t Ca' char(931) 'oS-Nonlinear sum-of-squares optimization suite \n']);
-printf(obj.log,'debug','\t\t Sequential Quadratic Sum-of-Squares Solver v1.0, April''25 \n');
+printf(obj.log,'debug','\t\t Sequential Quadratic Sum-of-Squares Solver v1.0, January''26 \n');
 printf(obj.log,'debug','\t\t GNU GENERAL PUBLIC LICENSE \n');
 printf(obj.log,'debug','\t\t Institute of Flight Mechanics and Control, Univ. of Stuttgart \n');
 printf(obj.log,'debug','------------------------------------------------------------------------------------------\n');
-printf(obj.log,'debug','Problem:\n Decision variables = %d (coefficents) \n SOS constraints \t= %d \n Linear constraints = %d\n',obj.display_para.no_decVar   , obj.display_para.no_sosCon, 0 );
-printf(obj.log,'debug','Settings:\n Solver:\t%s\n max_iter:\t%d \n Con. Violation Check: \t%s\n', obj.display_para.solver,obj.opts.max_iter,'signed-distance');
+printf(obj.log,'debug','\n');
+printf(obj.log,'debug','Problem\n ')
+printf(obj.log,'debug','Decision variables \t\t= %d (coefficents) \n',obj.display_para.no_decVar);
+printf(obj.log,'debug',' SOS constraints \t\t= %d \n', obj.display_para.no_sosCon);
+printf(obj.log,'debug',' Linear constraints \t\t= %d\n',0 );
+
+printf(obj.log,'debug','-------------------------------------------------------\n')
+printf(obj.log,'debug','Settings \n ')
+printf(obj.log,'debug','Solver\t\t\t\t- %s\n ', obj.display_para.solver);
+printf(obj.log,'debug','Maximum iterations\t\t- %d\n ', obj.opts.max_iter);
+printf(obj.log,'debug','Constraint violation Check \t- %s\n ',obj.opts.conVioCheck);
+printf(obj.log,'debug','Second-order correction \t- %s \n',mat2str(obj.opts.enable_SOC));
+printf(obj.log,'debug',' Hessian-approximation\t\t- %s\n',obj.opts.hessian_approx);
+printf(obj.log,'debug',[' ' char(949) '_con\t\t\t\t- %d\n'],obj.opts.tolerance_con);
+printf(obj.log,'debug',[' ' char(949) '_opt\t\t\t\t- %d\n'],obj.opts.tolerance_opt);
+printf(obj.log,'debug','-------------------------------------------------------\n');
+printf(obj.log,'debug','\n');
+printf(obj.log,'debug','Solver build time \t\t:  %0.2d s\n', obj.display_para.solver_build_time);
+printf(obj.log,'debug','Start solving ... \n');
+printf(obj.log,'debug','\n');
+
 printf(obj.log,'debug','------------------------------------------------------------------------------------------\n');
 printf(obj.log,'debug','%-8s%-15s%-15s%-15s%-15s%-10s%-10s\n', 'iter', 'obj', ['||' char(916) 'x'  '||_inf'], ['||' char(916) char(955)  '||_inf'], [char(920) '(x_k)'],char(945),'||dLdx||');
 printf(obj.log,'debug','------------------------------------------------------------------------------------------\n');
+
+
 
 initTimeMeas = tic;
 % input arguments
