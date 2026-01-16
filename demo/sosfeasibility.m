@@ -1,9 +1,9 @@
 % sos feasibility optimization.
 
 % indeterminate variable
-x = casos.Indeterminates('x');
-% some polynomial
-p = x^2+x^4;
+x = casos.Indeterminates('x',2);
+% polynomial
+p = x(1)^4 + 3*x(2)^4 - 2*x(1)^3*x(2) + 3*x(1)^2*x(2)^2;
 
 % check if p is SOS
 sos = struct('g',p);
@@ -16,5 +16,8 @@ S = casos.sossol('S','mosek',sos,opts);
 % evaluate
 sol = S();
 
-S.stats.UNIFIED_RETURN_STATUS
-sol.g
+if strcmp(S.stats.UNIFIED_RETURN_STATUS,'SOLVER_RET_SUCCESS')
+     disp('Given polynomial is SOS!')
+else
+    disp('No decomposition found!')
+end
