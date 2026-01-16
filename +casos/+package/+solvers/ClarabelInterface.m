@@ -23,6 +23,12 @@ methods
         % see default setting structure of Clarabel MATLAB interface
         if ~isfield(obj.opts,'clarabel'), obj.opts.clarabel = DefaultSettings; end
     end
+
+    function s = info(obj)
+        % Overwriting ConicSolver.info
+        s = info@casos.package.solvers.ConicSolver(obj);
+        s.clarabel = obj.solver_info;
+    end
 end
 
 methods (Static, Access=protected)

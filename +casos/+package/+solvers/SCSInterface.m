@@ -67,6 +67,12 @@ methods (Access=protected)
             obj.status = casos.package.UnifiedReturnStatus.SOLVER_RET_SUCCESS;
         end
     end
+    
+    function s = info(obj)
+        % Overwriting ConicSolver.info
+        s = info@casos.package.solvers.ConicSolver(obj);
+        s.scs = obj.solver_info;
+    end
 end
 
 end
