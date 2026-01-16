@@ -10,6 +10,8 @@ end
 
 properties (Access=private)
     solver;
+
+    sdp_info;
     map;    % maps from the relaxed sdp and the orignal sdp
 end
 
@@ -189,6 +191,12 @@ methods
     function s = stats(obj)
         % Return stats.
         s = obj.solver.stats;
+    end
+
+    function s = info(obj)
+        % Return info.
+        s = obj.sdp_info;
+        s.conic = obj.solver.info;
     end
 
     %% Options & Cones

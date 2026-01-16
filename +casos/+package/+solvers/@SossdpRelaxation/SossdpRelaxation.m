@@ -5,6 +5,9 @@ properties (Access=private)
     sdpsolver;
 
     gram2sos;
+    sdp2gram;
+
+    info;
 end
 
 properties (Constant,Access=protected)
@@ -80,6 +83,11 @@ methods
         s = obj.sdpsolver.stats;
     end
 
+    function s = get_info(obj)
+        % Return info.
+        s = obj.info;
+        s.sdp = obj.sdpsolver.info;
+    end
 end
 
 end
