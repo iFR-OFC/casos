@@ -65,6 +65,12 @@ methods
         s = addfield(obj.status,s);
     end
 
+    function s = info(obj)
+        % Overwriting ConicSolver.info
+        s = info@casos.package.solvers.ConicSolver(obj);
+        s.mosek = obj.solver_info;
+    end
+
     function sp = get_sparsity_in(obj,i)
         % Return sparsity pattern.
         if (i == 0)

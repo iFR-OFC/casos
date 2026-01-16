@@ -40,6 +40,12 @@ methods
         s = obj.solver_stats;
         s = addfield(obj.status,s);
     end
+
+    function s = info(obj)
+        % Overwriting ConicSolver.info
+        s = info@casos.package.solvers.ConicSolver(obj);
+        s.sedumi = obj.solver_info;
+    end
 end
 
 methods (Access=protected)
