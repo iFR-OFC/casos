@@ -45,7 +45,7 @@ methods
 
         % states
         if ~isfield(sos,'x')
-            error('No decision variables given.')
+           sos.x = casos.PS;
         else
             sos.x = casos.PS(sos.x);
         end
@@ -59,7 +59,7 @@ methods
         % objective
         if ~isfield(sos,'f')
             % feasibility problem
-            sos.f = casos.PS(0);
+            sos.f = casos.PS();
         else
             sos.f = casos.PS(sos.f);
         end

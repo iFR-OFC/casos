@@ -77,7 +77,11 @@ end
 % gradient and hessian of objective
 if ~isfield(sos,'derivatives')
     % compute derivatives if not  pre-computed
-    Hf = hessian(Qobj,Qvar);
+        if size(Qvar,1) > 0 % in case of feasibility problem, avoid error
+        Hf = hessian(Qobj,Qvar);
+    else
+        Hf = casadi.SX();
+    end
     Df = jacobian(Qobj,Qvar);
     Dg = jacobian(Qcon,Qvar);
 else
