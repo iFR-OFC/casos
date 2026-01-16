@@ -349,7 +349,6 @@ obj.ghan = casadi.Function('g',[struct2cell(sol); struct2cell(obj.args_in)],{sol
 
 
 % fill info struct
-obj.solver_info.name        = 'mosek';
 obj.solver_info.n_decVar    = length(obj.args_in.x0);
 obj.solver_info.size_A      = size(obj.args_in.a);
 
