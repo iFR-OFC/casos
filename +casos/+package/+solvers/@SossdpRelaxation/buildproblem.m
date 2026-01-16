@@ -199,4 +199,6 @@ obj.sdp2gram = casadi.Function('G', ...
     {sdp.x}, {Qvar_G Ksdp_x_s Qcon_G Ksdp_g_s}, ...
     {'x_sol'}, {'Qx', 'Qx_dim' 'Qc', 'Qc_dim'});
 
+% Fill info struct
+obj.info.gram = struct('Kx', Ksdp_x_s, 'Kc', Ksdp_g_s);
 end
