@@ -105,7 +105,6 @@ methods
         obj.args_in.lam_a0 = casadi.MX.sym('lam_a0',m);
 
         % Low-level interface info
-        obj.conic_info.n_decVar   = size(obj.args_in.h, 2);
         obj.conic_info.size_H_nnz = nnz(obj.args_in.h);
         obj.conic_info.size_H     = size(obj.args_in.h);
         obj.conic_info.size_g_nnz = nnz(obj.args_in.g);
