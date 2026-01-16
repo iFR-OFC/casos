@@ -147,9 +147,10 @@ classdef (Abstract) SequentialCommon < casos.package.solvers.SosoptCommon
             if ~isfield(obj.opts,'enable_SOC'), obj.opts.enable_SOC                             = true; end
             if ~isfield(obj.opts,'filter_struct'), obj.opts.filter_struct                       = filter_struct; end
             if ~isfield(obj.opts,'max_iter'), obj.opts.max_iter                                 = 100; end
-            if ~isfield(obj.opts,'almostOptCount'), obj.opts.almostOptCount                     = 100; end
+            if ~isfield(obj.opts,'almostOptCount'), obj.opts.almostOptCount                     = 5; end
             if ~isfield(obj.opts,'conVioCheck'), obj.opts.conVioCheck                           = 'signed-distance'; end
             if ~isfield(obj.opts,'userSample'), obj.opts.userSample                             = []; end
+            if ~isfield(obj.opts,'verbose'), obj.opts.verbose                                   = 1; end
 
             % set up logger
             if ~isfield(obj.opts,'verbose') || ~obj.opts.verbose
