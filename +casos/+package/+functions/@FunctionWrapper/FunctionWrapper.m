@@ -160,6 +160,7 @@ methods
         s = get_info(obj.wrap);
     end
 
+    %% Options & Cones
     function print_options(obj)
         % Print list of options.
         assert(~is_null(obj), 'Notify the developers.')
@@ -181,6 +182,22 @@ methods
         tf = has_option(obj.wrap,name);
     end
 
+    function print_cones(obj)
+        % Print list of supported cones.
+        print_cones(obj.wrap);
+    end
+
+    function print_cone(obj,name)
+        % Print information about a cone.
+        print_cone(obj.wrap,name);
+    end
+
+    function tf = has_cone(obj,name)
+        % Check if cone "name" is supported.
+        tf = has_cone(obj.wrap,name);
+    end
+
+    %% Function evaluation
     function J = jacobian(obj)
         % Return Jacobian if supported.
         J = jacobian(obj.wrap);
