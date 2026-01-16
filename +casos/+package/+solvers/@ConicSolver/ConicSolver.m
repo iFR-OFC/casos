@@ -43,8 +43,6 @@ end
 properties (Abstract, Access=protected)
     fhan;
     ghan;
-
-    solver_info;
 end
 
 methods (Abstract, Access=protected)
@@ -123,7 +121,6 @@ methods
 
     function s = info(obj)
         s = obj.conic_info;
-        s.solver = obj.solver_info;
     end
 end
 
