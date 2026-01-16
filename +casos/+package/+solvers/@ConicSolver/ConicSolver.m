@@ -120,6 +120,7 @@ methods
     end
 
     function s = info(obj)
+        % Return low-level conic interface information
         s = obj.conic_info;
     end
 end
