@@ -59,7 +59,7 @@ methods
         % objective
         if ~isfield(sos,'f')
             % feasibility problem
-            sos.f = casos.PS();
+            sos.f = casos.PS(0);
         else
             sos.f = casos.PS(sos.f);
         end
