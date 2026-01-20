@@ -125,7 +125,7 @@ else
     kprime = k - l + 1; % number of rows from diagonal
     Iv0 = (l-1).*(s(J)-l/2+1) + kprime; % number of lower-triangular elements
     % compute cumulative linear indices
-    Nv = s.*(s+1)/2; Sv = cumsum([0 Nv(1:end-1)]);
+    Nv = s.*(s+1)/2; Sv = cumsum([0; Nv(1:end-1)]);
     Iv = Sv(J) + Iv0;
     % subindices into block matrix V
     subIv{dim} = Iv-1; subIv{3-dim} = subItril{3-dim}-1; % CasADi interface has 0-index
