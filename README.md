@@ -49,6 +49,30 @@ If you use CaΣoS, please cite us:
 }
 ```
 
+
+</details>
+
+If you use the CaΣoS sequential SOS algorithm, please additionally cite:
+
+> J. Olucak and T. Cunis , ‘Sequential Quadratic Sum-of-squares Programming for Nonlinear Control Systems’,  submitted to IEEE  Transactions on Control Systems Technology, 2026. Pre-print:(https://arxiv.org/abs/2602.02394)
+
+
+<details>
+
+<summary>Bibtex entry</summary>
+
+```bibtex
+@misc{olucak2026sequentialquadraticsumofsquaresprogramming,
+      title={Sequential Quadratic Sum-of-squares Programming for Nonlinear Control Systems}, 
+      author={Jan Olucak and Torbjørn Cunis},
+      year={2026},
+      eprint={2602.02394},
+      archivePrefix={arXiv},
+      primaryClass={math.OC},
+      url={https://arxiv.org/abs/2602.02394}, 
+}
+```
+
 </details>
 
 #### Applications
