@@ -30,8 +30,9 @@
 
 If you use CaΣoS, please cite us:
 
-> T. Cunis and J. Olucak, ‘CaΣoS: A nonlinear sum-of-squares optimization suite’, in _2025 American Control Conference_, (Denver, CO), pp. 1659–1666, 2025. doi: [10.23919/ACC63710.2025.11107794](https://doi.org/10.23919/ACC63710.2025.11107794)
+1. T. Cunis and J. Olucak, ‘CaΣoS: A nonlinear sum-of-squares optimization suite’, in _2025 American Control Conference_, (Denver, CO), pp. 1659–1666, 2025. [doi: 10.23919/ACC63710.2025.11107794](https://doi.org/10.23919/ACC63710.2025.11107794)
 
+2. J. Olucak and T. Cunis, ‘Sequential Quadratic Sum-of-squares Programming for Nonlinear Control Systems’, Pre-print. [arXiv: 2602.02394](https://arxiv.org/abs/2602.02394)
 
 <details>
 
@@ -47,18 +48,32 @@ If you use CaΣoS, please cite us:
 	pages = {1659--1666},
 	doi = {10.23919/ACC63710.2025.11107794},
 }
+
+@misc{Olucak2026,
+      title={Sequential Quadratic Sum-of-squares Programming for Nonlinear Control Systems}, 
+      author={Olucak, Jan and Cunis, Torbjørn},
+      year={2026},
+      eprint={2602.02394},
+      archivePrefix={arXiv},
+      url={https://arxiv.org/abs/2602.02394}, 
+}
 ```
 
 </details>
 
+
 #### Applications
-We provide the [source code](https://doi.org/10.18419/darus-4499) for our benchmarks and comparison to other toolboxes.
+We provide the source code for our benchmarks and comparisons:
+
+1.  _Implementation details and source code for CaΣoS: A nonlinear sum-of-squares optimization suite_, DaRUS, 2024. [doi: 10.18419/DARUS-4499](https://doi.org/10.18419/DARUS-4499)
+1.  _Supplementary Material for Sequential Quadratic Sum-of-squares Programming for Nonlinear Control Systems_, DaRUS, 2026. [doi: 10.18419/DARUS-5677](https://doi.org/10.18419/DARUS-5677)
+
 
 Further applications of CaΣoS include:
 
-1. R. Loureiro and T. Cunis, ‘Nonlinear Observer Synthesis for Stochastic Polynomial Dynamical Systems’, in 2025 American Control Conference, (Denver, CO), 2025, pp. 2509–2514. [DOI](https://doi.org/10.23919/ACC63710.2025.11107965)
-2. R. Loureiro and T. Cunis, ‘Estimating Robust Regions of Attraction with Uncertain Equilibrium Points’, in 2025 American Control Conference, (Denver, CO), 2025, pp. 1045–1050. [DOI](https://doi.org/10.23919/ACC63710.2025.11107427)
+- R. Loureiro and T. Cunis, ‘Nonlinear Observer Synthesis for Stochastic Polynomial Dynamical Systems’, in 2025 American Control Conference, (Denver, CO), 2025, pp. 2509–2514. [doi: 10.23919/ACC63710.2025.11107965](https://doi.org/10.23919/ACC63710.2025.11107965)
+- R. Loureiro and T. Cunis, ‘Estimating Robust Regions of Attraction with Uncertain Equilibrium Points’, in 2025 American Control Conference, (Denver, CO), 2025, pp. 1045–1050. [doi: 10.23919/ACC63710.2025.11107427](https://doi.org/10.23919/ACC63710.2025.11107427)
 
-3. J. Olucak, A. C. B. de Oliveira, and T. Cunis, ‘Safe-by-Design: Approximate Nonlinear Model Predictive Control with Realtime Feasibility’, Preprint. [arXiv](https://arxiv.org/abs/2509.22422), [Source code](https://doi.org/10.18419/darus-5297)
+- J. Olucak, A. C. B. de Oliveira, and T. Cunis, ‘Safe-by-Design: Approximate Nonlinear Model Predictive Control with Realtime Feasibility’, Preprint. [arXiv: 2509.22422](https://arxiv.org/abs/2509.22422), [Source code](https://doi.org/10.18419/darus-5297)
 
 ----
