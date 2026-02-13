@@ -57,7 +57,7 @@ classdef (Abstract) SequentialCommon < casos.package.solvers.SosoptCommon
 
         % logging & info
         log;
-        info = struct('iter',[]);
+        sequential_stats = struct('iter',[]);
     end
 
     methods (Static)
@@ -168,11 +168,16 @@ classdef (Abstract) SequentialCommon < casos.package.solvers.SosoptCommon
 
         function s = get_stats(obj)
             % Return stats.
-            s = obj.info;
+            s = obj.sequential_stats;
             s = addfield(obj.status,s);
         end
 
+        function s = get_info(obj)
+            % Return info.
+            s = get_info@casos.package.solvers.SosoptCommon(obj);
+            s.sossol_convex = obj.solver_convex.get_info;
+            s.sossol_constraint = obj.solver_conVio.get_info;
+            s.sossol_correction = obj.solver_soc.get_info;
+        end
     end
-
-
 end
