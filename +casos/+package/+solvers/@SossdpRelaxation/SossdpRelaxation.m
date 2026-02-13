@@ -5,7 +5,7 @@ properties (Access=private)
     sdpsolver;
 
     gram2sos;
-    sdp2gram;
+    % sdp2gram;     not used yet
 
     info;
 end

@@ -142,10 +142,9 @@ obj.ghan = casadi.Function('g',[struct2cell(obj.args_in)' {X Y}],{x (g'*x) [lam_
 
 obj.solver_info.size_A      = size(A);
 obj.solver_info.nnz_A       = nnz(A);
-obj.solver_info.numel_b     = numel(b);
+obj.solver_info.size_b      = size(b);
 obj.solver_info.nnz_b       = nnz(b);
-obj.solver_info.numel_c     = numel(c);
+obj.solver_info.size_c      = size(c);
 obj.solver_info.nnz_c       = nnz(c);
-
 
 end
