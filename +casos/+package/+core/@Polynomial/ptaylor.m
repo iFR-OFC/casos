@@ -22,7 +22,7 @@ end
 c = a.new_poly;
 
 % shift to operating point
-y = x + b;
+y = x - b;
 % TODO: use internal operation
 [S,coeffs] = coeff_subs(a.get_sparsity,a.coeffs,x,y.get_sparsity,y.coeffs);
 
