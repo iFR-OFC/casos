@@ -347,14 +347,17 @@ cost = sol.pobjval;
 
 obj.ghan = casadi.Function('g',[struct2cell(sol); struct2cell(obj.args_in)],{sol_x cost lam_a lam_x},[fieldnames(sol); fieldnames(obj.args_in)],obj.names_out);
 
-
 % fill info struct
 obj.solver_info.size_a  = size(prob.a);
 obj.solver_info.nnz_a   = nnz(prob.a);
-obj.solver_info.size_c  = size(prob.c);
+obj.solver_info.numel_c  = numel(prob.c);
 obj.solver_info.size_f  = size(prob.f);
 obj.solver_info.nnz_f   = nnz(prob.f);
-obj.solver_info.size_g  = size(prob.g);
+obj.solver_info.numel_g  = numel(prob.g);
+% store info relative to PSD variables
+obj.solver_info.nnz_bara = length(barv.a);
+obj.solver_info.nnz_barc = length(barv.c);
+obj.solver_info.nnz_barf = length(barv.f);
 
 end
 
