@@ -6,7 +6,8 @@ properties (Access=private)
 
     qc_sign;
 
-    info = struct('iter',[]);
+    bisect_stats = struct('iter',[]);
+    bisect_info;
     status = casos.package.UnifiedReturnStatus.SOLVER_RET_UNKNOWN;
 
     log;
@@ -80,6 +81,7 @@ methods
         if ~isfield(obj.opts,'max_iter'), obj.opts.max_iter = 1000; end
         if ~isfield(obj.opts,'tolerance_abs'), obj.opts.tolerance_abs = 1e-3; end
         if ~isfield(obj.opts,'tolerance_rel'), obj.opts.tolerance_rel = 1e-3; end
+        
         % set up logger
         if ~isfield(obj.opts,'verbose') || ~obj.opts.verbose
             % no display
@@ -88,6 +90,12 @@ methods
             % display debug messages
             obj.log = casos.package.Logger.Debug;
         end
+
+        % qcsossol interface info
+        obj.bisect_info.numel_x = numel(sos.x);
+        obj.bisect_info.numel_g = numel(sos.g);
+        obj.bisect_info.Kx = opts.Kx;
+        obj.bisect_info.Kc = opts.Kc;
     
         % build SOS problem
         buildproblem(obj,sos);
@@ -95,8 +103,14 @@ methods
 
     function s = get_stats(obj)
         % Return stats.
-        s = obj.info;
+        s = obj.bisect_stats;
         s = addfield(obj.status,s);
+    end
+
+    function s = get_info(obj)
+        % Return info.
+        s = obj.bisect_info;
+        s.sossol = obj.sossolver.info;
     end
 end
 

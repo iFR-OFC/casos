@@ -92,7 +92,7 @@ methods
     function s = get_info(obj)
         % Return info.
         s = obj.sossol_info;
-        s.sdp = obj.sdpsolver.info;
+        s.sdpsol = obj.sdpsolver.info;
     end
 end
 
