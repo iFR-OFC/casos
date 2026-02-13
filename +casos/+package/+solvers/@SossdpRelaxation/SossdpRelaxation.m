@@ -7,7 +7,7 @@ properties (Access=private)
     gram2sos;
     % sdp2gram;     not used yet
 
-    info;
+    sossol_info;
 end
 
 properties (Constant,Access=protected)
@@ -74,6 +74,12 @@ methods
             sos.g = casos.PS(sos.g);
         end
 
+        % sossol interface info
+        obj.sossol_info.numel_x = numel(sos.x);
+        obj.sossol_info.numel_g = numel(sos.g);
+        obj.sossol_info.Kx = opts.Kx;
+        obj.sossol_info.Kc = opts.Kc;
+
         % build SDP problem
         buildproblem(obj,solver,sos);
     end
@@ -85,7 +91,7 @@ methods
 
     function s = get_info(obj)
         % Return info.
-        s = obj.info;
+        s = obj.sossol_info;
         s.sdp = obj.sdpsolver.info;
     end
 end

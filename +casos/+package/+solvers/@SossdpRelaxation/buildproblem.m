@@ -200,6 +200,6 @@ obj.gram2sos = casadi.Function('L', ...
 %     {'x_sol'}, {'Qx', 'Qx_dim' 'Qc', 'Qc_dim'});
 
 % Fill info struct
-obj.info.gram = struct('Kx', Ksdp_x_s, 'Kc', Ksdp_g_s);
+obj.sossol_info.gram = struct('Kx', Ksdp_x_s, 'Kc', Ksdp_g_s);
 
 end

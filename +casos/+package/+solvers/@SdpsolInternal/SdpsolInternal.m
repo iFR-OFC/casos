@@ -78,8 +78,8 @@ methods
         % sdpsol interface info
         obj.sdpsol_info.numel_x = numel(sdp.x);
         obj.sdpsol_info.numel_g = numel(sdp.g);
-        obj.sdpsol_info.Kc = opts.Kc;
         obj.sdpsol_info.Kx = opts.Kx;
+        obj.sdpsol_info.Kc = opts.Kc;
 
         % relax problem to smaller easier cones (LP and SOCP)
         args = struct('dd_ubg',[],'dd_lbg',[],'dd_ubx',[],'dd_lbx',[]); 
