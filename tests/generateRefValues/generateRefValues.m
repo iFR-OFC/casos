@@ -76,10 +76,10 @@ disp('========================================')
  
  for idx = 1:length(powers)
      caseName = caseNames{idx};
-     power = powers(idx);
+       powerVal = powers(idx);
      refSolution.(caseName) = cell(noPoly,1);
      for k = 1:noPoly
-         refSolution.(caseName){k} = full(poly2basis(mpower(refValue(k), power)));
+             refSolution.(caseName){k} = full(poly2basis(mpower(refValue(k), powerVal)));
      end
  end
  
@@ -228,6 +228,122 @@ save('refSolution_multipoly_plus.mat',"testValue_str","refSolution")
 cd ../
 
 disp('Completed: plus operation');
+disp(' ');
+
+%% minus
+disp('========================================');
+disp('Starting: minus operation');
+disp('========================================')
+ % Build flat arrays matching the testValue structure
+ refValue_flat = [];
+ for k = 1:noPoly
+       refValue_flat = [refValue_flat; refValue(k)];
+ end
+
+ refSolution = struct();
+
+ % Test case A: constant - constant (5 - 5)
+ refSolution.case_A = cell(1,1);
+ refSolution.case_A{1} = 0;
+
+ % Test case B: single polynomial - constant (testValue(1) - 3)
+ refSolution.case_B = cell(noPoly*2,1);
+ idx = 1;
+ for k = 1:noPoly
+       refSolution.case_B{idx} = full(poly2basis( minus(refValue(k), 3)));
+       idx = idx + 1;
+ end
+
+ % Test case C: n polynomials - constant (testValue(1:10) - 4)
+ refSolution.case_C = cell(10,1);
+ for k = 1:10
+       refSolution.case_C{k} = full(poly2basis( minus(refValue_flat(k), 4)));
+ end
+
+ % Test case D: constant - single polynomial (4 - testValue(1))
+ refSolution.case_D = cell(noPoly*2,1);
+ idx = 1;
+ for k = 1:noPoly
+       refSolution.case_D{idx} = full(poly2basis( minus(4, refValue(k))));
+       idx = idx + 1;
+ end
+
+ % Test case E: single polynomial - single polynomial (testValue(1) - testValue(2))
+ refSolution.case_E = cell(noPoly*2,1);
+ idx = 1;
+ for k = 1:noPoly
+       refSolution.case_E{idx} = full(poly2basis( minus(refValue_flat(1), refValue_flat(2))));
+       idx = idx + 1;
+ end
+
+ % Test case F: n polynomials - single polynomial (testValue(1:10) - testValue(1))
+ refSolution.case_F = cell(10,1);
+ for k = 1:10
+       refSolution.case_F{k} = full(poly2basis( minus(refValue_flat(k), refValue_flat(1))));
+ end
+
+ % Test case G: constant - n polynomials (5 - testValue(1:10))
+ refSolution.case_G = cell(10,1);
+ for k = 1:10
+       refSolution.case_G{k} = full(poly2basis( minus(5, refValue_flat(k))));
+ end
+
+ % Test case H: single polynomial - n polynomials (testValue(1) - testValue(1:10))
+ refSolution.case_H = cell(10,1);
+ for k = 1:10
+       refSolution.case_H{k} = full(poly2basis( minus(refValue_flat(1), refValue_flat(k))));
+ end
+
+ % Test case I: n polynomials - n polynomials (testValue(1:10) - testValue(11:20))
+ refSolution.case_I = cell(10,1);
+ for k = 1:10
+       refSolution.case_I{k} = full(poly2basis( minus(refValue_flat(k), refValue_flat(k+10))));
+ end
+
+ currentpath = pwd;
+cd refSolutions/
+save('refSolution_multipoly_minus.mat',"testValue_str","refSolution")
+cd ../
+
+disp('Completed: minus operation');
+disp(' ');
+
+%% uminus
+disp('========================================');
+disp('Starting: uminus operation');
+disp('========================================')
+ refSolution = struct();
+ refSolution.single = cell(1,1);
+ refSolution.single{1} = full(poly2basis(uminus(refValue(1))));
+
+ refSolution.multiple = cell(10,1);
+ for k = 1:10
+       refSolution.multiple{k} = full(poly2basis(uminus(refValue(k))));
+ end
+cd refSolutions/
+save('refSolution_multipoly_uminus.mat',"testValue_str","refSolution")
+cd ../
+
+disp('Completed: uminus operation');
+disp(' ');
+
+%% uplus
+disp('========================================');
+disp('Starting: uplus operation');
+disp('========================================')
+ refSolution = struct();
+ refSolution.single = cell(1,1);
+ refSolution.single{1} = full(poly2basis(uplus(refValue(1))));
+
+ refSolution.multiple = cell(10,1);
+ for k = 1:10
+       refSolution.multiple{k} = full(poly2basis(uplus(refValue(k))));
+ end
+cd refSolutions/
+save('refSolution_multipoly_uplus.mat',"testValue_str","refSolution")
+cd ../
+
+disp('Completed: uplus operation');
 disp(' ');
 
 %% times
