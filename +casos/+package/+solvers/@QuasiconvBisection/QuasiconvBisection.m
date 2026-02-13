@@ -7,7 +7,6 @@ properties (Access=private)
     qc_sign;
 
     bisect_stats = struct('iter',[]);
-    bisect_info;
     status = casos.package.UnifiedReturnStatus.SOLVER_RET_UNKNOWN;
 
     log;
@@ -91,12 +90,6 @@ methods
             obj.log = casos.package.Logger.Debug;
         end
 
-        % qcsossol interface info
-        obj.bisect_info.numel_x = numel(sos.x);
-        obj.bisect_info.numel_g = numel(sos.g);
-        obj.bisect_info.Kx = opts.Kx;
-        obj.bisect_info.Kc = opts.Kc;
-    
         % build SOS problem
         buildproblem(obj,sos);
     end
@@ -109,8 +102,9 @@ methods
 
     function s = get_info(obj)
         % Return info.
-        s = obj.bisect_info;
-        s.sossol = obj.sossolver.info;
+        s = get_info@casos.package.solvers.SosoptCommon(obj);
+        % add convex solver info
+        s.sossol = obj.sossolver.get_info;
     end
 end
 
