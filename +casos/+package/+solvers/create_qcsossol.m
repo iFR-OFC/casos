@@ -1,5 +1,5 @@
-function node = qcsossolInternal(name,solver,varargin)
-% Internal interface for quasiconvex sum-of-squares problems.
+function node = create_qcsossol(name,solver,varargin)
+% Create quasiconvex sum-of-squares solver.
 
 switch (solver)
     case 'bisection'

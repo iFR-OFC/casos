@@ -2,7 +2,7 @@ function f = conic(varargin)
 % Low-level interface for conic (SDP) solvers.
 
 try
-    sol = casos.package.solvers.conicInternal(varargin{:});
+    sol = casos.package.solvers.create_conic(varargin{:});
     
     f = casos.Function(sol);
 

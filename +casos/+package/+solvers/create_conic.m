@@ -1,5 +1,5 @@
-function sol = conicInternal(name,solver,conic,varargin)
-% Internal interface for conic (SDP) solvers.
+function sol = create_conic(name,solver,conic,varargin)
+% Create conic (SDP) solver.
         
 switch lower(solver)
     case 'sedumi'

@@ -178,7 +178,7 @@ methods
         conic.a = sparsity(A);
 
         % create low-level conic solver
-        obj.solver = casos.package.solvers.conicInternal([name '_conic'],solver,conic,opts);
+        obj.solver = casos.package.solvers.create_conic([name '_conic'],solver,conic,opts);
 
         % conic problem data as function of p
         % NOTE: When evaluating, we must set x = 0.

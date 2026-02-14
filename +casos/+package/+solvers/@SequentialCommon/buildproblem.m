@@ -43,7 +43,7 @@ sos_qp.derivatives.Df = Df + dot(casos.PSOperator.from_primal(d),Hf); % correct 
 sos_qp.derivatives.Dg = Dg;
 
 % initialize convex SOS solver
-obj.solver_convex = casos.package.solvers.sossolInternal('SOS',opts.sossol,sos_qp,sosopt);
+obj.solver_convex = casos.package.solvers.create_sossol('SOS',opts.sossol,sos_qp,sosopt);
 
 % store basis
 obj.sparsity_x  = obj.solver_convex.sparsity_x;
@@ -92,7 +92,7 @@ if strcmpi(obj.opts.conVioCheck,'signed-distance')
     sosopt.error_on_fail = true;
 
     % initialize convex SOS solver
-    obj.solver_conVio = casos.package.solvers.sossolInternal('SOS',opts.sossol,sos_conVio,sosopt);
+    obj.solver_conVio = casos.package.solvers.create_sossol('SOS',opts.sossol,sos_conVio,sosopt);
 else
     % evaluate constraints on sample points
     X  = casadi.SX.sym('x',nlsos.g.nvars,1);
@@ -135,7 +135,7 @@ if obj.opts.enable_SOC
     sosopt.error_on_fail = false;
 
     % initialize adapted convex SOS solver for soc
-    obj.solver_soc = casos.package.solvers.sossolInternal('SOS',opts.sossol,sos_soc,sosopt);
+    obj.solver_soc = casos.package.solvers.create_sossol('SOS',opts.sossol,sos_soc,sosopt);
 end
 
 %% Damped BFGS (see Nocedal p.536/537)

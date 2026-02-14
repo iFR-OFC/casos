@@ -1,5 +1,5 @@
-function node = nlsossolInternal(name,solver,varargin)
-% Internal interface for noncovex sum-of-squares problems.
+function node = create_nlsossol(name,solver,varargin)
+% Create noncovex sum-of-squares solver.
 
 switch (solver)
     case 'sequential'

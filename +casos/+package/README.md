@@ -64,14 +64,14 @@ flowchart LR
     SCSInterface --> ConicSolver
     SdpsolInternal --> SolverCallback
     SdpsolInternal -.-> ConicSolver
-    conicInternal -.-> MosekInterface
-    conicInternal -.-> SedumiInterface
-    conicInternal -.-> SCSInterface
+    create_conic -.-> MosekInterface
+    create_conic -.-> SedumiInterface
+    create_conic -.-> SCSInterface
     SosoptCommon --> SolverCommon
-    sossolInternal -.-> SossdpRelaxation
+    create_sossol -.-> SossdpRelaxation
     SossdpRelaxation --> SosoptCommon
     SossdpRelaxation -.-> SdpsolInternal
-    qcsossolInternal -.-> QuasiconvBisection
+    create_qcsossol -.-> QuasiconvBisection
     QuasiconvBisection --> SosoptCommon
     QuasiconvBisection -.-> SossdpRelaxation
   end
@@ -82,8 +82,8 @@ flowchart LR
   SolverCallback --> casadi.Callback
   SolverCommon --> FunctionCommon
   SosoptCommon --> FunctionInternal
-  casos.conic -.-> conicInternal
+  casos.conic -.-> create_conic
   casos.sdpsol -.-> SdpsolInternal
-  casos.sossol -.-> sossolInternal
-  casos.qcsossol -.-> qcsossolInternal
+  casos.sossol -.-> create_sossol
+  casos.qcsossol -.-> create_qcsossol
 ```
