@@ -5,6 +5,7 @@ properties (Access=private)
     sdpsolver;
 
     gram2sos;
+    % sdp2gram;     not used yet
 end
 
 properties (Constant,Access=protected)
@@ -81,6 +82,12 @@ methods
         s = obj.sdpsolver.stats;
     end
 
+    function s = get_info(obj)
+        % Return info.
+        s = get_info@casos.package.solvers.SosoptCommon(obj);
+        % add sdp solver info
+        s.sdpsol = obj.sdpsolver.info;
+    end
 end
 
 end

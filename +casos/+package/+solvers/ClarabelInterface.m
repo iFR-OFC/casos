@@ -23,6 +23,12 @@ methods
         % see default setting structure of Clarabel MATLAB interface
         if ~isfield(obj.opts,'clarabel'), obj.opts.clarabel = DefaultSettings; end
     end
+
+    function s = info(obj)
+        % Overwriting ConicSolver.info
+        s = info@casos.package.solvers.ConicSolver(obj);
+        s.clarabel = obj.solver_info;
+    end
 end
 
 methods (Static, Access=protected)
@@ -97,7 +103,7 @@ methods (Access=protected)
         clarabel_info.r_prim     = sol.r_prim;
         clarabel_info.r_dual     = sol.r_dual;
        
-        obj.info.clarabel_info = clarabel_info;
+        obj.solver_stats.clarabel_info = clarabel_info;
        
         % get solution status
         if strcmp(sol.status,'Solved')

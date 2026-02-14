@@ -11,15 +11,15 @@ qcpar = argin{2};
 % initialize confidence intervals
 interval = obj.qc_sign*obj.opts.conf_interval;
 
-% initialize iteration info
-info = cell(1,obj.opts.max_iter);
+% initialize iteration statistics
+stats = cell(1,obj.opts.max_iter);
 
 % last feasible solution
 feas_sol = [];
 
 printf(obj.log,'debug','====== Start Bisection =======\n\n');
 
-for i=1:length(info)  
+for i=1:length(stats)  
     % bisection
     ttry = mean(interval);
 
@@ -29,14 +29,14 @@ for i=1:length(info)
     % evaluate convex SOS problem
     sol = eval_on_basis(obj.sossolver, args);
 
-    % store iteration info
-    info{i} = obj.sossolver.get_stats;
+    % store iteration statistics
+    stats{i} = obj.sossolver.get_stats;
 
     % set value
     sol{2} = (obj.qc_sign*ttry);
 
     % update confidence interval
-    switch (info{i}.UNIFIED_RETURN_STATUS)
+    switch (stats{i}.UNIFIED_RETURN_STATUS)
         case UnifiedReturnStatus.SOLVER_RET_SUCCESS
             % feasible: reset upper bound
             interval(2) = ttry;
@@ -61,7 +61,7 @@ for i=1:length(info)
     % display bisection iterations
     tchar = 'gamma_';
     printf(obj.log,'info',['iteration:  %d/%d \t' tchar 'lb  = %-4.4f \t ' tchar 'try = %-4.4f \t'],...
-                            i,length(info),obj.qc_sign*round(interval(1),4),obj.qc_sign*round(ttry,4));
+                            i,length(stats),obj.qc_sign*round(interval(1),4),obj.qc_sign*round(ttry,4));
     printf(obj.log,'info',[tchar 'ub = %-4.4f \t Feas = %d \n'],obj.qc_sign*round(interval(2),4),feas);
    
     % check convergence
@@ -83,9 +83,9 @@ for i=1:length(info)
             argout = sol;
         end
 
-        % store iteration info
-        info(i+1:end) = [];
-        obj.info.iter = info;
+        % store iteration statistics
+        stats(i+1:end) = [];
+        obj.bisect_stats.iter = stats;
 
         printf(obj.log,'debug','\n====== Finished Bisection ======\n'); 
 
@@ -102,7 +102,7 @@ assert(~obj.opts.error_on_fail,'Bisection exceeded maximum number of iterations.
 % return last solution
 argout = sol;
 
-% store iteration info
-obj.info.iter = info;
+% store iteration statistics
+obj.bisect_stats.iter = stats;
 
 end

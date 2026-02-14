@@ -19,4 +19,12 @@ classdef FilterLinesearch < casos.package.solvers.SequentialCommon
         % internal evaluation
         argout = eval_on_basis(obj,argin);
     end
+
+    methods
+        function s = get_info(obj)
+            % Return info.
+            s = get_info@casos.package.solvers.SequentialCommon(obj);
+            s.nlsossol_feasibility = obj.feas_res_solver.get_info;
+        end
+    end
 end
