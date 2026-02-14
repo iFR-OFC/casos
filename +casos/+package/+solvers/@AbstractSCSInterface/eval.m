@@ -2,8 +2,8 @@ function argout = eval(obj,argin)
 % Call SCS-like solver interface.
 
 % evaluate problem structure
-prob = call(obj.fhan,cell2struct(argin',fieldnames(obj.args_in)));
-cone = call(obj.cone,cell2struct(argin',fieldnames(obj.args_in)));
+prob = call(obj.fhan,cell2struct(argin,fieldnames(obj.args_in)));
+cone = call(obj.cone,cell2struct(argin,fieldnames(obj.args_in)));
 
 % to double
 data.P = sparse(prob.P);
@@ -78,6 +78,6 @@ y = sparse(idx,1,y_,m,1);
 s = sparse(idx,1,s_,m,1);
 
 % parse solution
-argout = call(obj.ghan,[argin {x y s}]);
+argout = call(obj.ghan,[argin; {x; y; s}]);
 
 end

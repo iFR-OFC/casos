@@ -1,4 +1,4 @@
-classdef (Abstract) ConicSolver < casos.package.solvers.SolverCallback
+classdef (Abstract) ConicSolver < casos.package.solvers.ConicInternal
 % Base class for low-level conic (SDP) solvers.
 %
 % The generic conic problem has the form
@@ -30,7 +30,7 @@ properties (Access=protected)
 end
 
 properties (Constant, Access=protected)
-    conic_options = casos.package.solvers.SolverCallback.solver_options;
+    conic_options = casos.package.solvers.ConicInternal.solver_options;
 
     conic_cones = casos.package.Cones([
         casos.package.Cones.LIN
@@ -63,7 +63,7 @@ end
 
 methods
     function obj = ConicSolver(name,conic,varargin)
-        obj@casos.package.solvers.SolverCallback(varargin{:});
+        obj@casos.package.solvers.ConicInternal(name,varargin{:});
 
         % sparsity patterns
         as = conic.a;
@@ -113,9 +113,6 @@ methods
         
         % build conic problem
         buildproblem(obj);
-
-        % construct CasADi callback
-        construct(obj,name);
     end
 
     function s = info(obj)

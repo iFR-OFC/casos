@@ -1,6 +1,10 @@
 classdef (Sealed) ClarabelInterface < casos.package.solvers.AbstractSCSInterface
 % Interface for conic solver Clarabel.
 
+properties (SetAccess=private)
+    class_name = 'ClarabelInterface';
+end
+
 properties (Constant, Access=protected)
     clarabel_options = [casos.package.solvers.ConicSolver.conic_options
         {'clarabel', 'Options to be passed to Clarabel.'}

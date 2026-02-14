@@ -1,6 +1,10 @@
 classdef (Sealed) MosekInterface < casos.package.solvers.ConicSolver
 % Interface for conic solver MOSEK.
 
+properties (SetAccess=private)
+    class_name = 'MosekInterface';
+end
+
 properties (Access=protected)
     fhan;
     ghan;
@@ -75,7 +79,7 @@ methods
         % Return sparsity pattern.
         if (i == 0)
             % Hessian pattern
-            sp = sparsity(obj.args_in.h);
+            sp = casos.Sparsity(sparsity(obj.args_in.h));
 
         else
             sp = get_sparsity_in@casos.package.solvers.ConicSolver(obj,i);

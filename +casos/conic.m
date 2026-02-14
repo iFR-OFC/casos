@@ -4,7 +4,7 @@ function f = conic(varargin)
 try
     sol = casos.package.solvers.create_conic(varargin{:});
     
-    f = casos.Function(sol);
+    f = casos.Function.create(sol);
 
 catch e
     throwAsCaller(e)

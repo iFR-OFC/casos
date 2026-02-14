@@ -1,6 +1,10 @@
 classdef (Sealed) SCSInterface < casos.package.solvers.AbstractSCSInterface
 % Interface for conic solver SCS.
 
+properties (SetAccess = private)
+    class_name = 'SCSInterface';
+end
+
 properties (Constant, Access=protected)
     scs_options = [casos.package.solvers.ConicSolver.conic_options
         {'scs', 'Options to be passed to SCS.'}

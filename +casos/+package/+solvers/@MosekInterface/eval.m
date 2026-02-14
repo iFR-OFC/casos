@@ -3,7 +3,7 @@ function argout = eval(obj,argin)
 
 msk_prob = obj.cone;
 
-args = cell2struct(argin',fieldnames(obj.args_in));
+args = cell2struct(argin,fieldnames(obj.args_in));
 
 % compute cholseky numerically
 if nnz(obj.args_in.h) > 0 && strcmp(obj.opts.cholesky_method,'numerical')
@@ -174,6 +174,6 @@ else
 end
 
 % parse solution
-argout = call(obj.ghan,[struct2cell(sol)' argin]);
+argout = call(obj.ghan,[struct2cell(sol); argin]);
 
 end

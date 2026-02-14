@@ -103,6 +103,6 @@ else
 end
 
 % parse solution
-argout = call(obj.ghan,[argin {x y}]);
+argout = call(obj.ghan,[argin; {x; y}]);
 
 end

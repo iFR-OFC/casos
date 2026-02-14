@@ -1,6 +1,10 @@
 classdef (Sealed) SedumiInterface < casos.package.solvers.ConicSolver
 % Interface for conic solver SeDuMi.
 
+properties (SetAccess=private)
+    class_name = 'SedumiInterface';
+end
+
 properties (Access=protected)
     fhan;
     ghan;
