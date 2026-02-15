@@ -113,10 +113,10 @@ methods
     end
 
     function val = get_default_in(~,i)
-        % Defaults of inputs.
-        switch (i)
-            case {2 5}, val = -inf;
-            case {3 6}, val = +inf;
+        % Default inputs.
+        switch (i) % 0-index
+            case {2 5}, val = -inf; % lbx, lbg
+            case {3 6}, val = +inf; % ubx, ubg
             otherwise, val = 0;
         end
     end

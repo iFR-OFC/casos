@@ -69,6 +69,15 @@ methods
         sp = casos.Sparsity(sparsity_out(obj.ghan,i));
     end
 
+    function val = get_default_in(~,i)
+        % Default inputs.
+        switch (i) % 0-index
+            case {3 6}, val = -inf; % lba, lbx
+            case {4 7}, val = +inf; % uba, ubx
+            otherwise, val = 0;
+        end
+    end
+
     %% Call internal
     function argout = call(obj,argin,on_basis)
         % Call function.

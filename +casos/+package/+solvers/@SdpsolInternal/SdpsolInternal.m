@@ -195,6 +195,15 @@ methods
         buildproblem(obj,prob,data,opts,args);
     end
 
+    function val = get_default_in(~,i)
+        % Default inputs.
+        switch (i) % 0-index
+            case {2 5}, val = -inf; % lbx, lbg
+            case {3 6}, val = +inf; % ubx, ubg
+            otherwise, val = 0;
+        end
+    end
+
     function s = get_stats(obj)
         % Return stats.
         s = obj.solver.get_stats;
