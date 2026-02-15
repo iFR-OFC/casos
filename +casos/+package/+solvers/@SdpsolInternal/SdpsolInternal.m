@@ -1,4 +1,4 @@
-classdef SdpsolInternal < casos.package.solvers.ConicInternal & matlab.mixin.Copyable
+classdef SdpsolInternal < casos.package.solvers.ConicInternal
 % Internal interface for convex cone (SDP) solvers.
 
 properties (SetAccess=private)
@@ -43,24 +43,6 @@ methods
 
     function obj = SdpsolInternal(name,solver,sdp,opts)
         obj@casos.package.solvers.ConicInternal(name);
-
-        if isa(name,'casos.package.solvers.SdpsolInternal')
-            % copy constructor
-            obj.solver = name.solver;
-
-            if nargin > 1
-                % change input function
-                obj.fhan = solver;
-            else
-                obj.fhan = name.fhan;
-            end
-            obj.ghan = name.ghan;
-
-            % construct CasADi callback
-            construct(obj,name.name);
-
-            return
-        end
 
         % options
         if nargin < 4
@@ -281,11 +263,6 @@ methods (Access=private)
 end
 
 methods (Access=protected)
-    function S = copyElement(obj)
-        % Use copy constructor.
-        S = casos.package.solvers.SdpsolInternal(obj);
-    end
-
     function print_matrix_cones(obj)
         % Print list of supported matrix cones.
         disp('Supported Matrix Cones:')

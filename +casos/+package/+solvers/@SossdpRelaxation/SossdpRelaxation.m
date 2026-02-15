@@ -1,4 +1,4 @@
-classdef SossdpRelaxation < casos.package.solvers.SosoptCommon & matlab.mixin.Copyable
+classdef SossdpRelaxation < casos.package.solvers.SosoptCommon
 % Solve sum-of-squares problems by relaxation to SDP.
 
 properties (Access=private)
