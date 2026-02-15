@@ -4,7 +4,7 @@ function f = sdpsol(varargin)
 try
     sol = casos.package.solvers.SdpsolInternal(varargin{:});
     
-    f = casos.Function(sol);
+    f = casos.Function.create(sol);
 
 catch e
     throwAsCaller(e)

@@ -1,5 +1,9 @@
-classdef SdpsolInternal < casos.package.solvers.SolverCallback & matlab.mixin.Copyable
+classdef SdpsolInternal < casos.package.solvers.ConicInternal & matlab.mixin.Copyable
 % Internal interface for convex cone (SDP) solvers.
+
+properties (SetAccess=private)
+    class_name = 'SdpsolInternal';
+end
 
 properties (Constant,Access=protected)
     matrix_cones = casos.package.Cones([
@@ -38,7 +42,7 @@ methods
     argout = eval(obj,argin);
 
     function obj = SdpsolInternal(name,solver,sdp,opts)
-        obj@casos.package.solvers.SolverCallback;
+        obj@casos.package.solvers.ConicInternal(name);
 
         if isa(name,'casos.package.solvers.SdpsolInternal')
             % copy constructor
@@ -189,20 +193,17 @@ methods
 
         % build SDP problem
         buildproblem(obj,prob,data,opts,args);
-
-        % construct CasADi callback
-        construct(obj,name);
     end
 
-    function s = stats(obj)
+    function s = get_stats(obj)
         % Return stats.
-        s = obj.solver.stats;
+        s = obj.solver.get_stats;
     end
 
-    function s = info(obj)
+    function s = get_info(obj)
         % Return info.
         s = obj.sdpsol_info;
-        s.conic = obj.solver.info;
+        s.conic = obj.solver.get_info;
     end
 
     %% Options & Cones

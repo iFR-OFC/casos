@@ -41,12 +41,12 @@ methods
 
     function i = get_index_in(obj,name)
         % Return index of input argument.
-        i = get_index_in(obj.fhan,name);
+        i = index_in(obj.fhan,name);
     end
 
     function i = get_index_out(obj,name)
         % Return index of output argument.
-        i = get_index_out(obj.ghan,name);
+        i = index_out(obj.ghan,name);
     end
 
     function str = get_name_in(obj,i)
