@@ -27,9 +27,9 @@ methods
         if ~isfield(obj.opts,'scs'), obj.opts.scs = []; end
     end
 
-    function s = info(obj)
+    function s = get_info(obj)
         % Overwriting ConicSolver.info
-        s = info@casos.package.solvers.ConicSolver(obj);
+        s = get_info@casos.package.solvers.ConicSolver(obj);
         s.scs = obj.solver_info;
     end
 end

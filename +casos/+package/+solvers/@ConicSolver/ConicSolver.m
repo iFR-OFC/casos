@@ -115,7 +115,7 @@ methods
         buildproblem(obj);
     end
 
-    function s = info(obj)
+    function s = get_info(obj)
         % Return low-level conic interface information
         s = obj.conic_info;
     end

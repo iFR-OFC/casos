@@ -30,7 +30,7 @@ methods
         obj@casos.package.solvers.ConicSolver(name,conic,varargin{:});
     end
 
-    function s = stats(obj)
+    function s = get_stats(obj)
         % Return stats.
         s = obj.solver_stats;
         s = addfield(obj.status,s);

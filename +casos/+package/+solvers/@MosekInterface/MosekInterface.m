@@ -63,15 +63,15 @@ methods
         end
     end
 
-    function s = stats(obj)
+    function s = get_stats(obj)
         % Return stats.
         s = obj.solver_stats;
         s = addfield(obj.status,s);
     end
 
-    function s = info(obj)
+    function s = get_info(obj)
         % Overwriting ConicSolver.info
-        s = info@casos.package.solvers.ConicSolver(obj);
+        s = get_info@casos.package.solvers.ConicSolver(obj);
         s.mosek = obj.solver_info;
     end
 
