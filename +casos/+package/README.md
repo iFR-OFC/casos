@@ -57,12 +57,12 @@ flowchart LR
     PSFunction --> FunctionInternal
   end
   subgraph casos.package.solvers
-    ConicSolver --> SolverCallback
-    SolverCallback --> SolverCommon
+    ConicSolver --> ConicInternal
+    ConicInternal --> SolverCommon
     MosekInterface --> ConicSolver
     SedumiInterface --> ConicSolver
     SCSInterface --> ConicSolver
-    SdpsolInternal --> SolverCallback
+    SdpsolInternal --> ConicInternal
     SdpsolInternal -.-> ConicSolver
     create_conic -.-> MosekInterface
     create_conic -.-> SedumiInterface
@@ -79,7 +79,7 @@ flowchart LR
   casos.Function -.-> CasadiFunction
   casos.Function -.-> PSFunction
   CasadiFunction -.-> casadi.Function
-  SolverCallback --> casadi.Callback
+  ConicInternal --> FunctionInternal
   SolverCommon --> FunctionCommon
   SosoptCommon --> FunctionInternal
   casos.conic -.-> create_conic
