@@ -89,7 +89,7 @@ methods
             % get nonzero coordinates for basis
             in = cellfun(@(p,i) casadi.DM(p), argin(:), num2cell((1:get_n_in(obj))'-1), 'UniformOutput', false);
             % evaluate on coordinates
-            argout = eval(obj,in);
+            argout = eval(obj,in); %#ok<EV2IN>
         end
     end
 end
