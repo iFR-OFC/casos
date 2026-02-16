@@ -1,4 +1,4 @@
-classdef (Abstract) ConicInternal < casos.package.solvers.SolverCommon & casos.package.functions.FunctionInternal
+classdef (Abstract) ConicInternal < casos.package.solvers.SolverInternal
 % Common superclass for conic solvers.
 
 properties (Abstract, Access=protected)
@@ -24,8 +24,7 @@ end
 
 methods
     function obj = ConicInternal(name,varargin)
-        obj@casos.package.functions.FunctionInternal(name);
-        obj@casos.package.solvers.SolverCommon(varargin{:});
+        obj@casos.package.solvers.SolverInternal(name,varargin{:});
     end
 
     %% Common Callback interface
