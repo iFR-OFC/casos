@@ -87,11 +87,27 @@ methods
 
         else
             % get nonzero coordinates for basis
-            in = cellfun(@(p,i) casadi.DM(p), argin(:), num2cell((1:get_n_in(obj))'-1), 'UniformOutput', false);
+            in = cellfun(@(p,i) projectScalar(p,get_sparsity_in(obj,i)), argin(:), num2cell((1:get_n_in(obj))'-1), 'UniformOutput', false);
             % evaluate on coordinates
             argout = eval(obj,in); %#ok<EV2IN>
         end
     end
+end
+
+end
+
+function b = projectScalar(a,sp)
+% Project scalar or matrix onto sparsity pattern.
+
+sp = casadi.Sparsity(sp);
+
+if isscalar(a)
+    % repeat argument to sparsity pattern
+    b = casadi.DM(sp,a);
+
+else
+    % project matrix onto sparsity pattern
+    b = project(casadi.DM(a),sp);
 end
 
 end
