@@ -1,4 +1,4 @@
-classdef (Abstract) SosoptCommon < casos.package.solvers.SolverCommon & casos.package.functions.FunctionInternal
+classdef (Abstract) SosoptCommon < casos.package.solvers.SolverInternal
 % Common superclass for sum-of-squares optimization problems.
 %
 % The generic sum-of-squares problem has the form
@@ -18,7 +18,7 @@ classdef (Abstract) SosoptCommon < casos.package.solvers.SolverCommon & casos.pa
 %
 
 properties (Constant,Access=protected)
-    sosopt_options = casos.package.solvers.SolverCommon.solver_options;
+    sosopt_options = casos.package.solvers.SolverInternal.solver_options;
 
     sosopt_cones = casos.package.Cones([
         casos.package.Cones.LIN
@@ -58,8 +58,7 @@ end
 
 methods
     function [obj,sos] = SosoptCommon(name,sos,varargin)
-        obj@casos.package.functions.FunctionInternal(name);
-        obj@casos.package.solvers.SolverCommon(varargin{:});
+        obj@casos.package.solvers.SolverInternal(name,varargin{:});
 
         % problem size
         if isfield(sos,'x')
@@ -170,16 +169,23 @@ methods
         s = obj.sosopt_info;
     end
 
-    function argout = call(obj,argin,on_basis)
+    function argout = call(obj,argin,varargin)
         % Call function (override for efficiency).
         
-        if nargin > 2 && on_basis
+        if isstruct(argin)
+            % parse arguments by name
+            argout = call@casos.package.solvers.SolverInternal(obj,argin,varargin{:});
+            return
+
+        elseif nargin > 2 && varargin{1}
             % evaluate on basis
             argout = eval_on_basis(obj,argin);
             return
         end
 
         % else
+        assert(length(argin) == obj.get_n_in, 'Incorrect number of inputs: Expected %d, got %d.', obj.get_n_in, length(argin));
+
         in = cell(10,1);
         
         % project arguments to obtain SDP inputs

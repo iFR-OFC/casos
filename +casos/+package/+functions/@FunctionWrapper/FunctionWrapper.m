@@ -207,41 +207,7 @@ methods
         % Evaluate function for given arguments.
         assert(~is_null(obj), 'Notify the developers.')
 
-        if iscell(args)
-            assert(length(args) == obj.n_in, 'Incorrect number of inputs: Expected %d, got %d.', obj.n_in, length(args));
-
-            out = call(obj.wrap,args,varargin{:});
-            return
-        end
-
-        % else
-        assert(isstruct(args),'Arguments must be given as struct.')
-
-        argin = cell(obj.n_in,1);
-
-        % name of arguments
-        fn_arg = fieldnames(args);
-
-        % index of arguments
-        idx_in = cellfun(@(arg) obj.index_in(arg), fn_arg);
-        
-        % find arguments
-        L = ismember(0:obj.n_in-1, idx_in);
-
-        % default values
-        argin(~L) = arrayfun(@(i) obj.default_in(i), find(~L)-1, 'UniformOutput', false);
-
-        % assign arguments
-        argin(idx_in+1) = struct2cell(args);
-        
-        % call function with cell
-        argout = call(obj.wrap,argin,varargin{:});
-
-        % name of outputs
-        fn_out = arrayfun(@(i) obj.name_out(i), 0:obj.n_out-1, 'UniformOutput', false);
-
-        % parse outputs
-        out = cell2struct(argout(:),fn_out(:));
+        out = call(obj.wrap,args,varargin{:});
     end
 
     function varargout = subsref(obj,L)

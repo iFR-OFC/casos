@@ -78,13 +78,20 @@ methods
     end
 
     %% Call internal
-    function argout = call(obj,argin,on_basis)
+    function argout = call(obj,argin,varargin)
         % Call function.
-        if nargin > 2 && on_basis
+        if isstruct(argin)
+            % arguments by name
+            argout = call@casos.package.solvers.SolverInternal(obj,argin,varargin{:});
+
+        elseif nargin > 2
             % evaluate on coordinates
             error('Not implemented.')
 
         else
+            % evaluate on matrices
+            assert(length(argin) == obj.get_n_in, 'Incorrect number of inputs: Expected %d, got %d.', obj.get_n_in, length(argin));
+
             % get nonzero coordinates for basis
             in = cellfun(@(p,i) projectScalar(p,get_sparsity_in(obj,i)), argin(:), num2cell((1:get_n_in(obj))'-1), 'UniformOutput', false);
             % evaluate on coordinates
@@ -100,7 +107,11 @@ function b = projectScalar(a,sp)
 
 sp = casadi.Sparsity(sp);
 
-if isscalar(a)
+if isempty(a)
+    % create zero
+    b = casadi.DM(sp);
+
+elseif isscalar(a)
     % repeat argument to sparsity pattern
     b = casadi.DM(sp,a);
 

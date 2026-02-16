@@ -120,11 +120,20 @@ methods
         i = index_out(obj.func,str);
     end
 
-    function argout = call(obj, argin, on_basis)
+    function argout = call(obj, argin, varargin)
         % Evaluate casadi function object.
+        if isstruct(argin)
+            % parse arguments by name
+            argout = call@casos.package.solvers.SolverInternal(obj,argin,varargin{:});
+            return
+        end
+
+        % else
+        assert(length(argin) == obj.get_n_in, 'Incorrect number of inputs: Expected %d, got %d.', obj.get_n_in, length(argin));
+
         argout = call(obj.func, argin);
 
-        if nargin > 2 && on_basis
+        if nargin > 2 && varargin{1}
             % return nonzero entries only
             argout = cellfun(@(c,i) sparsity_cast(c,casadi.Sparsity.dense(nnz_out(obj.func,i),1)), argout(:), num2cell((1:get_n_out(obj))'-1), 'UniformOutput', false);
         end
