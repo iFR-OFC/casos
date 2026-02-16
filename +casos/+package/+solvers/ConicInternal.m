@@ -115,6 +115,11 @@ elseif isscalar(a)
     % repeat argument to sparsity pattern
     b = casadi.DM(sp,a);
 
+elseif isvector(a) && isvector(sp)
+    % project vector onto sparsity pattern
+    % reshape vector if necessary
+    b = project(reshape(casadi.DM(a),size(sp)),sp);
+
 else
     % project matrix onto sparsity pattern
     b = project(casadi.DM(a),sp);
