@@ -1,82 +1,127 @@
-function Lz = newton_reduce(Pdegmat,Zdegmat,solver)
-% Removes monomials outside half Newton polytope
-% Strategy inpired from: Simplification Methods for Sum-of-Squares 
-% Programs, Peter Seiler et al.
+function Lz = newton_reduce(Pdegmat,Zdegmat,solver,Lz)
+% Removes monomials outside half Newton polytope.
+%
+%   Inputs:
+%       Pdegmat - Degree matrix of polynomial basis (each row is a monomial)
+%       Zdegmat - Degree matrix of monomials to test (each row is a monomial)
+%       solver  - Solver for linear programming (e.g., 'sedumi', 'mosek')
+%       Lz      - Optional initial logical vector (if not provided, all true)
+%
+%   Output:
+%       Lz      - Sparse logical vector indicating kept monomials
+%
+%   Strategy inspired by: "Simplification Methods for Sum-of-Squares Programs",
+%   Peter Seiler et al.
 
-% build LP (part 1)
-bfixed = [zeros(size(Pdegmat,1),1); 1];
+% tolerance for feasibility
+tolerance = 1e-6;
 
-% trivial removal of monomials
-keep_trivial = ismember(Zdegmat*2,Pdegmat,'rows');
-keep = true(size(keep_trivial));
+% get dimensions
+[nP, ~] = size(Pdegmat);
+nZ = size(Zdegmat, 1);
 
-% initialize some parameters for optimization
-p_A = [];
+% quick return if no monomials to test
+if nZ == 0
+    Lz = sparse([]);
+    return;
+end
 
-% Set options for solver
-opts.error_on_fail = false;
+% if Lz is not provided, initialize all to true
+if nargin < 4 || isempty(Lz)
+    Lz = true(nZ, 1);
+end
 
-% try to go over each possible monomial basis and verify if it belongs to
-% the newton polytope by checking for the existance of a hyperplane 
-for i = 1:length(keep_trivial)
+% convert Lz to logical if it's not already
+Lz = logical(Lz);
 
+% pre-allocate keep array (start with provided Lz)
+keep = Lz;
+
+% check if any monomial in Zdegmat*2 matches a row in Pdegmat
+Z2 = Zdegmat * 2;
+keep_trivial = ismember(Z2, Pdegmat, 'rows');
+
+% early return if all are trivially kept
+if all(keep_trivial)
+    Lz = sparse(keep);
+    return;
+end
+
+% fixed part of LP constraints (common for all iterations)
+bfixed = [zeros(nP, 1); 1];
+
+% pre-allocate solver structure (will be reused)
+Slin = [];
+
+% check remaining monomials via linear programming
+for i = 1:nZ
+    % skip if already kept or trivially not kept
     if keep_trivial(i) || ~keep(i)
         continue;
     end
-    
-    % build LP (part 2)
-    q = Zdegmat(i,:)*2;
-    c = ([-q 1])';
-    F_struc = ([bfixed -[Pdegmat -ones(size(Pdegmat,1),1); q -1]]);
-    
-    A = -F_struc(1:end,2:end);  % Linear constraint matrix
-    b = F_struc(1:end,1);       % Right-hand side vector
-
-    % Build LP if dimensions mismatch or at first iteration 
-    % (reuse previous LP)
-    if i==1 || any(size(p_A) ~=size(A))
-        % for the conic solver:
-        lin = struct('g', casadi.Sparsity.dense(size(c)), ...
-                     'a', casadi.Sparsity.dense(size(A)));
-
-        % Build the linear program
-        Slin = casos.conic('S', solver, lin, opts);
+        
+    % current monomial to test (scaled by 2)
+    q = Z2(i, :);
+        
+    % extract A matrix and b vector
+    A = [Pdegmat, -ones(nP, 1); q, -1]; % linear constraint matrix
+    b = bfixed;                         % right-hand side
+        
+    % construct augmented matrix for LP
+    % variables: [x; t; s] where:
+    %   x - coefficients for hyperplane
+    %   t - scalar variable
+    %   s - slack variables for inequalities
+    n_x = size(A, 2);  % number of x variables
+    n_s = size(A, 1);  % number of slack variables
+        
+    % build LP in form: min c'*[x; t; s] subject to a*[x; t; s] <= [b; 0]
+    a = [A, -eye(n_s), zeros(n_s,1);%;        % A*[x;t] <= b
+         -q, 1, zeros(1, n_s), -1];           % -q*x + t <= 0
+    c = [zeros(n_x, 1); ones(n_s, 1); 1];     % objective: sum(s)
+        
+    % reuse or create solver instance
+    if isempty(Slin) || any(size(lp_struct.a) ~= size(a))
+        % create new LP structure
+        lp_struct = struct('g', casadi.Sparsity.dense(size(c)), ...
+                           'a', casadi.Sparsity.dense(size(a)));
+        Slin = casos.conic('S', solver, lp_struct);
     end
 
-    % Solve and obtain the solution
-    sol = Slin('h',    sparse(size(A,2), size(A,2)), ...
-                'g',    c,   ...
-                'a',    A,   ...
-                'lba',  -inf,    ...        
-                'uba',  b, ...    
-                'cba',  [], ...
-                'lbx',  -inf, ...        
-                'ubx',  +inf, ...
-                'cbx',  [], ...
-                'x0',   sparse(size(A,2),1), ...
-                'lam_a0', sparse(length(b),1) ,...
-                'lam_x0', sparse(length(c),1));
+    % Solve LP
+    sol = Slin('h',   sparse(size(a, 2), size(a, 2)),   ...
+               'g',   c,                                ...
+               'a',   a,                                ...
+               'lba', -inf,                             ...
+               'uba', [b; 0],                           ...
+               'lbx', [-inf(n_x, 1); zeros(n_s+1, 1)],  ...
+               'ubx', inf,                              ...
+               'x0',  sparse(size(a, 2), 1));
 
-    % Extract the solution
-    x = full(sol.x);
-
-    % Get status of conic solver
+    % check solver status
     status = Slin.stats.UNIFIED_RETURN_STATUS;
-
-    % If the solution is not feasible x should be filled with zeros
-    if isequal(status,'SOLVER_RET_INFEASIBLE')
-        x = zeros(length(c),1);
+    if ~isequal(status,'SOLVER_RET_SUCCESS')
+        continue;
+    end
+    
+    % check feasibility (cost < tolerance means feasible)
+    cost = full(sol.cost);
+    if cost < tolerance
+        % extract solution and identify removed monomials
+        x_sol = full(sol.x(1:n_x-1));
+                
+        % find monomials that violate the hyperplane inequality
+        % 2*z*a <= b1  ->  check if 2*z*a - x_sol(end) > 0
+        b1 = full(sol.x(n_x));
+        violation = Z2 * x_sol - b1 > 0;
+                
+        % remove violating monomials
+        keep(violation) = false;
     end
 
-    % If the LP gives an unbounded solution or the only solution is a zero vector
-    if (isequal(status,'SOLVER_RET_SUCCESS') && ([-q 1]*x(:) < 0)) || isequal(status,'SOLVER_RET_INFEASIBLE')
-        a = x(1:end-1);
-        b1 = x(end);
-        u = 2*Zdegmat*a - b1 > sqrt(eps);
-        keep(u) = 0;
-    end
 end
 
-Lz = keep;
-Lz = sparse(Lz);
+% return as sparse logical vector
+Lz = sparse(keep);
+
 end
