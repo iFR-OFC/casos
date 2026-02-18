@@ -89,6 +89,7 @@ for i = 1:nZ
     end
 
     % Solve LP
+    try
     sol = Slin('h',   sparse(size(a, 2), size(a, 2)),   ...
                'g',   c,                                ...
                'a',   a,                                ...
@@ -97,6 +98,11 @@ for i = 1:nZ
                'lbx', [-inf(n_x, 1); zeros(n_s+1, 1)],  ...
                'ubx', inf,                              ...
                'x0',  sparse(size(a, 2), 1));
+
+    catch ME
+    % Solver failed
+    error('Solver failed during newton Polytope reduction: %s', ME.message)
+    end
 
     % check solver status
     status = Slin.stats.UNIFIED_RETURN_STATUS;
