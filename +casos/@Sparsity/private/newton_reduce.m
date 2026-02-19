@@ -5,7 +5,7 @@ function Lz = newton_reduce(Pdegmat,Zdegmat,solver,Lz)
 %       Pdegmat - Degree matrix of polynomial basis (each row is a monomial)
 %       Zdegmat - Degree matrix of monomials to test (each row is a monomial)
 %       solver  - Solver for linear programming (e.g., 'sedumi', 'mosek')
-%       Lz      - Optional initial logical vector (if not provided, all true)
+%       Lz      - Initial logical vector
 %
 %   Output:
 %       Lz      - Sparse logical vector indicating kept monomials
@@ -19,17 +19,6 @@ tolerance = 1e-6;
 % get dimensions
 [nP, ~] = size(Pdegmat);
 nZ = size(Zdegmat, 1);
-
-% quick return if no monomials to test
-if nZ == 0
-    Lz = sparse([]);
-    return;
-end
-
-% if Lz is not provided, initialize all to true
-if nargin < 4 || isempty(Lz)
-    Lz = true(nZ, 1);
-end
 
 % pre-allocate keep array (start with provided Lz)
 keep = Lz;
