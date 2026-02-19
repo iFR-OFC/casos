@@ -31,9 +31,6 @@ if nargin < 4 || isempty(Lz)
     Lz = true(nZ, 1);
 end
 
-% convert Lz to logical if it's not already
-Lz = logical(Lz);
-
 % pre-allocate keep array (start with provided Lz)
 keep = Lz;
 
