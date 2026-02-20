@@ -23,7 +23,7 @@ All code contributions must follow the [CaΣoS Coding Guidelines](https://github
 It is understand that the copyright for all code is given to the CaΣoS maintainers. We use the [REUSE specification](https://reuse.software/spec-3.3/) for declaration of copyright and organisation of license of declarations in all files included in the repository. All new files therefore must contain the following header in a comment of the respective programming languages:
 
 ```matlab
-% SPDX-FileCopyrightText: YEAR–today Institute of Flight Mechanics and Controls, Stuttgart
+% SPDX-FileCopyrightText: YEAR Institute of Flight Mechanics and Controls, Stuttgart
 % SPDX-FileCopyrightText: Author(s): Torbjørn Cunis and FURTHER AUTHORS <tcunis@ifr.uni-stuttgart.de>
 % SPDX-FileCopyrightText: For a full list of contributors, see <https://github.com/ifr-ofc/casos>
 %
