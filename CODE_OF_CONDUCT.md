@@ -132,7 +132,7 @@ https://www.contributor-covenant.org/translations.
 ----
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://github.com/iFR-ACSO/.github/blob/main/assets/logo-casos-inverted.png">
-  <source media="(prefers-color-scheme: light)" srcset="https://github.com/iFR-ACSO/.github/blob/main/assets/logo-casos-trans.png">
+  <source media="(prefers-color-scheme: dark)" srcset="https://github.com/ifr-ofc/.github/blob/main/assets/logo-casos-inverted.png">
+  <source media="(prefers-color-scheme: light)" srcset="https://github.com/ifr-ofc/.github/blob/main/assets/logo-casos-trans.png">
   <img width="50%" alt="CaΣoS: A nonlinear sum-of-squares optimization suite">
 </picture>
