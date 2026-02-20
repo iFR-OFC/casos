@@ -1,4 +1,4 @@
-function [sol_iter,sol_qp,feas_res_flag,info,obj,filter,Bk] = do_single_iteration(obj, ...
+function [sol_iter,sol_qp,feas_res_flag,stats,obj,filter,Bk] = do_single_iteration(obj, ...
     iter,...
     x_k,...
     dual_k,...
@@ -8,18 +8,18 @@ function [sol_iter,sol_qp,feas_res_flag,info,obj,filter,Bk] = do_single_iteratio
     p0,...
     args, ...
     filter, ...
-    info)
+    stats)
 
 %% evaluate convex SOS problem and check feasibility
-[x_star,dual_star,sol_iter,sol_qp,feas_res_flag,info] = solve_Q_SDP(obj,iter,x_k,p0,Bk,args,info);
+[x_star,dual_star,sol_iter,sol_qp,feas_res_flag,stats] = solve_Q_SDP(obj,iter,x_k,p0,Bk,args,stats);
 
 % initilizing timing of backstepping components in case we have to switch
 % to feasibility restoration
-info{iter}.timeStats.HessApproxTime         = 0;
-info{iter}.timeStats.totalBackstepTime      = 0;
-info{iter}.timeStats.FilterAcceptTime       = 0;
-info{iter}.timeStats.SuffDecreaseTime       = 0;
-info{iter}.timeStats.SocTime                = 0;
+stats{iter}.timeStats.HessApproxTime         = 0;
+stats{iter}.timeStats.totalBackstepTime      = 0;
+stats{iter}.timeStats.FilterAcceptTime       = 0;
+stats{iter}.timeStats.SuffDecreaseTime       = 0;
+stats{iter}.timeStats.SocTime                = 0;
 
 
 if feas_res_flag
@@ -170,7 +170,7 @@ sol_iter.theta_x_k1 = theta_x_k1;
 sol_iter.f_x_k1     = f_x_k1;
 sol_iter.alpha_k    = alpha;
 sol_iter.dual_qp    = dual_star;
-info{iter}.constraint_violation = sol_convio;
+stats{iter}.constraint_violation = sol_convio;
 
 measHessApp = tic;
 % update quasi-Newton/exact Hessian
@@ -203,15 +203,15 @@ end
 HessApproxTimeMeas = toc(measHessApp);
 
 % get timing stats
-info{iter}.timeStats.HessApproxTime         = HessApproxTimeMeas;
-info{iter}.timeStats.totalBackstepTime      = totalBackstepTimeMeas;
-info{iter}.timeStats.FilterAcceptTime       = FilterAcceptTimeMeas;
-info{iter}.timeStats.SuffDecreaseTime       = SuffDecreaseTimeMeas;
+stats{iter}.timeStats.HessApproxTime         = HessApproxTimeMeas;
+stats{iter}.timeStats.totalBackstepTime      = totalBackstepTimeMeas;
+stats{iter}.timeStats.FilterAcceptTime       = FilterAcceptTimeMeas;
+stats{iter}.timeStats.SuffDecreaseTime       = SuffDecreaseTimeMeas;
 
 if ~isempty(SocTimeMeas)
-    info{iter}.timeStats.SocTime                = SocTimeMeas;
+    stats{iter}.timeStats.SocTime                = SocTimeMeas;
 else
-    info{iter}.timeStats.SocTime                = 0;
+    stats{iter}.timeStats.SocTime                = 0;
 end
 
 

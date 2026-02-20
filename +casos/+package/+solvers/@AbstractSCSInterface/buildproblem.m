@@ -142,4 +142,12 @@ lam_x = [lam_x_l; lam_x_q; lam_x_s];
 
 obj.ghan = casadi.Function('g',[struct2cell(obj.args_in)' {X Y S}],{X (X'*(P/2)*X + c'*X) lam_a lam_x},[fieldnames(obj.args_in)' {'X' 'Y' 'S'}],obj.names_out);
 
+% fill info struct
+obj.solver_info.size_p = size(P);
+obj.solver_info.nnz_p  = nnz(P);
+obj.solver_info.size_a  = size(Ascs);
+obj.solver_info.nnz_a   = nnz(Ascs);
+obj.solver_info.numel_b = numel(bscs);
+obj.solver_info.numel_c = numel(c);
+
 end

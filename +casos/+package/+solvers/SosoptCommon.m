@@ -40,6 +40,8 @@ properties (Access=protected)
     sparsity_g;
     sparsity_gl;
     sparsity_gs;
+
+    sosopt_info;
 end
 
 methods (Static)
@@ -74,6 +76,12 @@ methods
         % default options
         if ~isfield(obj.opts,'Kx'), obj.opts.Kx = struct('lin',n); end
         if ~isfield(obj.opts,'Kc'), obj.opts.Kc = struct('lin',m); end
+
+        % common interface info
+        obj.sosopt_info.numel_x = n;
+        obj.sosopt_info.numel_g = m;
+        obj.sosopt_info.Kx = obj.opts.Kx;
+        obj.sosopt_info.Kc = obj.opts.Kc;
     end
 
     %% Getter
@@ -155,6 +163,11 @@ methods
 
         % zero-based index
         idx = ii - 1;
+    end
+
+    function s = get_info(obj)
+        % Return info.
+        s = obj.sosopt_info;
     end
 
     function argout = call(obj,argin,on_basis)

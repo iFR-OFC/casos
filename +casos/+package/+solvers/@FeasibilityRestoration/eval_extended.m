@@ -1,4 +1,4 @@
-function [sol_iter,sol,filter_glob,feasibility_flag,info_glob] = eval_extended(obj,filter_glob,x_R,theta_x_R0,p0,solver,info_glob,iter_glob)
+function [sol_iter,sol,filter_glob,feasibility_flag,stats_glob] = eval_extended(obj,filter_glob,x_R,theta_x_R0,p0,solver,stats_glob,iter_glob)
 
 % original parameter
 p00 = p0;
@@ -24,8 +24,8 @@ r0 = ones(solver.feasRes_para.n_r,1);
 % decision variabbles of feasibility restoration
 x_k = [r0; x_R];
 
-% initialize iteration info struct
-info = cell(1,obj.opts.max_iter);
+% initialize iteration statistics struct
+stats = cell(1,obj.opts.max_iter);
 
 dual_k = zeros(obj.init_para.no_dual_var,1);
 
@@ -96,7 +96,7 @@ while iter <= obj.opts.max_iter
     feasibility_flag = 0;
 
     % compute solution of current iterate: solve Q-SDP, perform linesearch and update BFGS
-    [sol_iter,sol_qp,feas_res_flag,info,obj,filter,Bk] = do_single_iteration(obj, ...
+    [sol_iter,sol_qp,feas_res_flag,stats,obj,filter,Bk] = do_single_iteration(obj, ...
         iter,...
         x_k,...
         dual_k,...
@@ -106,7 +106,7 @@ while iter <= obj.opts.max_iter
         p0,...
         args, ...
         filter, ...
-        info);
+        stats);
 
     %% check feasibility;
     % feasibility restoration does not have a feasibility restoration
@@ -132,7 +132,7 @@ while iter <= obj.opts.max_iter
         theta_x_k_or = full(max(0,max(x_k(1:solver.feasRes_para.n_r))));
 
         % store them
-        info{iter}.constraint_violation = x_k(1:solver.feasRes_para.n_r);
+        stats{iter}.constraint_violation = x_k(1:solver.feasRes_para.n_r);
 
         % cost (original problem) at trial point
         f_x_k1_or   = full(solver.eval_cost(x_k(solver.feasRes_para.n_r+1:end),p00));
@@ -216,7 +216,7 @@ else
 
 end
 
-info_glob{iter_glob} = info{iter};
+stats_glob{iter_glob} = stats{iter};
 
 end % end of eval_extended
 

@@ -1,4 +1,4 @@
-function [sol_iter,sol_qp,feas_res_flag,info,obj,filter,Bk] = do_single_iteration(obj, ...
+function [sol_iter,sol_qp,feas_res_flag,stats,obj,filter,Bk] = do_single_iteration(obj, ...
     iter,...
     x_k,...
     dual_k,...
@@ -8,10 +8,10 @@ function [sol_iter,sol_qp,feas_res_flag,info,obj,filter,Bk] = do_single_iteratio
     p0,...
     args, ...
     filter, ...
-    info)
+    stats)
 
 %% evaluate convex SOS problem and check feasibility
-[x_star,dual_star,sol_iter,sol_qp,feas_res_flag,info] = solve_Q_SDP(obj,iter,x_k,p0,Bk,args,info);
+[x_star,dual_star,sol_iter,sol_qp,feas_res_flag,stats] = solve_Q_SDP(obj,iter,x_k,p0,Bk,args,stats);
 
 
 if feas_res_flag
@@ -126,7 +126,7 @@ sol_iter.theta_x_k1 = theta_x_k1;
 sol_iter.f_x_k1     = f_x_k1;
 sol_iter.alpha_k    = alpha;
 sol_iter.dual_qp    = dual_star;
-info{iter}.constraint_violation = sol_convio;
+stats{iter}.constraint_violation = sol_convio;
 
 % we only support BFGS because we have acutally a linear cost + a quadratic
 % term; other methods faild in the past

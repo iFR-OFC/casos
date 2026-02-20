@@ -47,8 +47,8 @@ x_k = args{1};
 % parameter from nonlinear problem
 p0   = args{2};
 
-% initialize iteration info struct
-info.single_iterations = cell(1,obj.opts.max_iter);
+% initialize iteration statistics struct
+stats.single_iterations = cell(1,obj.opts.max_iter);
 
 % initialze dual variables
 dual_k = zeros(obj.init_para.no_dual_var,1);
@@ -104,7 +104,7 @@ alpha_k           = 1;
 counterAcceplvl  = 0;
 feasibility_flag = 1;
 
-info.initTime = toc(initTimeMeas);
+stats.initTime = toc(initTimeMeas);
 
 while iter <= obj.opts.max_iter
 
@@ -130,7 +130,7 @@ while iter <= obj.opts.max_iter
         printf(obj.log,'debug',['Build time: ' num2str(obj.display_para.solver_build_time) ' s\n']);
         printf(obj.log,'debug',['Total time: ' num2str(obj.display_para.solver_build_time+solveTime) ' s\n']);
         feasibility_flag = 1;
-        info.solutionStatus = 'Optimal solution';
+        stats.solutionStatus = 'Optimal solution';
         break
 
     end
@@ -153,7 +153,7 @@ while iter <= obj.opts.max_iter
 
             feasibility_flag = 1;
 
-            info.solutionStatus = 'Alomst Optimal solution.';
+            stats.solutionStatus = 'Alomst Optimal solution.';
             break
         end
     else
@@ -164,7 +164,7 @@ while iter <= obj.opts.max_iter
     feasibility_flag = 0;
 
     % compute solution of current iterate: solve Q-SDP, perform linesearch and update BFGS
-    [sol_iter,sol_qp,feas_res_flag,info.single_iterations,obj,filter,Bk] = do_single_iteration(obj, ...
+    [sol_iter,sol_qp,feas_res_flag,stats.single_iterations,obj,filter,Bk] = do_single_iteration(obj, ...
         iter,...
         x_k,...
         dual_k,...
@@ -174,9 +174,9 @@ while iter <= obj.opts.max_iter
         p0,...
         args, ...
         filter, ...
-        info.single_iterations);
+        stats.single_iterations);
 
-    info.single_iterations{iter}.timeStats.feasResTime = 0;
+    stats.single_iterations{iter}.timeStats.feasResTime = 0;
     % Invoke feasibility restoration if necessary
     if feas_res_flag >= 1 && ...              % restoration requested
             theta_x_k >  obj.opts.tolerance_con    % is the constraint violation larger then tolerance; otherwise restoration does not make sense
@@ -190,13 +190,13 @@ while iter <= obj.opts.max_iter
         % shall be avoided in the future
         filter = [filter;[theta_x_k*(1-gamma_theta), f_x_k - gamma_phi*theta_x_k]];
 
-        tmptimeStats = info.single_iterations{iter}.timeStats;
+        tmptimeStats = stats.single_iterations{iter}.timeStats;
         measFeasResTime = tic;
         % feasibility restoration phase
-        [sol_iter,sol_qp_feas,filter,feasibility_flag,info.single_iterations] = obj.feas_res_solver.eval_extended(filter,x_k,theta_x_k,p0,obj,info.single_iterations,iter);
+        [sol_iter,sol_qp_feas,filter,feasibility_flag,stats.single_iterations] = obj.feas_res_solver.eval_extended(filter,x_k,theta_x_k,p0,obj,stats.single_iterations,iter);
 
-        info.single_iterations{iter}.timeStats = tmptimeStats;
-        info.single_iterations{iter}.timeStats.feasResTime = toc(measFeasResTime);
+        stats.single_iterations{iter}.timeStats = tmptimeStats;
+        stats.single_iterations{iter}.timeStats.feasResTime = toc(measFeasResTime);
 
         if feasibility_flag >=1
 
@@ -318,7 +318,7 @@ if iter >= obj.opts.max_iter
         printf(obj.log,'debug',['Build time: ' num2str(obj.display_para.solver_build_time) ' s\n']);
         printf(obj.log,'debug',['Total time: ' num2str(obj.display_para.solver_build_time+solveTime) ' s\n']);
 
-        info.solutionStatus = 'Optimal Solution';
+        stats.solutionStatus = 'Optimal Solution';
 
     else
 
@@ -329,7 +329,7 @@ if iter >= obj.opts.max_iter
         printf(obj.log,'debug',['Build time: ' num2str(obj.display_para.solver_build_time) ' s\n']);
         printf(obj.log,'debug',['Total time: ' num2str(obj.display_para.solver_build_time+solveTime) ' s\n']);
 
-        info.solutionStatus = 'Max. Iterations';
+        stats.solutionStatus = 'Max. Iterations';
     end
 end
 
@@ -346,7 +346,7 @@ if feasibility_flag == 0 && iter < obj.opts.max_iter
     printf(obj.log,'debug',['Build time: ' num2str(obj.display_para.solver_build_time) ' s\n']);
     printf(obj.log,'debug',['Total time: ' num2str(obj.display_para.solver_build_time+solveTime) ' s\n']);
 
-    info.solutionStatus = 'Problem infeasible';
+    stats.solutionStatus = 'Problem infeasible';
 
 elseif feasibility_flag == -1 && iter < obj.opts.max_iter
 
@@ -363,7 +363,7 @@ elseif feasibility_flag == -1 && iter < obj.opts.max_iter
     printf(obj.log,'debug',['Build time: ' num2str(obj.display_para.solver_build_time) ' s\n']);
     printf(obj.log,'debug',['Total time: ' num2str(obj.display_para.solver_build_time+solveTime) ' s\n']);
 
-    info.solutionStatus = 'Solver stalled';
+    stats.solutionStatus = 'Solver stalled';
 
 elseif feasibility_flag == -2 && iter < obj.opts.max_iter
 
@@ -375,20 +375,20 @@ elseif feasibility_flag == -2 && iter < obj.opts.max_iter
     printf(obj.log,'debug',['Total time: ' num2str(obj.display_para.solver_build_time+solveTime) ' s\n']);
 
 
-    info.solutionStatus = 'Feasible solution';
+    stats.solutionStatus = 'Feasible solution';
 end
 
-info.single_iterations = info.single_iterations(1:iter-1);
+stats.single_iterations = stats.single_iterations(1:iter-1);
 
-info.totalSolveTime    = solveTime;
-info.solverBuildTime   = obj.display_para.solver_build_time;
-info.iterations        = iter-1; % we do not count the initial guess
-info.timePerIteration  = info.totalSolveTime/info.iterations;
+stats.totalSolveTime    = solveTime;
+stats.solverBuildTime   = obj.display_para.solver_build_time;
+stats.iterations        = iter-1; % we do not count the initial guess
+stats.timePerIteration  = stats.totalSolveTime/stats.iterations;
 
 % assign output
 argout = sol;
 
-% store iteration info
-obj.info = info;
+% store iteration statistics
+obj.sequential_stats = stats;
 
 end % end of function

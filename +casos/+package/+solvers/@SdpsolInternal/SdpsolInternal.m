@@ -10,6 +10,8 @@ end
 
 properties (Access=private)
     solver;
+
+    sdpsol_info;
     map;    % maps from the relaxed sdp and the orignal sdp
 end
 
@@ -72,6 +74,12 @@ methods
         elseif ~isfield(opts.Kc,'lin')
             opts.Kc.lin = 0;
         end
+
+        % sdpsol interface info
+        obj.sdpsol_info.numel_x = numel(sdp.x);
+        obj.sdpsol_info.numel_g = numel(sdp.g);
+        obj.sdpsol_info.Kx = opts.Kx;
+        obj.sdpsol_info.Kc = opts.Kc;
 
         % relax problem to smaller easier cones (LP and SOCP)
         args = struct('dd_ubg',[],'dd_lbg',[],'dd_ubx',[],'dd_lbx',[]); 
@@ -189,6 +197,12 @@ methods
     function s = stats(obj)
         % Return stats.
         s = obj.solver.stats;
+    end
+
+    function s = info(obj)
+        % Return info.
+        s = obj.sdpsol_info;
+        s.conic = obj.solver.info;
     end
 
     %% Options & Cones
