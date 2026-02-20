@@ -42,6 +42,10 @@ print("Hello, world!");
 % SPDX-SnippetEnd
 ```
 
+## Examples
+
+You are always welcome to add examples to the [CaΣoS example package](https://github.com/iFR-OFC/casos-example-package). We are particularly interested in innovative ways to use sum-of-squares optimization and applications to systems and control problems from various disciplines.
+
 ## Academic cooperations
 
 We are always open to academic cooperations and involvement in research projects. All inquiries should come with a clear project proposal and publication perspective.
