@@ -1,4 +1,6 @@
-# Contributor Covenant Code of Conduct
+# CaΣoS Code of Conduct
+
+We adopt the [Contributor Covenant](#attribution) for our community.
 
 ## Our Pledge
 
@@ -126,3 +128,11 @@ enforcement ladder](https://github.com/mozilla/diversity).
 For answers to common questions about this code of conduct, see the FAQ at
 https://www.contributor-covenant.org/faq. Translations are available at
 https://www.contributor-covenant.org/translations.
+
+----
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://github.com/iFR-ACSO/.github/blob/main/assets/logo-casos-inverted.png">
+  <source media="(prefers-color-scheme: light)" srcset="https://github.com/iFR-ACSO/.github/blob/main/assets/logo-casos-trans.png">
+  <img width="50%" alt="CaΣoS: A nonlinear sum-of-squares optimization suite">
+</picture>
