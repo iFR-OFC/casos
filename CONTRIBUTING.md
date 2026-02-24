@@ -20,7 +20,7 @@ All code contributions must follow the [CaΣoS Coding Guidelines](https://github
 
 ### Copyright & License
 
-It is understand that the copyright for all code is given to the CaΣoS maintainers. We use the [REUSE specification](https://reuse.software/spec-3.3/) for declaration of copyright and organisation of license of declarations in all files included in the repository. All new files therefore must contain the following header in a comment of the respective programming languages:
+It is understood that the copyright for all code is given to the CaΣoS maintainers. We use the [REUSE specification](https://reuse.software/spec-3.3/) for copyright declaration and organisation of license declarations in all files included in the repository. All new files therefore must contain the following header in a comment of the respective programming languages:
 
 ```matlab
 % SPDX-FileCopyrightText: YEAR Institute of Flight Mechanics and Controls, Stuttgart
