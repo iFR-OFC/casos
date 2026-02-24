@@ -30,7 +30,7 @@ It is understood that the copyright for all code is given to the CaΣoS maintain
 % SDPX-License-Identifier: GPL-3.0-only
 ```
 
-Contributors may become authors of the respective files if they are responsible for a significant part of the addition. Other changes to either copyright or the [license](https://github.com/iFR-OFC/casos#GPL-3.0-1-ov-file) are generally not permitted. In exceptional cases, third-party code can be included under a different license contigent of compliance. In this case, the relevant inclusions including details of the copyright holder(s), version history, and license must be identified using REUSE's [in-line snippet comments](https://reuse.software/spec-3.3/#in-line-snippet-comments) as follows:
+Contributors may become authors of the respective files if they are responsible for a significant part of the addition. Other changes to either copyright or the [license](https://github.com/iFR-OFC/casos#GPL-3.0-1-ov-file) are generally not permitted. In exceptional cases, third-party code can be included under a different license contingent on compliance. In this case, the relevant inclusions including details of the copyright holder(s), version history, and license must be identified using REUSE's [in-line snippet comments](https://reuse.software/spec-3.3/#in-line-snippet-comments) as follows:
 
 ```matlab
 % SPDX-SnippetBegin
@@ -44,7 +44,7 @@ print("Hello, world!");
 
 ## Examples
 
-You are always welcome to add examples to the [CaΣoS example package](https://github.com/iFR-OFC/casos-example-package). We are particularly interested in innovative ways to use sum-of-squares optimization and applications to systems and control problems from various disciplines.
+You are always welcome to add examples to the [CaΣoS example package](https://github.com/iFR-OFC/casos-example-package). We are particularly interested in innovative ways to use sum-of-squares optimization and their applications to systems and control problems from various disciplines.
 
 ## Academic cooperations
 
