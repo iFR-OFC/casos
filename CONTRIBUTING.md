@@ -1,3 +1,11 @@
+<!--
+SPDX-FileCopyrightText: 2026 Institute of Flight Mechanics and Controls, University of Stuttgart
+SPDX-FileCopyrightText: Author(s): Torbjørn Cunis <tcunis@ifr.uni-stuttgart.de>
+SPDX-FileContributor: For a full list of contributors, see <https://github.com/ifr-ofc/casos>
+
+SPDX-License-Identifier: GPL-3.0-only
+-->
+
 # Contributing to CaΣoS
 
 If you use CaΣoS for your research, [cite us](https://github.com/iFR-OFC/casos#publications) in your publications, report bugs, or extend our code base, you are contributing to CaΣoS and the larger sum-of-squares community! This document details the different ways to contribute to and engage with our repository. To ensure a healthy and respectable community, please adhere to our [Code of Conduct](https://github.com/ifr-ofc/casos#coc-ov-file).
