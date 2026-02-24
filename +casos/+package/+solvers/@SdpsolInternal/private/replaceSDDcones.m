@@ -1,3 +1,9 @@
+% SPDX-FileCopyrightText: 2025 Institute of Flight Mechanics and Controls, University of Stuttgart
+% SPDX-FileCopyrightText: Author(s): Torbjørn Cunis and Renato Loureiro <tcunis@ifr.uni-stuttgart.de>
+% SPDX-FileContributor: For a full list of contributors, see <https://github.com/ifr-ofc/casos>
+%
+% SPDX-License-Identifier: GPL-3.0-only
+
 function [sdp,args,M_out,num_nlin,sdd_index,opts] = replaceSDDcones(sdp,sizes,Mlin,args,opts,field)
 % Replace SDD cones (constraint or decision variable form)
 %

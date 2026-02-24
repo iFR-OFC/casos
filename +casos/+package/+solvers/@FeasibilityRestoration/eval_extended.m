@@ -1,3 +1,9 @@
+% SPDX-FileCopyrightText: 2025 Institute of Flight Mechanics and Controls, University of Stuttgart
+% SPDX-FileCopyrightText: Author(s): Torbjørn Cunis and Jan Olucak <tcunis@ifr.uni-stuttgart.de>
+% SPDX-FileContributor: For a full list of contributors, see <https://github.com/ifr-ofc/casos>
+%
+% SPDX-License-Identifier: GPL-3.0-only
+
 function [sol_iter,sol,filter_glob,feasibility_flag,stats_glob] = eval_extended(obj,filter_glob,x_R,theta_x_R0,p0,solver,stats_glob,iter_glob)
 
 % original parameter

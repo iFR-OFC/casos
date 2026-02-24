@@ -1,3 +1,9 @@
+% SPDX-FileCopyrightText: 2025 Institute of Flight Mechanics and Controls, University of Stuttgart
+% SPDX-FileCopyrightText: Author(s): Torbjørn Cunis <tcunis@ifr.uni-stuttgart.de>
+% SPDX-FileContributor: For a full list of contributors, see <https://github.com/ifr-ofc/casos>
+%
+% SPDX-License-Identifier: GPL-3.0-only
+
 function [map,Qvar_G,Qcon_G] = process_reorder(Qvar_G,Qcon_G,Ksdp_x_s,Ksdp_g_s,Qvar_l,Ns,Ms,Nds,Mds)
 % Reorder variables to group by cone type in SDP formulation.
 %
