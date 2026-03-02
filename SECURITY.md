@@ -1,3 +1,11 @@
+<!--
+SPDX-FileCopyrightText: 2026 Institute of Flight Mechanics and Controls, University of Stuttgart
+SPDX-FileCopyrightText: Author(s): Torbjørn Cunis <tcunis@ifr.uni-stuttgart.de>
+SPDX-FileContributor: For a full list of contributors, see <https://github.com/ifr-ofc/casos>
+
+SPDX-License-Identifier: GPL-3.0-only
+-->
+
 # Security Policy
 
 [![GitHub release](https://img.shields.io/github/release/ifr-ofc/casos)](https://github.com/ifr-acso/casos/releases/)

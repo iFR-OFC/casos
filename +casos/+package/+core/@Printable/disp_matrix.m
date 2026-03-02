@@ -1,9 +1,11 @@
+% SPDX-FileCopyrightText: 2024 Institute of Flight Mechanics and Controls, University of Stuttgart
+% SPDX-FileCopyrightText: Author(s): Torbjørn Cunis <tcunis@ifr.uni-stuttgart.de>
+% SPDX-FileContributor: For a full list of contributors, see <https://github.com/ifr-ofc/casos>
+%
+% SPDX-License-Identifier: GPL-3.0-only
+
 function disp_matrix(obj,delim,out)
 % Print matrix to command line (display).
-
-% Mostly taken from multipoly, version history:
-% 6/7/2002: PJS  Initial Coding
-% 6/9/2002: PJS  Use char conversion and display matrices
 
 if nargin < 3
     % get String Representation of object
@@ -14,6 +16,15 @@ if nargin < 2
     delim = '[]';
 end
 sza = size(obj);
+
+% SPDX-SnippetBegin
+% SPDX-SnippetCopyrightText: 2002, 2010, 2014, 2019 Peter J. Seiler
+%
+% Copied from multipoly with minor edits
+% Source: <https://github.com/SOSAnalysis/multipoly/blob/a3d7c9ef55bebb08c38a5dcf8811c16d7e77f3a1/%40polynomial/display.m>
+% Version history:
+% 6/7/2002: PJS  Initial Coding
+% 6/9/2002: PJS  Use char conversion and display matrices
 
 % Compute sizes of character arrays and max size
 nchar = cellfun('size',out,2);
@@ -91,10 +102,9 @@ else
                 disp(' ');
             end
         end
-    end
-    
+    end 
 end
 
-% if ~compact
-%     disp(' ');
-% end
+% SPDX-SnippetEnd
+
+end

@@ -1,3 +1,13 @@
+<!--
+SPDX-FileCopyrightText: 2023 Institute of Flight Mechanics and Controls, University of Stuttgart
+SPDX-FileCopyrightText: Author(s): Torbjørn Cunis <tcunis@ifr.uni-stuttgart.de>
+SPDX-FileCopyrightText: Author(s): For a full list of contributors, see <https://github.com/ifr-ofc/casos> <tcunis@ifr.uni-stuttgart.de>
+SPDX-FileCopyrightText: Author(s): Torbjørn Cunis <tcunis@ifr.uni-stuttgart.de>
+SPDX-FileContributor: For a full list of contributors, see <https://github.com/ifr-ofc/casos>
+
+SPDX-License-Identifier: GPL-3.0-only
+-->
+
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://github.com/ifr-ofc/.github/blob/main/assets/logo-casos-inverted.png">
   <source media="(prefers-color-scheme: light)" srcset="https://github.com/ifr-ofc/.github/blob/main/assets/logo-casos-trans.png">

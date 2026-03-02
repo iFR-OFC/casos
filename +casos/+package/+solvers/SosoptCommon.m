@@ -1,3 +1,9 @@
+% SPDX-FileCopyrightText: 2023, 2025 Institute of Flight Mechanics and Controls, University of Stuttgart
+% SPDX-FileCopyrightText: Author(s): Torbjørn Cunis and Fabian Geyer <tcunis@ifr.uni-stuttgart.de>
+% SPDX-FileContributor: For a full list of contributors, see <https://github.com/ifr-ofc/casos>
+%
+% SPDX-License-Identifier: GPL-3.0-only
+
 classdef (Abstract) SosoptCommon < casos.package.solvers.SolverCommon & casos.package.functions.FunctionInternal
 % Common superclass for sum-of-squares optimization problems.
 %
