@@ -2,6 +2,12 @@
 % SPDX-FileCopyrightText: Author(s): Torbjørn Cunis <tcunis@ifr.uni-stuttgart.de>
 % SPDX-FileContributor: For a full list of contributors, see <https://github.com/ifr-ofc/casos>
 %
+% Adapted from multipoly
+% Source: <https://github.com/SOSAnalysis/multipoly/blob/a3d7c9ef55bebb08c38a5dcf8811c16d7e77f3a1/%40polynomial/pcontour.m>
+% Version history:
+% 6/7/2002: PJS  Initial Coding
+% 6/9/2002: PJS  Use char conversion and display matrices
+%
 % SPDX-License-Identifier: GPL-3.0-only
 
 function varargout = pcontour(poly,lvlset,domain,linespec,noPoints,varName)

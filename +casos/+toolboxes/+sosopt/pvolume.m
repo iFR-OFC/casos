@@ -2,6 +2,12 @@
 % SPDX-FileCopyrightText: Author(s): Torbjørn Cunis and Renato Loureiro <tcunis@ifr.uni-stuttgart.de>
 % SPDX-FileContributor: For a full list of contributors, see <https://github.com/ifr-ofc/casos>
 %
+% Adapted from multipoly
+% Source: <https://github.com/SOSAnalysis/multipoly/blob/a3d7c9ef55bebb08c38a5dcf8811c16d7e77f3a1/%40polynomial/pvolume.m>
+% Version history:
+% PJS 5/13/08   Initial coding
+% PJS 11/23/10  Updated std for volume est, removed SOS call for domain
+%
 % SPDX-License-Identifier: GPL-3.0-only
 
 function [vol,volstd] = pvolume(p,v,domain,npts)
