@@ -1,4 +1,4 @@
-classdef TestSdpsolSedumi < matlab.unittest.TestCase
+classdef TestSdpsolSedumi < TestSolver
 % ========================================================================
 %
 % Test Name: test_sdpsol_sedumi.m
@@ -22,31 +22,12 @@ properties (TestParameter)
     opts 
 end
 
-properties (Access=private, Constant)
+properties (Access=protected, Constant)
     packages = {'sedumi'};
-    PackagesAvailable   = checkRequiredPackages(1, TestSdpsolSedumi.packages);
-    MissingPackages     = checkRequiredPackages(2, TestSdpsolSedumi.packages);
-end
-
-methods (TestClassSetup)
-    function setupClass(testCase)
-        if ~TestSdpsolSedumi.PackagesAvailable
-            default = 'The following required packages are missing: %s.';
-            message = sprintf(default, strjoin(TestSdpsolSedumi.MissingPackages, ', '));
-            testCase.assumeTrue(TestSdpsolSedumi.PackagesAvailable, message);
-        end
-    end
 end
 
 methods (TestParameterDefinition, Static)
-   function [sdp, opts] = initializeTestData()
-        % only run initialization if all required packages are available
-        if ~TestSdpsolSedumi.PackagesAvailable
-            sdp  = {[]};
-            opts = {[]};
-            return;
-        end
-
+    function [sdp, opts] = initializeTestData()
         % set seed
         rng(0)
         
@@ -59,11 +40,11 @@ methods (TestParameterDefinition, Static)
 
         % define cones
         opts = {struct('Kx',struct('psd',3),'Kc',struct('lin',1,'psd',3))};
-   end
+    end
 end
 
 methods (Test)
-    function solve_sdp(testCase,sdp,opts)
+    function solve_sdp(test_case,sdp,opts)
         % initialize solver
         S = casos.sdpsol('S','sedumi',sdp,opts);
         
@@ -78,7 +59,7 @@ methods (Test)
             actSolution = inf;
         end
         % Perform assertions if needed
-        testCase.verifyEqual(actSolution, refSolution ,"AbsTol",1e-12);
+        test_case.verifyEqual(actSolution, refSolution ,"AbsTol",1e-12);
     end
 end
 

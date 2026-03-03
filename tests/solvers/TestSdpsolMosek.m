@@ -1,4 +1,4 @@
-classdef TestSdpsolMosek < matlab.unittest.TestCase
+classdef TestSdpsolMosek < TestSolver
 % ========================================================================
 %
 % Test Name: test_sdpsol_mosek.m
@@ -21,32 +21,12 @@ properties (TestParameter)
     opts 
 end
 
-properties (Access=private, Constant)
-    packages = {'mosek'};
-    PackagesAvailable   = checkRequiredPackages(1, TestSdpsolMosek.packages);
-    MissingPackages     = checkRequiredPackages(2, TestSdpsolMosek.packages);
-end
-    
-methods (TestClassSetup)
-    function setupClass(test_case)
-        if ~test_case.PackagesAvailable
-            default = 'The following required packages are missing: %s.';
-            message = sprintf(default, strjoin(test_case.MissingPackages, ', '));
-            test_case.assumeTrue(test_case.PackagesAvailable, message);
-        end
-    end
+properties (Access=protected, Constant)
+    packages = {'mosekopt'};
 end
 
 methods (TestParameterDefinition, Static)
     function [sdp, opts] = initializeTestData()
-
-        % only run initialization if all required packages are available
-        if ~test_sdpsol_mosek.PackagesAvailable
-            sdp  = {[]};
-            opts = {[]};
-            return;
-        end
-
         % set seed
         rng(0)
         
