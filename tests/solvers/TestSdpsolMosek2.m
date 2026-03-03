@@ -56,7 +56,7 @@ methods (Test)
         S = casos.sdpsol('S','mosek',sdp,opts);
         
         % solve with equality constraints
-        sol = S();
+        sol = S('lbx',-inf,'ubx',inf);
 
         if S.stats.UNIFIED_RETURN_STATUS ~= "SOLVER_RET_SUCCESS"
             refSolution = 1;
