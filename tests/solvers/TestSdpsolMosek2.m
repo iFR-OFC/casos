@@ -1,4 +1,4 @@
-classdef TestSdpsolMosek2 < matlab.unittest.TestCase
+classdef TestSdpsolMosek2 < TestSolver
 % ========================================================================
 %
 % Test Name: test_sdpsol_mosek_2.m
@@ -21,31 +21,12 @@ properties (TestParameter)
     opts 
 end
 
-properties (Access=private, Constant)
-    packages = {'mosek'};
-    PackagesAvailable   = checkRequiredPackages(1, TestSdpsolMosek2.packages);
-    MissingPackages     = checkRequiredPackages(2, TestSdpsolMosek2.packages);
-end
-    
-methods (TestClassSetup)
-    function setupClass(testCase)
-        if ~TestSdpsolMosek2.PackagesAvailable
-            default = 'The following required packages are missing: %s.';
-            message = sprintf(default, strjoin(TestSdpsolMosek2.MissingPackages, ', '));
-            testCase.assumeTrue(TestSdpsolMosek2.PackagesAvailable, message);
-        end
-    end
+properties (Access=protected, Constant)
+    packages = {'mosekopt'};
 end
 
 methods (TestParameterDefinition, Static)
     function [sdp, opts] = initializeTestData()
-        % only run initialization if all required packages are available
-        if ~TestSdpsolMosek2.PackagesAvailable
-            sdp  = {[]};
-            opts = {[]};
-            return;
-        end
-
         % set seed
         rng(0)
 
@@ -70,7 +51,7 @@ methods (TestParameterDefinition, Static)
 end
 
 methods (Test)
-    function solve_sdp(testCase,sdp,opts)
+    function solve_sdp(test_case,sdp,opts)
         % initialize solver
         S = casos.sdpsol('S','mosek',sdp,opts);
         
@@ -80,14 +61,14 @@ methods (Test)
         if S.stats.UNIFIED_RETURN_STATUS ~= "SOLVER_RET_SUCCESS"
             refSolution = 1;
             actSolution = inf;
-            testCase.verifyEqual(actSolution, refSolution ,"AbsTol",1e-12);
+            test_case.verifyEqual(actSolution, refSolution ,"AbsTol",1e-12);
         end
            
         actSolution = 1;
         refSolution = 1;
 
         % Perform assertions if needed
-        testCase.verifyEqual(actSolution, refSolution ,"AbsTol",1e-12);
+        test_case.verifyEqual(actSolution, refSolution ,"AbsTol",1e-12);
     end
 end
 
