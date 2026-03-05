@@ -3,6 +3,7 @@ classdef (Abstract) TestPolynomialOperations < matlab.unittest.TestCase
 
 methods (Static)
     function [test_values,references] = loadTestData(op)
+        % Load test data for given polynomial operations.
         load(compose("../references/reference_%s.mat", op),"test_values_struct","reference_solutions")
 
         test_value = cell(2,length(test_values_struct));

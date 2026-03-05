@@ -11,6 +11,7 @@ end
 
 methods (TestParameterDefinition, Static)
     function [test_values,references,arg] = initializeTestData()
+        % Initialize test data for substitution operation.
         [test_values,references] = TestSubs.loadTestData("subs");
 
         arg = num2cell(1:size(test_values{:},2));
@@ -19,6 +20,7 @@ end
 
 methods (Test, ParameterCombination="pairwise")
     function test_subs_single(test_case, test_values, references, ivar, arg)
+        % Test substitution of a single variable.
         vars = test_values{1,arg}.indeterminates;
         if ivar > length(vars)
             % variable not in polynomial
@@ -35,6 +37,7 @@ methods (Test, ParameterCombination="pairwise")
     end
 
     function test_subs_multiple(test_case, test_values, references, ivar, arg)
+        % Test substitution of multiple variables.
         vars = test_values{1,arg}.indeterminates;
         if ivar <= length(vars)
             % replace variable

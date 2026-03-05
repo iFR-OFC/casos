@@ -11,6 +11,7 @@ end
 
 methods (TestParameterDefinition, Static)
     function [test_values,references,arg] = initializeTestData()
+        % Initialize test data for nabla operations.
         [test_values,references] = TestNabla.loadTestData("nabla");
 
         arg = num2cell(1:size(test_values{:},2));
@@ -19,6 +20,7 @@ end
 
 methods (Test, ParameterCombination="pairwise")
     function test_derivative(test_case, test_values, references, ivar, arg)
+        % Test nabla operation with respect to a single variable.
         vars = test_values{arg}.indeterminates;
         if ivar > length(vars)
             % variable not in polynomial
@@ -35,6 +37,7 @@ methods (Test, ParameterCombination="pairwise")
     end
 
     function test_gradient(test_case, test_values, references, ivar, arg)
+        % Test nabla operation with respect to multiple variables.
         vars = test_values{arg}.indeterminates;
         if ivar <= length(vars)
             % replace variable
