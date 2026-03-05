@@ -1,19 +1,18 @@
 classdef (Abstract) TestSolver < matlab.unittest.TestCase
 % Base class for solver tests.
 
-properties (Abstract, Access=protected, Constant)
-    packages;
-end
-
-methods (TestClassSetup)
-    function setupClass(test_case)
-        [available,missing] = checkRequiredPackages(test_case.packages);
-
-        if ~available
-            default = 'The following required packages are missing: %s.';
-            message = sprintf(default, strjoin(missing, ', '));
-            test_case.assumeTrue(available, message);
+methods 
+    function check_required_package(test_case,package)
+        switch (package)
+            case 'mosek'
+                package = 'mosekopt';
+            case 'clarabel'
+                package = 'clarabel_mex';
         end
+
+        message = sprintf('Required package is missing: %s.', package);
+        
+        test_case.assumeTrue(exist(package,'file') >= 2, message);
     end
 end
 
