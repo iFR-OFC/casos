@@ -1,9 +1,9 @@
 % Generate reference solutions from multipoly
-disp('========================================');
-disp('Starting: Generate test polynomials');
-disp('========================================');
+disp("========================================");
+disp("Starting: Generate test polynomials");
+disp("========================================");
 
-noPoly = 25;
+noPoly = 10;
 
 test_values_struct = cell(1,noPoly);
 reference_values   = cell(2,noPoly);
@@ -12,474 +12,349 @@ for k = 1:noPoly
     [test_values_struct{k},reference_values(:,k)] = generateTestPolynomials();
 end
 
-save('test_values.mat',"test_values_struct");
+save("test_values.mat","test_values_struct");
 
-disp('Completed: Generate test polynomials');
-disp(' ');
+disp("Completed: Generate test polynomials");
+disp(" ");
 
-%% dot
-disp('========================================');
-disp('Starting: dot operation');
-disp('========================================');
-
-reference_values_flat = cell(noPoly,1);
-for k = 1:noPoly
-   reference_values_flat{k} = reference_values{1,k};
-end
-
-basis = monomials(reference_values_flat{1});
+%% unary
+disp("========================================");
+disp("Starting: unary operation");
+disp("========================================")
 
 reference_solutions = struct;
-reference_solutions.single = cell(1,1);
-reference_solutions.single{1} = full(dot(poly2basis(reference_values_flat{1}), poly2basis(reference_values_flat{1})));
 
-reference_solutions.multiple = cell(1,noPoly);
-for k = 1:noPoly
-   reference_solutions.multiple{k} = full(dot(poly2basis(reference_values_flat{1}), poly2basis(reference_values_flat{k},basis)));
-end
-
-save('reference_dot.mat',"test_values_struct","reference_solutions")
-
-disp('Completed: dot operation');
-disp(' ');
-
-%% kron
-disp('========================================');
-disp('Starting: kron operation');
-disp('========================================')
-
-reference_solutions = struct;
-reference_solutions.single = cell(1,1);
-reference_solutions.single{1} = full(poly2basis(kron(reference_values{1,1}, reference_values{2,1})));
-
-reference_solutions.multiple = cell(1,noPoly);
-for k = 1:noPoly
-   reference_solutions.multiple{k} = full(poly2basis(kron(reference_values{1,k}, reference_values{2,k})));
-end
-
-save('reference_kron.mat',"test_values_struct","reference_solutions")
-
-disp('Completed: kron operation');
-disp(' ');
-
-%% mpower
-disp('========================================');
-disp('Starting: mpower operation');
-disp('========================================')
- 
-% Test cases for different powers (2 through 4)
-powers = 2;
-caseNames = {'case_A', 'case_B', 'case_C'};
-
-for idx = 1:length(powers)
-    caseName = caseNames{idx};
-    powerVal = powers(idx);
-    reference_solutions.(caseName) = cell(noPoly,1);
+% unary plus and minus
+for op = ["uplus" "uminus"]
+    reference_solutions.(op) = cell(noPoly,1);
     for k = 1:noPoly
-        reference_solutions.(caseName){k} = full(poly2basis(mpower(reference_values_flat{k}, powerVal)));
+       reference_solutions.(op){k} = full(coordinates(feval(op,reference_values{k})));
     end
 end
 
-save('reference_mpower.mat',"test_values_struct","reference_solutions")
-
-disp('Completed: mpower operation');
-disp(' ');
-
-%% mrdivide
-disp('========================================');
-disp('Starting: mrdivide operation');
-disp('========================================')
-
-reference_solutions = struct;
-reference_solutions.single = cell(1,1);
-reference_solutions.single{1} = full(poly2basis(mrdivide(reference_values_flat{1},2)));
-
-reference_solutions.multiple = cell(noPoly,1);
-for k = 1:noPoly
-   reference_solutions.multiple{k} = full(poly2basis(mrdivide(reference_values_flat{k},2)));
+% element-wise power with scalar exponent
+reference_solutions.power = cell(noPoly,3);
+for pow = (2:4)
+    for k = 1:noPoly
+        reference_solutions.power{k,pow-1} = full(coordinates(power(reference_values{k},pow)));
+    end
 end
 
-save('reference_mrdivide.mat',"test_values_struct","reference_solutions")
+save("reference_unary.mat","test_values_struct","reference_solutions")
 
-disp('Completed: mrdivide operation');
-disp(' ');
+disp("Completed: unary operation");
+disp(" ");
+
+%% binary
+disp("========================================");
+disp("Starting: binary operation");
+disp("========================================") 
+
+reference_solutions = struct;
+
+% element-wise addition, subtraction, multiplication
+for op = ["plus" "minus" "times"]
+    reference_solutions.(op) = cell(noPoly,noPoly);
+    for k1 = 1:noPoly
+        for k2 = 1:noPoly
+            reference_solutions.(op){k1,k2} = full(coordinates(feval(op,reference_values{1,k1},reference_values{2,k2})));
+        end
+    end
+end
+
+% left-side division B.\A
+reference_solutions.ldivide = cell(noPoly,noPoly);
+for k1 = 1:noPoly
+    vars = reference_values{1,k1}.varname;
+    reference_value_double = double(subs(reference_values{1,k1},vars,ones(size(vars))));
+
+    for k2 = 1:noPoly
+        reference_solutions.ldivide{k1,k2} = full(coordinates(times(inv(reference_value_double),reference_values{2,k2})));
+    end
+end
+
+% right-side division A./B
+reference_solutions.rdivide = cell(noPoly,noPoly);
+for k2 = 1:noPoly
+    vars = reference_values{2,k2}.varname;
+    reference_value_double = double(subs(reference_values{2,k2},vars,ones(size(vars))));
+
+    for k1 = 1:noPoly
+        reference_solutions.rdivide{k1,k2} = full(coordinates(rdivide(reference_values{1,k1},reference_value_double)));
+    end
+end
+
+save("reference_binary.mat","test_values_struct","reference_solutions")
+
+disp("Completed: binary operation");
+disp(" ");
+
+%% dot
+disp("========================================");
+disp("Starting: dot operation");
+disp("========================================");
+
+% dot product
+reference_solutions.dot = cell(noPoly,noPoly);
+for k1 = 1:noPoly
+    basis = monomials(reference_values{1,k1});
+
+    for k2 = 1:noPoly
+       reference_solutions.dot{k1,k2} = full(dot(coordinates(reference_values{1,k1}), coordinates(reference_values{2,k2},basis)));
+    end
+end
+
+save("reference_dot.mat","test_values_struct","reference_solutions")
+
+disp("Completed: dot operation");
+disp(" ");
 
 %% mtimes
-disp('========================================');
-disp('Starting: mtimes operation');
-disp('========================================')
+disp("========================================");
+disp("Starting: mtimes operation");
+disp("========================================")
 
 reference_solutions = struct;
-reference_solutions.single = cell(1,1);
-reference_solutions.single{1} = full(poly2basis(mtimes(reference_values{1,1}, reference_values{2,1})));
 
-reference_solutions.multiple = cell(noPoly,1);
-for k = 1:noPoly
-   reference_solutions.multiple{k} = full(poly2basis(mtimes(reference_values{1,k}, reference_values{2,k})));
+% matrix multiplication
+reference_solutions.mtimes = cell(noPoly,noPoly);
+for k1 = 1:noPoly
+    for k2 = 1:noPoly
+        reference_solutions.mtimes{k1,k2} = full(coordinates(mtimes(reference_values{1,k1},reference_values{2,k2})));
+    end
 end
 
-save('reference_mtimes.mat',"test_values_struct","reference_solutions")
+% Kronecker product
+reference_solutions.kron = cell(noPoly,noPoly);
+for k1 = 1:noPoly
+    for k2 = 1:noPoly
+        reference_solutions.kron{k1,k2} = full(coordinates(kron(reference_values{1,k1},reference_values{2,k2})));
+    end
+end
 
-disp('Completed: mtimes operation');
-disp(' ');
+% left-side matrix division B\A
+reference_solutions.mldivide = cell(noPoly,noPoly);
+for k1 = 1:noPoly
+    vars = reference_values{1,k1}.varname;
+    reference_value_double = double(subs(reference_values{1,k1},vars,ones(size(vars))));
+
+    for k2 = 1:noPoly
+        reference_solutions.mldivide{k1,k2} = full(coordinates(mtimes(inv(reference_value_double),reference_values{2,k2})));
+    end
+end
+
+% right-side matrix division A/B
+reference_solutions.mrdivide = cell(noPoly,noPoly);
+for k2 = 1:noPoly
+    vars = reference_values{2,k2}.varname;
+    reference_value_double = double(subs(reference_values{2,k2},vars,ones(size(vars))));
+
+    for k1 = 1:noPoly
+        reference_solutions.mrdivide{k1,k2} = full(coordinates(mrdivide(reference_values{1,k1},reference_value_double)));
+    end
+end
+
+% matrix power with scalar exponents
+reference_solutions.mpower = cell(noPoly,3);
+for pow = (2:4)
+    for k = 1:noPoly
+        reference_solutions.mpower{k,pow-1} = full(coordinates(mpower(reference_values{k},pow)));
+    end
+end
+
+save("reference_mtimes.mat","test_values_struct","reference_solutions")
+
+disp("Completed: mtimes operation");
+disp(" ");
 
 %% nabla
-disp('========================================');
-disp('Starting: nabla operation');
-disp('========================================')
-
-reference_solutions = struct;
-reference_solutions.single = cell(1,1);
-reference_solutions.single{1} = full(poly2basis(jacobian(reference_values_flat{1}, mpvar('x',reference_values{1}.nvars,1))));
-
-reference_solutions.multiple = cell(noPoly,1);
-for k = 1:noPoly
-   reference_solutions.multiple{k} = full(poly2basis(jacobian(reference_values_flat{k}, mpvar('x',reference_values_flat{k}.nvars,1))));
-end
-
-save('reference_nabla.mat',"test_values_struct","reference_solutions")
-
-disp('Completed: nabla operation');
-disp(' ');
-
-%% plus
-disp('========================================');
-disp('Starting: plus operation');
-disp('========================================') 
+disp("========================================");
+disp("Starting: nabla operation");
+disp("========================================")
 
 reference_solutions = struct;
 
-% Test case A: constant + constant (5 + 5)
-reference_solutions.case_A = cell(1,1);
-reference_solutions.case_A{1} = 10;
+% nabla with respect to single variable (derivative)
+reference_solutions.derivative = cell(noPoly,4);
+for ivar = 1:4
+    for k = 1:noPoly
+        vars = reference_values{k}.varname;
+        if ivar > length(vars)
+            % variable not in polynomial
+            var = {'y'};
+        else
+            var = vars(ivar);
+        end
 
-% Test case B: single polynomial + constant (testValue(1) + 3)
-reference_solutions.case_B = cell(2*noPoly,1);
-idx = 1;
-for k = 1:noPoly
-   reference_solutions.case_B{idx} = full(poly2basis(plus(reference_values_flat{k}, 3)));
-   idx = idx + 1;
+        reference_solutions.derivative{k,ivar} = full(coordinates(jacobian(reference_values{k},var)));
+    end
 end
 
-% Test case C: n polynomials + constant (testValue(1:10) + 4)
-reference_solutions.case_C = cell(10,1);
-for k = 1:10
-   reference_solutions.case_C{k} = full(poly2basis(plus(reference_values_flat{k}, 4)));
+% nabla with respect to multiple variables (gradient)
+reference_solutions.gradient = cell(noPoly,4);
+for ivar = 1:4
+    for k = 1:noPoly
+        vars = reference_values{k}.varname;
+        if ivar <= length(vars)
+            % replace variable
+            vars(ivar) = {'y'};
+        end
+
+        reference_solutions.gradient{k,ivar} = full(coordinates(jacobian(reference_values{k},vars)));
+    end
 end
 
-% Test case D: constant + single polynomial (4 + testValue(1))
-reference_solutions.case_D = cell(2*noPoly,1);
-idx = 1;
-for k = 1:noPoly
-   reference_solutions.case_D{idx} = full(poly2basis(plus(4, reference_values_flat{k})));
-   idx = idx + 1;
-end
- 
-% Test case E: single polynomial + single polynomial (testValue(1) + testValue(2))
-reference_solutions.case_E = cell(2*noPoly,1);
-idx = 1;
-for k = 1:noPoly
-   reference_solutions.case_E{idx} = full(poly2basis(plus(reference_values_flat{k}, reference_values_flat{end-k+1})));
-   idx = idx + 1;
-end
+save("reference_nabla.mat","test_values_struct","reference_solutions")
 
-% Test case F: n polynomials + single polynomial (testValue(1:10) + testValue(1))
-reference_solutions.case_F = cell(10,1);
-for k = 1:10
-   reference_solutions.case_F{k} = full(poly2basis(plus(reference_values_flat{k}, reference_values_flat{1})));
-end
+disp("Completed: nabla operation");
+disp(" ");
 
-% Test case G: constant + n polynomials (5 + testValue(1:10))
-reference_solutions.case_G = cell(10,1);
-for k = 1:10
-   reference_solutions.case_G{k} = full(poly2basis(plus(5, reference_values_flat{k})));
-end
-
-% Test case H: single polynomial + n polynomials (testValue(1) + testValue(1:10))
-reference_solutions.case_H = cell(10,1);
-for k = 1:10
-   reference_solutions.case_H{k} = full(poly2basis(plus(reference_values_flat{1}, reference_values_flat{k})));
-end
-
-% Test case I: n polynomials + n polynomials (testValue(1:10) + testValue(11:20))
-reference_solutions.case_I = cell(10,1);
-for k = 1:10
-   reference_solutions.case_I{k} = full(poly2basis(plus(reference_values_flat{k}, reference_values_flat{k+10})));
-end
-
-save('reference_plus.mat',"test_values_struct","reference_solutions")
-
-disp('Completed: plus operation');
-disp(' ');
-
-%% minus
-disp('========================================');
-disp('Starting: minus operation');
-disp('========================================')
+%% coordinates
+disp("========================================");
+disp("Starting: poly2basis operation");
+disp("========================================")
 
 reference_solutions = struct;
 
-% Test case A: constant - constant (5 - 5)
-reference_solutions.case_A = cell(1,1);
-reference_solutions.case_A{1} = 0;
-
-% Test case B: single polynomial - constant (testValue(1) - 3)
-reference_solutions.case_B = cell(2*noPoly,1);
-idx = 1;
-for k = 1:noPoly
-   reference_solutions.case_B{idx} = full(poly2basis(minus(reference_values_flat{k}, 3)));
-   idx = idx + 1;
+reference_solutions.poly2basis = cell(noPoly,noPoly);
+for k1 = 1:noPoly
+    basis = monomials(reference_values{1,k1});
+    for k2 = 1:noPoly
+        reference_solutions.poly2basis{k1,k2} = full(coordinates(reference_values{2,k2},basis));
+    end
 end
 
-% Test case C: n polynomials - constant (testValue(1:10) - 4)
-reference_solutions.case_C = cell(10,1);
-for k = 1:10
-   reference_solutions.case_C{k} = full(poly2basis(minus(reference_values_flat{k}, 4)));
-end
+save("reference_poly2basis.mat","test_values_struct","reference_solutions")
 
-% Test case D: constant - single polynomial (4 - testValue(1))
-reference_solutions.case_D = cell(2*noPoly,1);
-idx = 1;
-for k = 1:noPoly
-   reference_solutions.case_D{idx} = full(poly2basis(minus(4, reference_values_flat{k})));
-   idx = idx + 1;
-end
-
-% Test case E: single polynomial - single polynomial (testValue(1) - testValue(2))
-reference_solutions.case_E = cell(2*noPoly,1);
-idx = 1;
-for k = 1:noPoly
-   reference_solutions.case_E{idx} = full(poly2basis(minus(reference_values_flat{k}, reference_values_flat{end-k+1})));
-   idx = idx + 1;
-end
-
-% Test case F: n polynomials - single polynomial (testValue(1:10) - testValue(1))
-reference_solutions.case_F = cell(10,1);
-for k = 1:10
-   reference_solutions.case_F{k} = full(poly2basis( minus(reference_values_flat{k}, reference_values_flat{1})));
-end
-
-% Test case G: constant - n polynomials (5 - testValue(1:10))
-reference_solutions.case_G = cell(10,1);
-for k = 1:10
-   reference_solutions.case_G{k} = full(poly2basis(minus(5, reference_values_flat{k})));
-end
-
-% Test case H: single polynomial - n polynomials (testValue(1) - testValue(1:10))
-reference_solutions.case_H = cell(10,1);
-for k = 1:10
-   reference_solutions.case_H{k} = full(poly2basis(minus(reference_values_flat{1}, reference_values_flat{k})));
-end
-
-% Test case I: n polynomials - n polynomials (testValue(1:10) - testValue(11:20))
-reference_solutions.case_I = cell(10,1);
-for k = 1:10
- reference_solutions.case_I{k} = full(poly2basis(minus(reference_values_flat{k}, reference_values_flat{k+10})));
-end
-
-save('reference_minus.mat',"test_values_struct","reference_solutions")
-
-disp('Completed: minus operation');
-disp(' ');
-
-%% uminus
-disp('========================================');
-disp('Starting: uminus operation');
-disp('========================================')
-
-reference_solutions = struct;
-reference_solutions.single = cell(1,1);
-reference_solutions.single{1} = full(poly2basis(uminus(reference_values_flat{1})));
-
-reference_solutions.multiple = cell(10,1);
-for k = 1:10
-   reference_solutions.multiple{k} = full(poly2basis(uminus(reference_values_flat{k})));
-end
-
-save('reference_uminus.mat',"test_values_struct","reference_solutions")
-
-disp('Completed: uminus operation');
-disp(' ');
-
-%% uplus
-disp('========================================');
-disp('Starting: uplus operation');
-disp('========================================')
-
-reference_solutions = struct;
-reference_solutions.single = cell(1,1);
-reference_solutions.single{1} = full(poly2basis(uplus(reference_values_flat{1})));
-
-reference_solutions.multiple = cell(10,1);
-for k = 1:10
-   reference_solutions.multiple{k} = full(poly2basis(uplus(reference_values_flat{k})));
-end
-
-save('reference_uplus.mat',"test_values_struct","reference_solutions")
-
-disp('Completed: uplus operation');
-disp(' ');
-
-%% times
-disp('========================================');
-disp('Starting: times operation');
-disp('========================================')
-
-reference_solutions = struct;
-reference_solutions.single = cell(1,1);
-reference_solutions.single{1} = full(poly2basis(times(reference_values_flat{1}, reference_values_flat{2})));
-
-reference_solutions.multiple = cell(10,1);
-for k = 1:10
-   reference_solutions.multiple{k} = full(poly2basis(times(reference_values_flat{k}, reference_values_flat{k+10})));
-end
-
-save('reference_times.mat',"test_values_struct","reference_solutions")
-
-disp('Completed: times operation');
-disp(' ');
-
-%% power
-disp('========================================');
-disp('Starting: power operation');
-disp('========================================')
-
-reference_solutions = struct;
-reference_solutions.single = cell(1,1);
-reference_solutions.single{1} = full(poly2basis(power(reference_values_flat{1}, 3)));
-
-save('reference_power.mat',"test_values_struct","reference_solutions")
-
-disp('Completed: power operation');
-disp(' ');
-
-%% prod
-disp('========================================');
-disp('Starting: prod operation');
-disp('========================================')
-
-reference_solutions = struct;
-reference_solutions.single = cell(1,1);
-reference_solutions.single{1} = full(poly2basis(prod(reference_values_flat{1}, 1)));
-
-reference_solutions.multiple = cell(10,1);
-for k = 1:10
-   reference_solutions.multiple{k} = full(poly2basis(prod(reference_values_flat{k}, 2)));
-end
-
-save('reference_prod.mat',"test_values_struct","reference_solutions")
-
-disp('Completed: prod operation');
-disp(' ');
-
-%% poly2basis
-disp('========================================');
-disp('Starting: poly2basis operation');
-disp('========================================')
-
-reference_solutions = struct;
-reference_solutions.single = cell(1,1);
-reference_solutions.single{1} = full(poly2basis(reference_values_flat{1}));
-
-reference_solutions.multiple = cell(noPoly,1);
-for k = 1:noPoly
-   reference_solutions.multiple{k} = full(poly2basis(reference_values_flat{k}));
-end
-
-save('reference_poly2basis.mat',"test_values_struct","reference_solutions")
-
-disp('Completed: poly2basis operation');
-disp(' ');
-
-%% rdivide
-disp('========================================');
-disp('Starting: rdivide operation');
-disp('========================================')
-
-reference_solutions = struct;
-reference_solutions.single = cell(1,1);
-reference_solutions.single{1} = full(poly2basis(rdivide(reference_values_flat{1}, 2)));
-
-reference_solutions.multiple = cell(10,1);
-for k = 1:10
-   reference_solutions.multiple{k} = full(poly2basis(rdivide(reference_values_flat{k}, 3)));
-end
-
-save('reference_rdivide.mat',"test_values_struct","reference_solutions")
-
-disp('Completed: rdivide operation');
-disp(' ');
-
-%% sum
-disp('========================================');
-disp('Starting: sum operation');
-disp('========================================')
-
-reference_solutions = struct;
-reference_solutions.single = cell(1,1);
-reference_solutions.single{1} = full(poly2basis(sum(reference_values_flat{1}, 2)));
-
-reference_solutions.multiple = cell(10,1);
-for k = 1:10
-   reference_solutions.multiple{k} = full(poly2basis(sum(reference_values_flat{k}, 1)));
-end
-
-save('reference_sum.mat',"test_values_struct","reference_solutions")
-
-disp('Completed: sum operation');
-disp(' ');
-
-%% transpose
-disp('========================================');
-disp('Starting: transpose operation');
-disp('========================================')
-
-reference_solutions = struct;
-reference_solutions.single = cell(1,1);
-reference_solutions.single{1} = full(poly2basis(transpose(reference_values_flat{1})));
-
-reference_solutions.multiple = cell(10,1);
-for k = 1:10
-   reference_solutions.multiple{k} = full(poly2basis(transpose(reference_values_flat{k})));
-end
-
-save('reference_transpose.mat',"test_values_struct","reference_solutions")
-
-disp('Completed: transpose operation');
-disp(' ');
+disp("Completed: coordinates operation");
+disp(" ");
 
 %% remove_coeffs
-disp('========================================');
-disp('Starting: remove_coeffs operation');
-disp('========================================')
+disp("========================================");
+disp("Starting: remove_coeffs operation");
+disp("========================================")
 
 reference_solutions = struct;
-reference_solutions.single = cell(1,1);
-reference_solutions.single{1} = full(poly2basis(cleanpoly(reference_values_flat{1}, 1e-3)));
 
-reference_solutions.multiple = cell(10,1);
-for k = 1:10
-   reference_solutions.multiple{k} = full(poly2basis(cleanpoly(reference_values_flat{k}, 1e-1)));
+reference_solutions.remove_coeffs = cell(noPoly,3);
+for decade = 1:3
+    for k = 1:noPoly
+        tol = prctile(coordinates(reference_values{k}),10*decade);
+    
+        reference_solutions.remove_coeffs{k,decade} = full(coordinates(cleanpoly(reference_values{k}, tol)));
+    end
 end
 
-save('reference_remove_coeffs.mat',"test_values_struct","reference_solutions")
+save("reference_remove_coeffs.mat","test_values_struct","reference_solutions")
 
-disp('Completed: remove_coeffs operation');
-disp(' ');
+disp("Completed: remove_coeffs operation");
+disp(" ");
 
 %% subs
-disp('========================================');
-disp('Starting: subs operation');
-disp('========================================')
+disp("========================================");
+disp("Starting: subs operation");
+disp("========================================")
 
 reference_solutions = struct;
-reference_solutions.single = cell(1,1);
-reference_solutions.single{1} = full(poly2basis(subs(reference_values_flat{1}, mpvar('x',reference_values_flat{1}.nvars,1), ones(reference_values_flat{1}.nvars,1))));
 
-save('reference_subs.mat',"test_values_struct","reference_solutions")
+% substitute single variable
+reference_solutions.single = cell(noPoly,4);
+for ivar = 1:4
+    for k = 1:noPoly
+        vars = reference_values{1,k}.varname;
+        if ivar > length(vars)
+            % variable not in polynomial
+            var = {'y'};
+        else
+            var = vars(ivar);
+        end
 
-disp('Completed: subs operation');
-disp(' ');
-disp('========================================');
-disp('All reference values generated successfully!');
-disp('========================================')
+        reference_solutions.single{k,ivar} = full(coordinates(subs(reference_values{1,k},var,reference_values{2,k})));
+    end
+end
+
+% substitute multiple variables
+reference_solutions.multiple = cell(noPoly,4);
+for ivar = 1:4
+    for k = 1:noPoly
+        vars = reference_values{1,k}.varname;
+        if ivar <= length(vars)
+            % replace variable
+            vars(ivar) = {'y'};
+        end
+        if k < noPoly/2
+            new = vertcat(reference_values{2,k+(1:length(vars))});
+        else
+            new = vertcat(reference_values{2,(end-k)+(1:length(vars))});
+        end
+
+        reference_solutions.multiple{k,ivar} = full(coordinates(subs(reference_values{1,k},vars,new)));
+    end
+end
+
+save("reference_subs.mat","test_values_struct","reference_solutions")
+
+disp("Completed: subs operation");
+disp(" ");
+
+% %% sum
+% disp("========================================");
+% disp("Starting: sum operation");
+% disp("========================================")
+% 
+% reference_solutions = struct;
+% reference_solutions.single = cell(1,1);
+% reference_solutions.single{1} = full(coordinates(sum(reference_values_flat{1}, 2)));
+% 
+% reference_solutions.multiple = cell(10,1);
+% for k = 1:10
+%    reference_solutions.multiple{k} = full(coordinates(sum(reference_values_flat{k}, 1)));
+% end
+% 
+% save("reference_sum.mat","test_values_struct","reference_solutions")
+% 
+% disp("Completed: sum operation");
+% disp(" ");
+% 
+% %% prod
+% disp("========================================");
+% disp("Starting: prod operation");
+% disp("========================================")
+% 
+% reference_solutions = struct;
+% reference_solutions.single = cell(1,1);
+% reference_solutions.single{1} = full(coordinates(prod(reference_values_flat{1}, 1)));
+% 
+% reference_solutions.multiple = cell(10,1);
+% for k = 1:10
+%    reference_solutions.multiple{k} = full(coordinates(prod(reference_values_flat{k}, 2)));
+% end
+% 
+% save("reference_prod.mat","test_values_struct","reference_solutions")
+% 
+% disp("Completed: prod operation");
+% disp(" ");
+% 
+% %% transpose
+% disp("========================================");
+% disp("Starting: transpose operation");
+% disp("========================================")
+% 
+% reference_solutions = struct;
+% reference_solutions.single = cell(1,1);
+% reference_solutions.single{1} = full(coordinates(transpose(reference_values_flat{1})));
+% 
+% reference_solutions.multiple = cell(10,1);
+% for k = 1:10
+%    reference_solutions.multiple{k} = full(coordinates(transpose(reference_values_flat{k})));
+% end
+% 
+% save("reference_transpose.mat","test_values_struct","reference_solutions")
+% 
+% disp("Completed: transpose operation");
+% disp(" ");
+
+%% Fini
+disp("========================================");
+disp("All reference values generated successfully!");
+disp("========================================")
