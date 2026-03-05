@@ -1,5 +1,5 @@
-classdef TestDot < TestPolynomialOperations
-% Test dot operation.
+classdef TestPoly2Basis < TestPolynomialOperations
+% Test poly2basis operation.
 
 properties (TestParameter)
     test_values  % test polynmials
@@ -11,7 +11,7 @@ end
 
 methods (TestParameterDefinition, Static)
     function [test_values,references,arg1,arg2] = initializeTestData()
-        [test_values,references] = TestDot.loadTestData("dot");
+        [test_values,references] = TestPoly2Basis.loadTestData("poly2basis");
 
         arg1 = num2cell(1:size(test_values{:},2));
         arg2 = num2cell(1:size(test_values{:},2));
@@ -19,11 +19,12 @@ methods (TestParameterDefinition, Static)
 end
 
 methods (Test, ParameterCombination="pairwise")
-    function test_dot(test_case, test_values, references, arg1, arg2)
-        actual = full(dot(test_values{1,arg1},test_values{2,arg2}));
-        reference = references.dot{arg1,arg2};
+    function test_poly2basis(test_case, test_values, references, arg1, arg2)
+        basis = sparsity(test_values{1,arg1});
+        actual = full(poly2basis(test_values{2,arg2},basis));
+        reference = references.poly2basis{arg1,arg2};
 
-        % Perform assertions if needed
+        % perform assertion
         test_case.verifyEqual(actual,reference,"RelTol",1e-15);
     end
 end
