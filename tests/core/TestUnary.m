@@ -12,6 +12,7 @@ end
 
 methods (TestParameterDefinition, Static)
     function [test_values,references,arg] = initializeTestData()
+        % Initialize test data for unary operations.
         [test_values,references] = TestUnary.loadTestData("unary");
 
         arg = num2cell(1:size(test_values{:},2));
@@ -20,6 +21,7 @@ end
 
 methods (Test, ParameterCombination="pairwise")
     function test_unary(test_case, test_values, references, op, arg)
+        % Test unary operation.
         actual = full(poly2basis(feval(op,test_values{arg})));
         reference = references.(op){arg};
 
@@ -28,6 +30,7 @@ methods (Test, ParameterCombination="pairwise")
     end
 
     function test_power(test_case, test_values, references, arg, pow)
+        % Test power operation (single exponent).
         actual = full(poly2basis(power(test_values{arg},pow)));
         reference = references.power{arg,pow-1};
 

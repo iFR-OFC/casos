@@ -15,6 +15,7 @@ end
 
 methods (TestParameterDefinition, Static)
     function [test_values,arg1,arg2] = initializeTestData()
+        % Initialize test values.
         [test_values] = TestIsLinear.loadTestData();
 
         arg1 = num2cell(1:size(test_values{:},2));
@@ -23,7 +24,7 @@ methods (TestParameterDefinition, Static)
 end
 
 methods (Test, ParameterCombination="pairwise")
-    function test_is_linear_unary(test_case, test_values, op1, symb1, arg1)
+    function test_unary(test_case, test_values, op1, symb1, arg1)
         % Test is_linear of a unary operation.
         if (symb1)
             % symbolic operand
@@ -52,7 +53,7 @@ methods (Test, ParameterCombination="pairwise")
         end
     end
 
-    function test_is_linear_bilinear(test_case, test_values, op2, symb1, arg1)
+    function test_bilinear(test_case, test_values, op2, symb1, arg1)
         % Test is_linear of a bilinear operation.
         if (symb1)
             % symbolic operand
@@ -83,7 +84,7 @@ methods (Test, ParameterCombination="pairwise")
         end
     end
 
-    function test_is_linear_binary(test_case, test_values, op2, symb1, symb2, arg1, arg2)
+    function test_binary(test_case, test_values, op2, symb1, symb2, arg1, arg2)
         % Test is_linear of a binary operation.
         if (symb1)
             % symbolic operand

@@ -11,6 +11,7 @@ end
 
 methods (TestParameterDefinition, Static)
     function [test_values,references,arg1,arg2] = initializeTestData()
+        % Initialize test data for poly2basis operation.
         [test_values,references] = TestPoly2Basis.loadTestData("poly2basis");
 
         arg1 = num2cell(1:size(test_values{:},2));
@@ -20,6 +21,7 @@ end
 
 methods (Test, ParameterCombination="pairwise")
     function test_poly2basis(test_case, test_values, references, arg1, arg2)
+        % Test poly2basis operation.
         basis = sparsity(test_values{1,arg1});
         actual = full(poly2basis(test_values{2,arg2},basis));
         reference = references.poly2basis{arg1,arg2};
