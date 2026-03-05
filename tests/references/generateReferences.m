@@ -303,6 +303,70 @@ save("reference_subs.mat","test_values_struct","reference_solutions")
 disp("Completed: subs operation");
 disp(" ");
 
+%% concat
+disp("========================================");
+disp("Starting: concat operation");
+disp("========================================")
+
+reference_solutions = struct;
+
+% concatenate to m-by-n matrix
+reference_solutions.concat = cell(2,5);
+for dim1 = 1:5
+    dim2 = 6-dim1;
+
+    for k = 1:2
+        args_to_vertcat = mat2cell(reference_values(k,1:(dim1*dim2)), 1, repmat(dim1,1,dim2));
+        args_to_horzcat = cellfun(@(c) vertcat(c{:}), args_to_vertcat, 'UniformOutput', false);
+
+        reference_solutions.concat{k,dim1} = full(coordinates(horzcat(args_to_horzcat{:})));
+    end
+end
+
+% horizontal concatenation
+reference_solutions.horzcat = cell(1,4);
+for dim1 = 1:4
+    dim2 = 5-dim1;
+    dim3 = 6-dim1;
+
+    p1 = reshape([reference_values{1,1:(dim1*dim2)}],dim1,dim2);
+    p2 = reshape([reference_values{2,1:(dim1*dim3)}],dim1,dim3);
+
+    reference_solutions.horzcat{dim1} = full(coordinates(horzcat(p1,p2)));
+end
+
+% vertical concatenation
+reference_solutions.vertcat = cell(1,4);
+for dim3 = 1:4
+    dim1 = 5-dim3;
+    dim2 = 6-dim3;
+
+    p1 = reshape([reference_values{1,1:(dim1*dim3)}],dim1,dim3);
+    p2 = reshape([reference_values{2,1:(dim2*dim3)}],dim2,dim3);
+
+    reference_solutions.vertcat{dim3} = full(coordinates(vertcat(p1,p2)));
+end
+
+% diagonal concatenation
+reference_solutions.diagcat = cell(4,4);
+for dim1 = 1:4
+for dim3 = 1:4
+    dim2 = 5-dim1;
+    dim4 = 6-dim3;
+
+    p1 = reshape([reference_values{1,1:(dim1*dim2)}],dim1,dim2);
+    p2 = reshape([reference_values{2,1:(dim3*dim4)}],dim3,dim4);
+
+    reference_solutions.diagcat{dim1,dim3} = full(coordinates(blkdiag(p1,p2)));
+end
+end
+
+save("reference_concat.mat","test_values_struct","reference_solutions")
+
+disp("Completed: concat operation");
+disp(" ");
+
+
 % %% sum
 % disp("========================================");
 % disp("Starting: sum operation");
