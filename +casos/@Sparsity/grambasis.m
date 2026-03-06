@@ -1,3 +1,9 @@
+% SPDX-FileCopyrightText: 2024, 2025 Institute of Flight Mechanics and Controls, University of Stuttgart
+% SPDX-FileCopyrightText: Author(s): Torbjørn Cunis and Renato Loureiro <tcunis@ifr.uni-stuttgart.de>
+% SPDX-FileContributor: For a full list of contributors, see <https://github.com/ifr-ofc/casos>
+%
+% SPDX-License-Identifier: GPL-3.0-only
+
 function [Z,K,z,Mp,Md] = grambasis(S,I,newton_solver)
 % Return Gram basis of polynomial vector.
 
@@ -78,7 +84,8 @@ Lz(:,~I) = [];
 
 % removes monomials outside half Newton polytope
 if ~isempty(newton_solver)
-    Lz_red = arrayfun(@(i) newton_reduce(S.degmat(Ldegmat(i,:),Iv),degmat,newton_solver), idx, 'UniformOutput', false);
+    Ldegmat_red = Ldegmat(idx,:);
+    Lz_red = arrayfun(@(i) newton_reduce(S.degmat(Ldegmat_red(i,:),Iv),degmat,newton_solver,Lz(i,:)'), 1:lp, 'UniformOutput', false);
     Lz_red = horzcat(Lz_red{:})';
     
     [Z,K,Mp,Md] = gram_internal(Lz,degmat,z.indets,Lz_red);

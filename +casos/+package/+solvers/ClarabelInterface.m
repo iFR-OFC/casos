@@ -1,3 +1,9 @@
+% SPDX-FileCopyrightText: 2025 Institute of Flight Mechanics and Controls, University of Stuttgart
+% SPDX-FileCopyrightText: Author(s): Torbjørn Cunis and Jan Olucak <tcunis@ifr.uni-stuttgart.de>
+% SPDX-FileContributor: For a full list of contributors, see <https://github.com/ifr-ofc/casos>
+%
+% SPDX-License-Identifier: GPL-3.0-only
+
 classdef (Sealed) ClarabelInterface < casos.package.solvers.AbstractSCSInterface
 % Interface for conic solver Clarabel.
 
@@ -22,6 +28,12 @@ methods
         % default options
         % see default setting structure of Clarabel MATLAB interface
         if ~isfield(obj.opts,'clarabel'), obj.opts.clarabel = DefaultSettings; end
+    end
+
+    function s = info(obj)
+        % Overwriting ConicSolver.info
+        s = info@casos.package.solvers.ConicSolver(obj);
+        s.clarabel = obj.solver_info;
     end
 end
 
@@ -97,7 +109,7 @@ methods (Access=protected)
         clarabel_info.r_prim     = sol.r_prim;
         clarabel_info.r_dual     = sol.r_dual;
        
-        obj.info.clarabel_info = clarabel_info;
+        obj.solver_stats.clarabel_info = clarabel_info;
        
         % get solution status
         if strcmp(sol.status,'Solved')

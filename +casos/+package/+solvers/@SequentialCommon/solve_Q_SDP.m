@@ -1,3 +1,9 @@
+% SPDX-FileCopyrightText: 2025 Institute of Flight Mechanics and Controls, University of Stuttgart
+% SPDX-FileCopyrightText: Author(s): Torbjørn Cunis and Jan Olucak <tcunis@ifr.uni-stuttgart.de>
+% SPDX-FileContributor: For a full list of contributors, see <https://github.com/ifr-ofc/casos>
+%
+% SPDX-License-Identifier: GPL-3.0-only
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 % Short Description:
@@ -17,13 +23,13 @@
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function [x_star,dual_star,sol_iter,sol_qp,feas_res_flag,info] = solve_Q_SDP(obj, ...
+function [x_star,dual_star,sol_iter,sol_qp,feas_res_flag,stats] = solve_Q_SDP(obj, ...
     iter, ...
     x_k, ...
     p0, ...
     Bk, ...
     args, ...
-    info)
+    stats)
 
 import casos.package.UnifiedReturnStatus
 
@@ -36,8 +42,8 @@ measSolver =tic;
 sol_qp   = eval_on_basis(obj.solver_convex, args);
 solveTimeSDP = toc(measSolver);
 % store iteration info
-info{iter} = obj.solver_convex.get_stats  ;
-info{iter}.timeStats.mainSDP = solveTimeSDP;
+stats{iter} = obj.solver_convex.get_stats  ;
+stats{iter}.timeStats.mainSDP = solveTimeSDP;
 
 %% check solution status
 switch (obj.solver_convex.get_stats.UNIFIED_RETURN_STATUS)

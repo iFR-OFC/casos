@@ -1,3 +1,9 @@
+% SPDX-FileCopyrightText: 2023 Institute of Flight Mechanics and Controls, University of Stuttgart
+% SPDX-FileCopyrightText: Author(s): Torbjørn Cunis <tcunis@ifr.uni-stuttgart.de>
+% SPDX-FileContributor: For a full list of contributors, see <https://github.com/ifr-ofc/casos>
+%
+% SPDX-License-Identifier: GPL-3.0-only
+
 classdef (Abstract) FunctionWrapper < casos.package.core.Printable
 % Wrap a function interface.
     
@@ -19,6 +25,7 @@ properties (Dependent)
 %     monomials_out;
 %     size_out;
     stats;
+    info;
 end
 
 properties (Access=private)
@@ -150,6 +157,13 @@ methods
         assert(~is_null(obj), 'Notify the developers.')
 
         s = get_stats(obj.wrap);
+    end
+
+    function s = get.info(obj)
+        % Return info.
+        assert(~is_null(obj), 'Notify the developers.')
+
+        s = get_info(obj.wrap);
     end
 
     %% Options & Cones

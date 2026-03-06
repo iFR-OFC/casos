@@ -1,3 +1,9 @@
+% SPDX-FileCopyrightText: 2025 Institute of Flight Mechanics and Controls, University of Stuttgart
+% SPDX-FileCopyrightText: Author(s): Torbjørn Cunis <tcunis@ifr.uni-stuttgart.de>
+% SPDX-FileContributor: For a full list of contributors, see <https://github.com/ifr-ofc/casos>
+%
+% SPDX-License-Identifier: GPL-3.0-only
+
 classdef (Sealed) SCSInterface < casos.package.solvers.AbstractSCSInterface
 % Interface for conic solver SCS.
 
@@ -22,6 +28,12 @@ methods
         % default options
         if ~isfield(obj.opts,'scs'), obj.opts.scs = []; end
     end
+
+    function s = info(obj)
+        % Overwriting ConicSolver.info
+        s = info@casos.package.solvers.ConicSolver(obj);
+        s.scs = obj.solver_info;
+    end
 end
 
 methods (Static, Access=protected)
@@ -42,10 +54,10 @@ methods (Access=protected)
         if ~isfield(opts,'verbose'), opts.verbose = 0; end
 
         % call SCS
-        [x,y,s,obj.info] = scs(data,K,opts);
+        [x,y,s,obj.solver_stats] = scs(data,K,opts);
 
         % check solver status
-        status_val = obj.info.status_val;
+        status_val = obj.solver_stats.status_val;
         if status_val == -1
             % primal unbounded / dual infeasible
             obj.status = casos.package.UnifiedReturnStatus.SOLVER_RET_INFEASIBLE;
@@ -57,11 +69,11 @@ methods (Access=protected)
         elseif ismember(status_val, [2 -6 -7])
             % inaccurate solution
             obj.status = casos.package.UnifiedReturnStatus.SOLVER_RET_NAN;
-            assert(~obj.opts.error_on_fail,'Optimizer did not reach desired accuracy (Status: %s).', obj.info.status)
+            assert(~obj.opts.error_on_fail,'Optimizer did not reach desired accuracy (Status: %s).', obj.solver_stats.status)
         elseif status_val < -2
             % failure
             obj.status = casos.package.UnifiedReturnStatus.SOLVER_RET_LIMITED;
-            assert(~obj.opts.error_on_fail,'Optimizer failed (Status: %s).', obj.info.status)
+            assert(~obj.opts.error_on_fail,'Optimizer failed (Status: %s).', obj.solver_stats.status)
         else
             % success
             obj.status = casos.package.UnifiedReturnStatus.SOLVER_RET_SUCCESS;

@@ -1,3 +1,9 @@
+% SPDX-FileCopyrightText: 2023 Institute of Flight Mechanics and Controls, University of Stuttgart
+% SPDX-FileCopyrightText: Author(s): Torbjørn Cunis <tcunis@ifr.uni-stuttgart.de>
+% SPDX-FileContributor: For a full list of contributors, see <https://github.com/ifr-ofc/casos>
+%
+% SPDX-License-Identifier: GPL-3.0-only
+
 function buildproblem(obj)
 % Construct SeDuMi problem description (A,b,c,K) from problem structure.
 %
@@ -139,5 +145,12 @@ lam_a_c = -Sc{5};  %  -y_cba
 lam_x_c = -Sc{2};  %  -y_cbx
 
 obj.ghan = casadi.Function('g',[struct2cell(obj.args_in)' {X Y}],{x (g'*x) [lam_a_l; lam_a_c] [lam_x_l; lam_x_c]},[fieldnames(obj.args_in)' {'X' 'Y'}],obj.names_out);
+
+obj.solver_info.size_A      = size(A);
+obj.solver_info.nnz_A       = nnz(A);
+obj.solver_info.size_b      = size(b);
+obj.solver_info.nnz_b       = nnz(b);
+obj.solver_info.size_c      = size(c);
+obj.solver_info.nnz_c       = nnz(c);
 
 end

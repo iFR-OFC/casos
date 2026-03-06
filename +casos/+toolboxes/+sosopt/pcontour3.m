@@ -1,3 +1,15 @@
+% SPDX-FileCopyrightText: 2024 Institute of Flight Mechanics and Controls, University of Stuttgart
+% SPDX-FileCopyrightText: Author(s): Torbjørn Cunis <tcunis@ifr.uni-stuttgart.de>
+% SPDX-FileContributor: For a full list of contributors, see <https://github.com/ifr-ofc/casos>
+%
+% Adapted from multipoly
+% Source: <https://github.com/SOSAnalysis/multipoly/blob/a3d7c9ef55bebb08c38a5dcf8811c16d7e77f3a1/%40polynomial/pcontour3.m>
+% Version history:
+% PJS 5/7/08   Initial coding
+% PJS 11/23/10 Removed SOS call for domain
+%
+% SPDX-License-Identifier: GPL-3.0-only
+
 function varargout = pcontour3(poly,lvlset,domain,noPoints,varName)
 % Plot 2D contour plot of a polynomial.
 %

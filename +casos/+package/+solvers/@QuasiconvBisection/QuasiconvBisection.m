@@ -1,3 +1,9 @@
+% SPDX-FileCopyrightText: 2023 Institute of Flight Mechanics and Controls, University of Stuttgart
+% SPDX-FileCopyrightText: Author(s): Torbjørn Cunis <tcunis@ifr.uni-stuttgart.de>
+% SPDX-FileContributor: For a full list of contributors, see <https://github.com/ifr-ofc/casos>
+%
+% SPDX-License-Identifier: GPL-3.0-only
+
 classdef QuasiconvBisection < casos.package.solvers.SosoptCommon
 % Solve quasiconvex sum-of-squares problems via bisection.
 
@@ -6,7 +12,7 @@ properties (Access=private)
 
     qc_sign;
 
-    info = struct('iter',[]);
+    bisect_stats = struct('iter',[]);
     status = casos.package.UnifiedReturnStatus.SOLVER_RET_UNKNOWN;
 
     log;
@@ -80,6 +86,7 @@ methods
         if ~isfield(obj.opts,'max_iter'), obj.opts.max_iter = 1000; end
         if ~isfield(obj.opts,'tolerance_abs'), obj.opts.tolerance_abs = 1e-3; end
         if ~isfield(obj.opts,'tolerance_rel'), obj.opts.tolerance_rel = 1e-3; end
+        
         % set up logger
         if ~isfield(obj.opts,'verbose') || ~obj.opts.verbose
             % no display
@@ -88,15 +95,22 @@ methods
             % display debug messages
             obj.log = casos.package.Logger.Debug;
         end
-    
+
         % build SOS problem
         buildproblem(obj,sos);
     end
 
     function s = get_stats(obj)
         % Return stats.
-        s = obj.info;
+        s = obj.bisect_stats;
         s = addfield(obj.status,s);
+    end
+
+    function s = get_info(obj)
+        % Return info.
+        s = get_info@casos.package.solvers.SosoptCommon(obj);
+        % add convex solver info
+        s.sossol = obj.sossolver.get_info;
     end
 end
 

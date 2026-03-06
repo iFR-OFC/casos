@@ -1,3 +1,9 @@
+% SPDX-FileCopyrightText: 2023 Institute of Flight Mechanics and Controls, University of Stuttgart
+% SPDX-FileCopyrightText: Author(s): Torbjørn Cunis <tcunis@ifr.uni-stuttgart.de>
+% SPDX-FileContributor: For a full list of contributors, see <https://github.com/ifr-ofc/casos>
+%
+% SPDX-License-Identifier: GPL-3.0-only
+
 function buildproblem(obj,solver,sos)
 % Build SDP problem from SOS relaxation.
 
@@ -199,5 +205,13 @@ obj.gram2sos = casadi.Function('L', ...
                 fieldnames(sossol), ...
                 fopt ...
 );
+
+% function to retrieve Gram solution with dimensions (currently unused)
+% obj.sdp2gram = casadi.Function('G', ...
+%     {sdp.x}, {Qvar_G Ksdp_x_s Qcon_G Ksdp_g_s}, ...
+%     {'x_sol'}, {'Qx', 'Qx_dim' 'Qc', 'Qc_dim'});
+
+% Fill info struct
+obj.sosopt_info.gram = struct('Kx', Ksdp_x_s, 'Kc', Ksdp_g_s);
 
 end

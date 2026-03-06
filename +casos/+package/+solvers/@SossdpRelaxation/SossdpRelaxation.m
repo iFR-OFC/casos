@@ -1,3 +1,9 @@
+% SPDX-FileCopyrightText: 2023 Institute of Flight Mechanics and Controls, University of Stuttgart
+% SPDX-FileCopyrightText: Author(s): Torbjørn Cunis <tcunis@ifr.uni-stuttgart.de>
+% SPDX-FileContributor: For a full list of contributors, see <https://github.com/ifr-ofc/casos>
+%
+% SPDX-License-Identifier: GPL-3.0-only
+
 classdef SossdpRelaxation < casos.package.solvers.SosoptCommon & matlab.mixin.Copyable
 % Solve sum-of-squares problems by relaxation to SDP.
 
@@ -5,6 +11,7 @@ properties (Access=private)
     sdpsolver;
 
     gram2sos;
+    % sdp2gram;     not used yet
 end
 
 properties (Constant,Access=protected)
@@ -81,6 +88,12 @@ methods
         s = obj.sdpsolver.stats;
     end
 
+    function s = get_info(obj)
+        % Return info.
+        s = get_info@casos.package.solvers.SosoptCommon(obj);
+        % add sdp solver info
+        s.sdpsol = obj.sdpsolver.info;
+    end
 end
 
 end
