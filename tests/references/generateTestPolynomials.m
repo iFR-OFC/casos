@@ -16,35 +16,30 @@ deg  = 0:ceil(lower + (upper-lower)*rand()); % degree of first polynomial
 deg2 = 1:ceil(lower + (upper-lower)*rand());   % degree of second polynomial
 
 % generate casos monomial vector
-x_cas        = casos.PS('x',m,1);
-x_monom1_cas = monomials(x_cas,deg);
-x_monom2_cas = monomials(x_cas,deg2);
+x   = casos.Indeterminates('x',m,1);
+sp1 = monomials(x,deg);
+sp2 = monomials(x,deg2);
 
-         % generate random coefficients
-coeffs1 = rand(x_monom1_cas.nnz,1)';
-coeffs2 = rand(x_monom2_cas.nnz,1)';
+% generate random coefficients
+coeffs1 = rand(sp1.nnz,1)';
+coeffs2 = rand(sp2.nnz,1)';
     
+% build polynomials
+poly1 = casos.PD(sp1,coeffs1);
+poly2 = casos.PD(sp2,coeffs2);
 
+% return test values as structs
 test_value.nIndet  = m;
 test_value.deg     = deg;
 test_value.deg2    = deg2;
 test_value.coeffs1 = coeffs1;
 test_value.coeffs2 = coeffs2;
 
+% convert to multipoly for reference
+poly1_mltp = casos.toolboxes.to_multipoly(poly1);
+poly2_mltp = casos.toolboxes.to_multipoly(poly2);
 
-% generate reference polynomials using multipoly
-x_sopt        = mpvar('x',m,1);
-x_monom1_sopt = monomials(x_sopt,deg);
-x_monom2_sopt = monomials(x_sopt,deg2);
-
-
-poly1_sopt = coeffs1 * x_monom1_sopt;
-poly2_sopt = coeffs2 * x_monom2_sopt;
-
-% add test values to testValue
-%testValue = [poly1_cas;poly2_cas];
-
-% add test values to testValue
-reference_value = {poly1_sopt poly2_sopt};
+% return reference values
+reference_value = {poly1_mltp poly2_mltp};
 
 end
