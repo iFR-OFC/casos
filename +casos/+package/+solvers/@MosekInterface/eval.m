@@ -123,19 +123,19 @@ if ~isempty(msk_sol)
                                                                                       abs(res.info.MSK_DINF_SOL_ITR_DUAL_OBJ)]));
             
             % log values for decision logic
-            obj.solver_info.acceptable_solution.primMaxVio  = primMaxVio;
-            obj.solver_info.acceptable_solution.dualMaxVio  = dualMaxVio;
-            obj.solver_info.acceptable_solution.relativeGap = relativeGap;
-            obj.solver_info.acceptable_solution.optMeas     = optMeas;
-            obj.solver_info.acceptable_solution.maxNorm     = maxNorm;
+            obj.solver_stats.acceptable_solution.primMaxVio  = primMaxVio;
+            obj.solver_stats.acceptable_solution.dualMaxVio  = dualMaxVio;
+            obj.solver_stats.acceptable_solution.relativeGap = relativeGap;
+            obj.solver_stats.acceptable_solution.optMeas     = optMeas;
+            obj.solver_stats.acceptable_solution.maxNorm     = maxNorm;
             
             % store the decision values thresholds
             % user can check what led to the decision
-            obj.solver_info.acceptable_solution.tolerances.primMaxVio  = feasibilityTol;
-            obj.solver_info.acceptable_solution.tolerances.dualMaxVio  = feasibilityTol;
-            obj.solver_info.acceptable_solution.tolerances.relativeGap = obj.opts.augmented_check.relativeGap;
-            obj.solver_info.acceptable_solution.tolerances.maxNorm     = obj.opts.augmented_check.maxNorm;
-            obj.solver_info.acceptable_solution.tolerances.optMeas     = obj.opts.augmented_check.optMeas;
+            obj.solver_stats.acceptable_solution.tolerances.primMaxVio  = feasibilityTol;
+            obj.solver_stats.acceptable_solution.tolerances.dualMaxVio  = feasibilityTol;
+            obj.solver_stats.acceptable_solution.tolerances.relativeGap = obj.opts.augmented_check.relativeGap;
+            obj.solver_stats.acceptable_solution.tolerances.maxNorm     = obj.opts.augmented_check.maxNorm;
+            obj.solver_stats.acceptable_solution.tolerances.optMeas     = obj.opts.augmented_check.optMeas;
             
             % decision logic for solution acceptability
             if (relativeGap < obj.opts.augmented_check.relativeGap) ...    % ensure relative gap is less than 5%
