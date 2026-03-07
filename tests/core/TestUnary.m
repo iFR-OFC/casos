@@ -28,20 +28,20 @@ end
 methods (Test, ParameterCombination="pairwise")
     function test_unary(test_case, test_values, references, op, arg)
         % Test unary operation.
-        actual = full(poly2basis(feval(op,test_values{arg})));
+        actual = feval(op,test_values{arg});
         reference = references.(op){arg};
 
         % perform assertion
-        test_case.verifyEqual(actual,reference,"RelTol",1e-15);
+        test_case.verifyEqualPolynomial(actual,reference,"RelTol",1e-15);
     end
 
     function test_power(test_case, test_values, references, arg, pow)
         % Test power operation (single exponent).
-        actual = full(poly2basis(power(test_values{arg},pow)));
+        actual = power(test_values{arg},pow);
         reference = references.power{arg,pow-1};
 
         % perform assertion
-        test_case.verifyEqual(actual,reference,"RelTol",1e-12);
+        test_case.verifyEqualPolynomial(actual,reference,"RelTol",1e-12);
     end
 end
 

@@ -35,11 +35,11 @@ methods (Test, ParameterCombination="pairwise")
             var = vars(ivar);
         end
 
-        actual = full(poly2basis(nabla(test_values{arg},var)));
+        actual = nabla(test_values{arg},var);
         reference = references.derivative{arg,ivar};
 
         % perform assertion
-        test_case.verifyEqual(actual,reference,"RelTol",1e-15);
+        test_case.verifyEqualPolynomial(actual,reference,"RelTol",1e-15);
     end
 
     function test_gradient(test_case, test_values, references, ivar, arg)
@@ -50,11 +50,11 @@ methods (Test, ParameterCombination="pairwise")
             vars(ivar) = casos.Indeterminates('y');
         end
 
-        actual = full(poly2basis(nabla(test_values{arg},vars)));
+        actual = nabla(test_values{arg},vars);
         reference = references.gradient{arg,ivar};
 
         % perform assertion
-        test_case.verifyEqual(actual,reference,"RelTol",1e-15);
+        test_case.verifyEqualPolynomial(actual,reference,"RelTol",1e-15);
     end
 end
 
