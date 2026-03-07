@@ -28,11 +28,12 @@ end
 methods (Test, ParameterCombination="pairwise")
     function test_dot(test_case, test_values, references, arg1, arg2)
         % Test dot operation.
-        actual = full(dot(test_values{1,arg1},test_values{2,arg2}));
+        actual = dot(test_values{1,arg1},test_values{2,arg2});
         reference = references.dot{arg1,arg2};
 
         % Perform assertions if needed
-        test_case.verifyEqual(actual,reference,"RelTol",1e-15);
+        test_case.verifyClass(actual,?casadi.DM);
+        test_case.verifyEqual(full(actual),reference,"RelTol",1e-15);
     end
 end
 

@@ -12,22 +12,45 @@ methods (Static)
         % Load test data for given polynomial operations.
         load(compose("../references/reference_%s.mat", op),"test_values_struct","reference_solutions")
 
-        test_value = cell(2,length(test_values_struct));
+        test_value = cell(size(test_values_struct));
 
-        for k = 1:length(test_values_struct)
-            x_cas        = casos.PS('x',test_values_struct{k}.nIndet,1);
+        for k = 1:numel(test_values_struct)
+            arg = test_values_struct{k};
 
-            x_monom1_cas = monomials(x_cas,test_values_struct{k}.deg);
-            x_monom2_cas = monomials(x_cas,test_values_struct{k}.deg2);
+            x = casos.Indeterminates(arg.indets{:});
+            sp = casos.Sparsity.tuplet(arg.sz(1),arg.sz(2),arg.i,arg.j,x,arg.degrees);
 
-            poly1_cas = casos.PD(x_monom1_cas,test_values_struct{k}.coeffs1);
-            poly2_cas = casos.PD(x_monom2_cas,test_values_struct{k}.coeffs2);
-
-            test_value(:,k) = {poly1_cas poly2_cas};
+            test_value{k} = casos.PD(sp,arg.coeffs);
         end
 
         test_values = {test_value};
         references  = {reference_solutions};
+    end
+end
+
+methods
+    function verifyEqualPolynomial(test_case,actual,reference,varargin)
+        % Verify that actual polynomial is equal to reference structure.
+        test_case.assertClass(reference,?struct,'Reference must be a structure.')
+
+        test_case.verifySize(actual,reference.sz,'Size does not match.');
+
+        % verify indeterminates
+        reference_indets = casos.Indeterminates(reference.indets{:});
+        test_case.verifyEqual(actual.indeterminates,reference_indets,'Indeterminate variables do not match.');
+
+        % only compare nonzero terms
+        actual_sparse = sparsify(actual);
+
+        % verify nonzero coefficients
+        test_case.verifyEqual(full(poly2basis(actual_sparse)),reference.coeffs,'Nonzero coefficients do not match.',varargin{:});
+
+        % verify tuplet
+        [i,j,degrees] = get_tuplet(sparsity(actual_sparse));
+
+        test_case.verifyEqual(i,reference.i,'Rows do not match.');
+        test_case.verifyEqual(j,reference.j,'Columns do not match.');
+        test_case.verifyEqual(degrees,reference.degrees,'Degrees do not match.');
     end
 end
 

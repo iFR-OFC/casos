@@ -32,10 +32,10 @@ methods (Test, ParameterCombination="pairwise")
         args_to_vertcat = mat2cell(test_values(arg,1:(dim*dim2)), 1, repmat(dim,1,dim2));
         args_to_horzcat = cellfun(@(c) vertcat(c{:}), args_to_vertcat, 'UniformOutput', false);
 
-        actual = full(poly2basis(horzcat(args_to_horzcat{:})));
+        actual = horzcat(args_to_horzcat{:});
         reference = references.concat{arg,dim};
 
-        test_case.verifyEqual(actual, reference);
+        test_case.verifyEqualPolynomial(actual, reference);
     end
 
     function test_horzcat(test_case, test_values, references, dim1)
@@ -46,10 +46,10 @@ methods (Test, ParameterCombination="pairwise")
         p1 = reshape([test_values{1,1:(dim1*dim2)}],dim1,dim2);
         p2 = reshape([test_values{2,1:(dim1*dim3)}],dim1,dim3); %#ok<PROPLC>
 
-        actual = full(poly2basis(horzcat(p1,p2)));
+        actual = horzcat(p1,p2);
         reference = references.horzcat{dim1};
 
-        test_case.verifyEqual(actual, reference);
+        test_case.verifyEqualPolynomial(actual, reference);
     end
 
     function test_vertcat(test_case, test_values, references, dim3)
@@ -60,10 +60,10 @@ methods (Test, ParameterCombination="pairwise")
         p1 = reshape([test_values{1,1:(dim1*dim3)}],dim1,dim3); %#ok<PROPLC>
         p2 = reshape([test_values{2,1:(dim2*dim3)}],dim2,dim3);
 
-        actual = full(poly2basis(vertcat(p1,p2)));
+        actual = vertcat(p1,p2);
         reference = references.vertcat{dim3};
 
-        test_case.verifyEqual(actual, reference);
+        test_case.verifyEqualPolynomial(actual, reference);
     end
 
     % function test_diagcat(test_case, test_values, references, dim1, dim3)
@@ -74,10 +74,10 @@ methods (Test, ParameterCombination="pairwise")
     %     p1 = reshape([test_values{1,1:(dim1*dim2)}],dim1,dim2);
     %     p2 = reshape([test_values{2,1:(dim3*dim4)}],dim3,dim4);
     % 
-    %     actual = full(poly2basis(diagcat(p1,p2)));
+    %     actual = diagcat(p1,p2)));
     %     reference = references.diagcat{dim1,dim3};
     % 
-    %     test_case.verifyEqual(actual, reference);
+    %     test_case.verifyEqualPolynomial(actual, reference);
     % end
 end
 

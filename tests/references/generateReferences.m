@@ -4,6 +4,8 @@
 %
 % SPDX-License-Identifier: GPL-3.0-only
 
+rng(0)
+
 % Generate reference solutions from multipoly
 disp("========================================");
 disp("Starting: Generate test polynomials");
@@ -11,11 +13,11 @@ disp("========================================");
 
 noPoly = 10;
 
-test_values_struct = cell(1,noPoly);
+test_values_struct = cell(2,noPoly);
 reference_values   = cell(2,noPoly);
 
 for k = 1:noPoly
-    [test_values_struct{k},reference_values(:,k)] = generateTestPolynomials();
+    [test_values_struct(:,k),reference_values(:,k)] = generateTestPolynomials();
 end
 
 save("test_values.mat","test_values_struct");
@@ -34,7 +36,7 @@ reference_solutions = struct;
 for op = ["uplus" "uminus"]
     reference_solutions.(op) = cell(noPoly,1);
     for k = 1:noPoly
-       reference_solutions.(op){k} = full(coordinates(feval(op,reference_values{k})));
+       reference_solutions.(op){k} = multipoly2struct(feval(op,reference_values{k}));
     end
 end
 
@@ -42,7 +44,7 @@ end
 reference_solutions.power = cell(noPoly,3);
 for pow = (2:4)
     for k = 1:noPoly
-        reference_solutions.power{k,pow-1} = full(coordinates(power(reference_values{k},pow)));
+        reference_solutions.power{k,pow-1} = multipoly2struct(power(reference_values{k},pow));
     end
 end
 
@@ -63,7 +65,7 @@ for op = ["plus" "minus" "times"]
     reference_solutions.(op) = cell(noPoly,noPoly);
     for k1 = 1:noPoly
         for k2 = 1:noPoly
-            reference_solutions.(op){k1,k2} = full(coordinates(feval(op,reference_values{1,k1},reference_values{2,k2})));
+            reference_solutions.(op){k1,k2} = multipoly2struct(feval(op,reference_values{1,k1},reference_values{2,k2}));
         end
     end
 end
@@ -75,7 +77,7 @@ for k1 = 1:noPoly
     reference_value_double = double(subs(reference_values{1,k1},vars,ones(size(vars))));
 
     for k2 = 1:noPoly
-        reference_solutions.ldivide{k1,k2} = full(coordinates(times(inv(reference_value_double),reference_values{2,k2})));
+        reference_solutions.ldivide{k1,k2} = multipoly2struct(times(inv(reference_value_double),reference_values{2,k2}));
     end
 end
 
@@ -86,7 +88,7 @@ for k2 = 1:noPoly
     reference_value_double = double(subs(reference_values{2,k2},vars,ones(size(vars))));
 
     for k1 = 1:noPoly
-        reference_solutions.rdivide{k1,k2} = full(coordinates(rdivide(reference_values{1,k1},reference_value_double)));
+        reference_solutions.rdivide{k1,k2} = multipoly2struct(rdivide(reference_values{1,k1},reference_value_double));
     end
 end
 
@@ -126,7 +128,7 @@ reference_solutions = struct;
 reference_solutions.mtimes = cell(noPoly,noPoly);
 for k1 = 1:noPoly
     for k2 = 1:noPoly
-        reference_solutions.mtimes{k1,k2} = full(coordinates(mtimes(reference_values{1,k1},reference_values{2,k2})));
+        reference_solutions.mtimes{k1,k2} = multipoly2struct(mtimes(reference_values{1,k1},reference_values{2,k2}));
     end
 end
 
@@ -134,7 +136,7 @@ end
 reference_solutions.kron = cell(noPoly,noPoly);
 for k1 = 1:noPoly
     for k2 = 1:noPoly
-        reference_solutions.kron{k1,k2} = full(coordinates(kron(reference_values{1,k1},reference_values{2,k2})));
+        reference_solutions.kron{k1,k2} = multipoly2struct(kron(reference_values{1,k1},reference_values{2,k2}));
     end
 end
 
@@ -145,7 +147,7 @@ for k1 = 1:noPoly
     reference_value_double = double(subs(reference_values{1,k1},vars,ones(size(vars))));
 
     for k2 = 1:noPoly
-        reference_solutions.mldivide{k1,k2} = full(coordinates(mtimes(inv(reference_value_double),reference_values{2,k2})));
+        reference_solutions.mldivide{k1,k2} = multipoly2struct(mtimes(inv(reference_value_double),reference_values{2,k2}));
     end
 end
 
@@ -156,7 +158,7 @@ for k2 = 1:noPoly
     reference_value_double = double(subs(reference_values{2,k2},vars,ones(size(vars))));
 
     for k1 = 1:noPoly
-        reference_solutions.mrdivide{k1,k2} = full(coordinates(mrdivide(reference_values{1,k1},reference_value_double)));
+        reference_solutions.mrdivide{k1,k2} = multipoly2struct(mrdivide(reference_values{1,k1},reference_value_double));
     end
 end
 
@@ -164,7 +166,7 @@ end
 reference_solutions.mpower = cell(noPoly,3);
 for pow = (2:4)
     for k = 1:noPoly
-        reference_solutions.mpower{k,pow-1} = full(coordinates(mpower(reference_values{k},pow)));
+        reference_solutions.mpower{k,pow-1} = multipoly2struct(mpower(reference_values{k},pow));
     end
 end
 
@@ -192,7 +194,7 @@ for ivar = 1:4
             var = vars(ivar);
         end
 
-        reference_solutions.derivative{k,ivar} = full(coordinates(jacobian(reference_values{k},var)));
+        reference_solutions.derivative{k,ivar} = multipoly2struct(jacobian(reference_values{k},var));
     end
 end
 
@@ -206,7 +208,7 @@ for ivar = 1:4
             vars(ivar) = {'y'};
         end
 
-        reference_solutions.gradient{k,ivar} = full(coordinates(jacobian(reference_values{k},vars)));
+        reference_solutions.gradient{k,ivar} = multipoly2struct(jacobian(reference_values{k},vars));
     end
 end
 
@@ -215,7 +217,7 @@ save("reference_nabla.mat","test_values_struct","reference_solutions")
 disp("Completed: nabla operation");
 disp(" ");
 
-%% coordinates
+%% poly2basis
 disp("========================================");
 disp("Starting: poly2basis operation");
 disp("========================================")
@@ -226,7 +228,7 @@ reference_solutions.poly2basis = cell(noPoly,noPoly);
 for k1 = 1:noPoly
     basis = monomials(reference_values{1,k1});
     for k2 = 1:noPoly
-        reference_solutions.poly2basis{k1,k2} = full(coordinates(reference_values{2,k2},basis));
+        reference_solutions.poly2basis{k1,k2} = poly2basis(reference_values{2,k2},basis);
     end
 end
 
@@ -247,7 +249,7 @@ for decade = 1:3
     for k = 1:noPoly
         tol = prctile(coordinates(reference_values{k}),10*decade);
     
-        reference_solutions.remove_coeffs{k,decade} = full(coordinates(cleanpoly(reference_values{k}, tol)));
+        reference_solutions.remove_coeffs{k,decade} = multipoly2struct(cleanpoly(reference_values{k}, tol));
     end
 end
 
@@ -275,7 +277,7 @@ for ivar = 1:4
             var = vars(ivar);
         end
 
-        reference_solutions.single{k,ivar} = full(coordinates(subs(reference_values{1,k},var,reference_values{2,k})));
+        reference_solutions.single{k,ivar} = multipoly2struct(subs(reference_values{1,k},var,reference_values{2,k}));
     end
 end
 
@@ -294,7 +296,7 @@ for ivar = 1:4
             new = vertcat(reference_values{2,(end-k)+(1:length(vars))});
         end
 
-        reference_solutions.multiple{k,ivar} = full(coordinates(subs(reference_values{1,k},vars,new)));
+        reference_solutions.multiple{k,ivar} = multipoly2struct(subs(reference_values{1,k},vars,new));
     end
 end
 
@@ -319,7 +321,7 @@ for dim1 = 1:5
         args_to_vertcat = mat2cell(reference_values(k,1:(dim1*dim2)), 1, repmat(dim1,1,dim2));
         args_to_horzcat = cellfun(@(c) vertcat(c{:}), args_to_vertcat, 'UniformOutput', false);
 
-        reference_solutions.concat{k,dim1} = full(coordinates(horzcat(args_to_horzcat{:})));
+        reference_solutions.concat{k,dim1} = multipoly2struct(horzcat(args_to_horzcat{:}));
     end
 end
 
@@ -332,7 +334,7 @@ for dim1 = 1:4
     p1 = reshape([reference_values{1,1:(dim1*dim2)}],dim1,dim2);
     p2 = reshape([reference_values{2,1:(dim1*dim3)}],dim1,dim3);
 
-    reference_solutions.horzcat{dim1} = full(coordinates(horzcat(p1,p2)));
+    reference_solutions.horzcat{dim1} = multipoly2struct(horzcat(p1,p2));
 end
 
 % vertical concatenation
@@ -344,7 +346,7 @@ for dim3 = 1:4
     p1 = reshape([reference_values{1,1:(dim1*dim3)}],dim1,dim3);
     p2 = reshape([reference_values{2,1:(dim2*dim3)}],dim2,dim3);
 
-    reference_solutions.vertcat{dim3} = full(coordinates(vertcat(p1,p2)));
+    reference_solutions.vertcat{dim3} = multipoly2struct(vertcat(p1,p2));
 end
 
 % diagonal concatenation
@@ -357,7 +359,7 @@ for dim3 = 1:4
     p1 = reshape([reference_values{1,1:(dim1*dim2)}],dim1,dim2);
     p2 = reshape([reference_values{2,1:(dim3*dim4)}],dim3,dim4);
 
-    reference_solutions.diagcat{dim1,dim3} = full(coordinates(blkdiag(p1,p2)));
+    reference_solutions.diagcat{dim1,dim3} = multipoly2struct(blkdiag(p1,p2));
 end
 end
 
@@ -374,11 +376,11 @@ disp(" ");
 % 
 % reference_solutions = struct;
 % reference_solutions.single = cell(1,1);
-% reference_solutions.single{1} = full(coordinates(sum(reference_values_flat{1}, 2)));
+% reference_solutions.single{1} = multipoly2struct(sum(reference_values_flat{1}, 2)));
 % 
 % reference_solutions.multiple = cell(10,1);
 % for k = 1:10
-%    reference_solutions.multiple{k} = full(coordinates(sum(reference_values_flat{k}, 1)));
+%    reference_solutions.multiple{k} = multipoly2struct(sum(reference_values_flat{k}, 1)));
 % end
 % 
 % save("reference_sum.mat","test_values_struct","reference_solutions")
@@ -393,11 +395,11 @@ disp(" ");
 % 
 % reference_solutions = struct;
 % reference_solutions.single = cell(1,1);
-% reference_solutions.single{1} = full(coordinates(prod(reference_values_flat{1}, 1)));
+% reference_solutions.single{1} = multipoly2struct(prod(reference_values_flat{1}, 1)));
 % 
 % reference_solutions.multiple = cell(10,1);
 % for k = 1:10
-%    reference_solutions.multiple{k} = full(coordinates(prod(reference_values_flat{k}, 2)));
+%    reference_solutions.multiple{k} = multipoly2struct(prod(reference_values_flat{k}, 2)));
 % end
 % 
 % save("reference_prod.mat","test_values_struct","reference_solutions")
@@ -412,11 +414,11 @@ disp(" ");
 % 
 % reference_solutions = struct;
 % reference_solutions.single = cell(1,1);
-% reference_solutions.single{1} = full(coordinates(transpose(reference_values_flat{1})));
+% reference_solutions.single{1} = multipoly2struct(transpose(reference_values_flat{1})));
 % 
 % reference_solutions.multiple = cell(10,1);
 % for k = 1:10
-%    reference_solutions.multiple{k} = full(coordinates(transpose(reference_values_flat{k})));
+%    reference_solutions.multiple{k} = multipoly2struct(transpose(reference_values_flat{k})));
 % end
 % 
 % save("reference_transpose.mat","test_values_struct","reference_solutions")

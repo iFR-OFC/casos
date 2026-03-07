@@ -29,11 +29,12 @@ methods (Test, ParameterCombination="pairwise")
     function test_poly2basis(test_case, test_values, references, arg1, arg2)
         % Test poly2basis operation.
         basis = sparsity(test_values{1,arg1});
-        actual = full(poly2basis(test_values{2,arg2},basis));
+        actual = poly2basis(test_values{2,arg2},basis);
         reference = references.poly2basis{arg1,arg2};
 
         % perform assertion
-        test_case.verifyEqual(actual,reference,"RelTol",1e-15);
+        test_case.verifyClass(actual,?casadi.DM);
+        test_case.verifyEqual(full(actual),reference,"RelTol",1e-15);
     end
 end
 

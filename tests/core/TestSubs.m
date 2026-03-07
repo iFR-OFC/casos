@@ -35,11 +35,11 @@ methods (Test, ParameterCombination="pairwise")
             var = vars(ivar);
         end
 
-        actual = full(poly2basis(subs(test_values{1,arg},var,test_values{2,arg})));
+        actual = subs(test_values{1,arg},var,test_values{2,arg});
         reference = references.single{arg,ivar};
 
         % perform assertion
-        test_case.verifyEqual(actual,reference,"RelTol",1e-12);
+        test_case.verifyEqualPolynomial(actual,reference,"RelTol",1e-12);
     end
 
     function test_subs_multiple(test_case, test_values, references, ivar, arg)
@@ -55,11 +55,11 @@ methods (Test, ParameterCombination="pairwise")
             new = vertcat(test_values{2,(end-arg)+(1:length(vars))});
         end
 
-        actual = full(poly2basis(subs(test_values{1,arg},vars,new)));
+        actual = subs(test_values{1,arg},vars,new);
         reference = references.multiple{arg,ivar};
 
         % perform assertion
-        test_case.verifyEqual(actual,reference,"RelTol",1e-12);
+        test_case.verifyEqualPolynomial(actual,reference,"RelTol",1e-12);
     end
 end
 
