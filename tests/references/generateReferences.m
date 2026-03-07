@@ -48,6 +48,17 @@ for pow = (2:4)
     end
 end
 
+% unary operation on vector
+reference_solutions.vector = struct;
+for op = ["uplus" "uminus"]
+    reference_solutions.vector.(op) = cell(1,5);
+    for dim1 = 1:5
+        dim2 = 6-dim1;
+        value = reshape([reference_values{1:(dim1*dim2)}],dim1,dim2);
+        reference_solutions.vector.(op){dim1} = multipoly2struct(feval(op,value));
+    end
+end
+
 save("reference_unary.mat","test_values_struct","reference_solutions")
 
 disp("Completed: unary operation");
