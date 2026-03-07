@@ -1,0 +1,10 @@
+version = 1
+
+# test data files
+[[annotations]]
+path = "*.mat"
+SPDX-FileCopyrightText = [
+    "2026 Institute of Flight Mechanics and Controls",
+    "Author(s): Torbjørn Cunis and Jan Olucak <tcunis@ifr.uni-stuttgart.de"
+]
+SPDX-License-Identifier = "CC0-1.0"
