@@ -13,6 +13,7 @@ properties (TestParameter)
 
     op = {"uplus" "uminus"};
     pow = {2 3 4};
+    dim1 = {1 2 3 4 5};
     arg          % index argument
 end
 
@@ -42,6 +43,17 @@ methods (Test, ParameterCombination="pairwise")
 
         % perform assertion
         test_case.verifyEqualPolynomial(actual,reference,"RelTol",1e-12);
+    end
+
+    function test_unary_vector(test_case, test_values, references, op, dim1)
+        % Test unary operation on vector.
+        dim2 = 6-dim1;
+        value = reshape([test_values{1:(dim1*dim2)}],dim1,dim2);
+        actual = feval(op,value);
+        reference = references.vector.(op){dim1};
+
+        % perform assertion
+        test_case.verifyEqualPolynomial(actual,reference,"RelTol",1e-15);
     end
 end
 
