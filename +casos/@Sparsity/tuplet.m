@@ -24,10 +24,12 @@ col = sub2ind([n m],i+1,j+1); % 1-index
 coeffs = casadi.Sparsity.triplet(length(col),n*m,0:length(col)-1,col-1); % 0-index
 
 % make degree matrix unique
-[S.coeffs,S.degmat] = uniqueDeg(coeffs,degrees);
+[coeffs,degmat] = uniqueDeg(coeffs,degrees);
 
-% set output
-S.indets = casos.Indeterminates(x);
+% remove redundant zeros
+[S.coeffs,S.degmat,S.indets] = removeZero(coeffs,degmat,casos.Indeterminates(x));
+
+% set dimensions
 S.matdim = [n m];
 
 end
