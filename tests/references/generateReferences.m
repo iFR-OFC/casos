@@ -11,13 +11,15 @@ disp("========================================");
 disp("Starting: Generate test polynomials");
 disp("========================================");
 
+variables = casos.Indeterminates('x',5);
+
 noPoly = 10;
 
 test_values_struct = cell(2,noPoly);
 reference_values   = cell(2,noPoly);
 
 for k = 1:noPoly
-    [test_values_struct(:,k),reference_values(:,k)] = generateTestPolynomials();
+    [test_values_struct(:,k),reference_values(:,k)] = generateTestPolynomials([1 1],variables,3);
 end
 
 save("test_values.mat","test_values_struct");

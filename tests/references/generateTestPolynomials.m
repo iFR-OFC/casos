@@ -4,25 +4,15 @@
 %
 % SPDX-License-Identifier: GPL-3.0-only
 
-function [test_value,reference_value] = generateTestPolynomials()
+function [test_value,reference_value] = generateTestPolynomials(sz,variables,degmax)
 % Generate test polynomials from CaΣoS and Multipoly
 
-lower = 1;
-upper = 4;
-
-m    = ceil(lower + (upper-lower)*rand());  % number of indeterminates
-
-deg  = 0:ceil(lower + (upper-lower)*rand()); % degree of first polynomial
-deg2 = 1:ceil(lower + (upper-lower)*rand());   % degree of second polynomial
-
-% generate casos monomial vector
-x   = casos.Indeterminates('x',m,1);
-sp1 = monomials(x,deg);
-sp2 = monomials(x,deg2);
+sp1 = generateRandomSparsity(sz,variables,degmax);
+sp2 = generateRandomSparsity(sz,variables,degmax);
 
 % generate random coefficients
-coeffs1 = rand(sp1.nnz,1)';
-coeffs2 = rand(sp2.nnz,1)';
+coeffs1 = rand(1,sp1.nnz);
+coeffs2 = rand(1,sp2.nnz);
     
 % build polynomials
 poly1 = casos.PD(sp1,coeffs1);
