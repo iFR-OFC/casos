@@ -11,15 +11,49 @@ disp("========================================");
 disp("Starting: Generate test polynomials");
 disp("========================================");
 
+test_values_struct = struct;
+reference_values = struct;
+
 variables = casos.Indeterminates('x',5);
 
 noPoly = 10;
+maxdim = 6;
+maxdeg = 3;
 
-test_values_struct = cell(2,noPoly);
-reference_values   = cell(2,noPoly);
+% generate scalar values
+test_values_struct.scalar = cell(2,noPoly);
+reference_values.scalar = cell(2,noPoly);
 
-for k = 1:noPoly
-    [test_values_struct(:,k),reference_values(:,k)] = generateTestPolynomials([1 1],variables,3);
+for k = 1:numel(test_values_struct)
+    [test_values_struct.scalar(k),reference_values.scalar(k)] = ...
+                        generateTestPolynomials([1 1],variables,maxdeg);
+end
+
+% generate (column) vector values
+test_values_struct.vector = cell(2,maxdim);
+reference_values.vector = cell(2,maxdim);
+
+for dim = 1:maxdim
+    % create vectors of same dimensions
+    [test_values_struct.vector(1,dim),reference_values.vector(1,dim)] = ...
+                    generateTestPolynomials([dim-1 1],variables,maxdeg);
+    [test_values_struct.vector(2,dim),reference_values.vector(2,dim)] = ...
+                    generateTestPolynomials([dim-1 1],variables,maxdeg);
+end
+
+% generate matrix values
+test_values_struct.matrix = cell(3,maxdim);
+reference_values.matrix = cell(3,maxdim);
+
+for dim = 1:maxdim
+    % generate matrices of same dimensions
+    [test_values_struct.matrix(1,dim),reference_values.matrix(1,dim)] = ...
+        generateTestPolynomials([dim-1 maxdim-dim],variables,maxdeg);
+    [test_values_struct.matrix(2,dim),reference_values.matrix(2,dim)] = ...
+        generateTestPolynomials([dim-1 maxdim-dim],variables,maxdeg);
+    % generate matrices of different dimensions
+    [test_values_struct.matrix(3,dim),reference_values.matrix(3,dim)] = ...
+        generateTestPolynomials([dim maxdim-dim],variables,maxdeg);
 end
 
 save("test_values.mat","test_values_struct");
@@ -47,17 +81,6 @@ reference_solutions.power = cell(noPoly,3);
 for pow = (2:4)
     for k = 1:noPoly
         reference_solutions.power{k,pow-1} = multipoly2struct(power(reference_values{k},pow));
-    end
-end
-
-% unary operation on vector
-reference_solutions.vector = struct;
-for op = ["uplus" "uminus"]
-    reference_solutions.vector.(op) = cell(1,5);
-    for dim1 = 1:5
-        dim2 = 6-dim1;
-        value = reshape([reference_values{1:(dim1*dim2)}],dim1,dim2);
-        reference_solutions.vector.(op){dim1} = multipoly2struct(feval(op,value));
     end
 end
 
