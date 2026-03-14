@@ -32,7 +32,7 @@ coeffs = (summat*coeffs);
 
 % get tuplet
 [row,col] = find(coeffs);
-[i1,j1] = ind2sub(sz,col);
+[i1,j1] = ind2sub(sz,reshape(col,1,[])); % ensure row vectors
 
 % create struct
 ref = struct('sz',sz,'i',i1-1,'j',j1-1); % 0-index

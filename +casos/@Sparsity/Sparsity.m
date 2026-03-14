@@ -255,8 +255,8 @@ methods
         % columns are elements
         [i1,j1] = ind2sub(size(obj),col+1); % 1-index
         % return 0-indices
-        i = i1(:)-1;
-        j = j1(:)-1;
+        i = i1-1;
+        j = j1-1;
         % rows are degrees
         degrees = full(obj.degmat(row+1,:)); % 1-index
     end
