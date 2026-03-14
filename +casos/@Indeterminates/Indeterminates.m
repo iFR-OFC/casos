@@ -9,7 +9,7 @@ classdef Indeterminates < casos.package.core.AlgebraicObject & casos.package.cor
 
 properties (GetAccess=protected, SetAccess=private)
     % cell array of strings {x1,...,xN}
-    variables = {};
+    variables = cell(1,0);
 
     % transpose flag
     transp = false;
