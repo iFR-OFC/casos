@@ -12,15 +12,19 @@ methods (Static)
         % Load test data for given polynomial operations.
         load(compose("../references/reference_%s.mat", op),"test_values_struct","reference_solutions")
 
-        test_value = cell(size(test_values_struct));
+        test_value = struct;
+        
+        for type = ["scalar" "vector" "matrix"]
+            test_value.(type) = cell(size(test_values_struct.(type{:})));
 
-        for k = 1:numel(test_values_struct)
-            arg = test_values_struct{k};
-
-            x = casos.Indeterminates(arg.indets{:});
-            sp = casos.Sparsity.tuplet(arg.sz(1),arg.sz(2),arg.i,arg.j,x,arg.degrees);
-
-            test_value{k} = casos.PD(sp,arg.coeffs);
+            for k = 1:numel(test_values_struct.(type))
+                arg = test_values_struct.(type){k};
+    
+                x = casos.Indeterminates(arg.indets{:});
+                sp = casos.Sparsity.tuplet(arg.sz(1),arg.sz(2),arg.i,arg.j,x,arg.degrees);
+    
+                test_value.(type){k} = casos.PD(sp,arg.coeffs);
+            end
         end
 
         test_values = {test_value};
