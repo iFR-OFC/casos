@@ -24,7 +24,8 @@ maxdeg = 3;
 test_values_struct.scalar = cell(2,noPoly);
 reference_values.scalar = cell(2,noPoly);
 
-for k = 1:numel(test_values_struct)
+for k = 1:numel(test_values_struct.scalar)
+    % create scalars
     [test_values_struct.scalar(k),reference_values.scalar(k)] = ...
                         generateTestPolynomials([1 1],variables,maxdeg);
 end
@@ -66,21 +67,37 @@ disp("========================================");
 disp("Starting: unary operation");
 disp("========================================")
 
-reference_solutions = struct;
+reference_solutions = struct('scalar',struct, ...
+                             'matrix',struct ...
+);
 
 % unary plus and minus
 for op = ["uplus" "uminus"]
-    reference_solutions.(op) = cell(noPoly,1);
+    % on scalar values
+    reference_solutions.scalar.(op) = cell(noPoly,1);
     for k = 1:noPoly
-       reference_solutions.(op){k} = multipoly2struct(feval(op,reference_values{k}));
+       reference_solutions.scalar.(op){k} = multipoly2struct(feval(op,reference_values.scalar{1,k}));
+    end
+
+    % on matrix values
+    reference_solutions.matrix.(op) = cell(maxdim,1);
+    for dim = 1:maxdim
+        reference_solutions.matrix.(op){dim} = multipoly2struct(feval(op,reference_values.matrix{1,dim}));
     end
 end
 
 % element-wise power with scalar exponent
-reference_solutions.power = cell(noPoly,3);
-for pow = (2:4)
+reference_solutions.scalar.power = cell(noPoly,4);
+reference_solutions.matrix.power = cell(maxdim,3);
+for pow = (0:3)
+    % on scalar values
     for k = 1:noPoly
-        reference_solutions.power{k,pow-1} = multipoly2struct(power(reference_values{k},pow));
+        reference_solutions.scalar.power{k,pow+1} = multipoly2struct(power(reference_values.scalar{1,k},pow));
+    end
+
+    % on matrix values
+    for dim = 1:maxdim
+        reference_solutions.matrix.power{dim,pow+1} = multipoly2struct(power(reference_values.matrix{1,dim},pow));
     end
 end
 
