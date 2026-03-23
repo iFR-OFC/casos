@@ -179,13 +179,35 @@ disp("========================================");
 disp("Starting: dot operation");
 disp("========================================");
 
-% dot product
-reference_solutions.dot = cell(noPoly,noPoly);
+reference_solutions = struct;
+
+% dot product on scalar values
+reference_solutions.scalar = cell(noPoly,noPoly);
 for k1 = 1:noPoly
-    basis = monomials(reference_values{1,k1});
+    arg1 = reference_values.scalar{1,k1};
+    basis = monomials(arg1);
 
     for k2 = 1:noPoly
-       reference_solutions.dot{k1,k2} = full(dot(coordinates(reference_values{1,k1}), coordinates(reference_values{2,k2},basis)));
+        arg2 = reference_values.scalar{2,k2};
+        reference_solutions.scalar{k1,k2} = full(dot(coordinates(arg1), coordinates(arg2,basis)));
+    end
+end
+
+% dot product on matrix values
+reference_solutions.matrix = cell(maxdim,maxdim);
+for d1 = 1:maxdim
+    arg1 = reference_values.matrix{1,d1};
+    basis = monomials(arg1);
+
+    for d2 = 1:maxdim
+        arg2 = reference_values.matrix{2,d2};
+
+        if ~isequal(size(arg1), size(arg2))
+            % size mismatch
+            continue
+        end
+
+        reference_solutions.matrix{d1,d2} = full(dot(coordinates(arg1,basis), coordinates(arg2,basis)));
     end
 end
 
