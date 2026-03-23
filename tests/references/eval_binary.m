@@ -29,13 +29,13 @@ switch (op)
     case "ldivide"
         % left-side division B.\A
         vars = arg1.varname;
-        arg1_double = double(subs(arg1,vars,ones(size(vars))));
+        arg1_double = 1+double(subs(arg1,vars,ones(size(vars))));
         res = times((arg1_double).\1,arg2);
 
     case "rdivide"
         % right-side division A./B
         vars = arg2.varname;
-        arg2_double = double(subs(arg2,vars,ones(size(vars))));
+        arg2_double = 1+double(subs(arg2,vars,ones(size(vars))));
         res = rdivide(arg1,arg2_double);
 
     otherwise
