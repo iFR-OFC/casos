@@ -111,38 +111,62 @@ disp("========================================");
 disp("Starting: binary operation");
 disp("========================================") 
 
-reference_solutions = struct;
+reference_solutions = struct('scalar',struct, ...
+                             'inner',struct, ...
+                             'outer',struct, ...
+                             'matrix',struct ...
+);
 
-% element-wise addition, subtraction, multiplication
-for op = ["plus" "minus" "times"]
-    reference_solutions.(op) = cell(noPoly,noPoly);
+% element-wise addition, subtraction, and multiplication
+% as well as left-side (B.\A) and right-side (A./B) division
+for op = ["plus" "minus" "times" "ldivide" "rdivide"]
+    % on scalar values
+    reference_solutions.scalar.(op) = cell(noPoly,noPoly);
     for k1 = 1:noPoly
         for k2 = 1:noPoly
-            reference_solutions.(op){k1,k2} = multipoly2struct(feval(op,reference_values{1,k1},reference_values{2,k2}));
+            arg1 = reference_values.scalar{1,k1};
+            arg2 = reference_values.scalar{2,k2};
+            reference_solutions.scalar.(op){k1,k2} = multipoly2struct(eval_binary(op,arg1,arg2));
         end
     end
-end
 
-% left-side division B.\A
-reference_solutions.ldivide = cell(noPoly,noPoly);
-for k1 = 1:noPoly
-    vars = reference_values{1,k1}.varname;
-    reference_value_double = double(subs(reference_values{1,k1},vars,ones(size(vars))));
-
-    for k2 = 1:noPoly
-        reference_solutions.ldivide{k1,k2} = multipoly2struct(times(inv(reference_value_double),reference_values{2,k2}));
+    % on row-by-column values
+    reference_solutions.inner.(op) = cell(maxdim,maxdim);
+    for d1 = 1:maxdim
+        for d2 = 1:maxdim
+            arg1 = reference_values.vector{1,d1}';
+            arg2 = reference_values.vector{2,d2};
+            
+            reference_solutions.inner.(op){d1,d2} = multipoly2struct(eval_binary(op,arg1,arg2));
+        end
     end
-end
 
-% right-side division A./B
-reference_solutions.rdivide = cell(noPoly,noPoly);
-for k2 = 1:noPoly
-    vars = reference_values{2,k2}.varname;
-    reference_value_double = double(subs(reference_values{2,k2},vars,ones(size(vars))));
-
-    for k1 = 1:noPoly
-        reference_solutions.rdivide{k1,k2} = multipoly2struct(rdivide(reference_values{1,k1},reference_value_double));
+    % on column-by-row values
+    reference_solutions.outer.(op) = cell(maxdim,maxdim);
+    for d1 = 1:maxdim
+        for d2 = 1:maxdim
+            arg1 = reference_values.vector{1,d1};
+            arg2 = reference_values.vector{2,d2}';
+            reference_solutions.outer.(op){d1,d2} = multipoly2struct(eval_binary(op,arg1,arg2));
+        end
     end
+
+    % on matrix values
+    reference_solutions.outer.(op) = cell(maxdim,maxdim);
+    for d1 = 1:maxdim
+        for d2 = 1:maxdim
+            arg1 = reference_values.matrix{1,d1};
+            arg2 = reference_values.matrix{2,d2}';
+
+            if (~isrow(arg1) && ~isrow(arg2) && size(arg1,1) ~= size(arg2,1)) ...
+                    || (~iscolumn(arg1) && ~iscolumn(arg2) && size(arg1,2) ~= size(arg2,2))
+                % dimension mismatch
+                continue
+            end
+
+            reference_solutions.matrix.(op){d1,d2} = multipoly2struct(eval_binary(op,arg1,arg2));
+        end
+    end    
 end
 
 save("reference_binary.mat","test_values_struct","reference_solutions")
