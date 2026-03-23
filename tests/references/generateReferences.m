@@ -156,7 +156,7 @@ for op = ["plus" "minus" "times" "ldivide" "rdivide"]
     for d1 = 1:maxdim
         for d2 = 1:maxdim
             arg1 = reference_values.matrix{1,d1};
-            arg2 = reference_values.matrix{2,d2}';
+            arg2 = reference_values.matrix{2,d2};
 
             if (~isrow(arg1) && ~isrow(arg2) && size(arg1,1) ~= size(arg2,1)) ...
                     || (~iscolumn(arg1) && ~iscolumn(arg2) && size(arg1,2) ~= size(arg2,2))
