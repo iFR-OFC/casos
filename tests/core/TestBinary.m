@@ -35,7 +35,7 @@ methods (Test, ParameterCombination="pairwise", TestTags="scalar")
         reference = references.scalar.(op){arg1,arg2};
 
         % perform assertion
-        test_case.verifyEqualPolynomial(actual,reference,"RelTol",1e-15)
+        test_case.verifyEqualPolynomial(actual,reference,"RelTol",1e-15);
     end
 
     function test_ldivide(test_case, test_values, references, arg1, arg2)
@@ -47,7 +47,7 @@ methods (Test, ParameterCombination="pairwise", TestTags="scalar")
         reference = references.scalar.ldivide{arg1,arg2};
 
         % perform assertion
-        test_case.verifyEqualPolynomial(actual,reference,"RelTol",1e-15)
+        test_case.verifyEqualPolynomial(actual,reference,"RelTol",1e-15);
     end
 
     function test_rdivide(test_case, test_values, references, arg1, arg2)
@@ -59,7 +59,7 @@ methods (Test, ParameterCombination="pairwise", TestTags="scalar")
         reference = references.scalar.rdivide{arg1,arg2};
 
         % perform assertion
-        test_case.verifyEqualPolynomial(actual,reference,"RelTol",1e-15)
+        test_case.verifyEqualPolynomial(actual,reference,"RelTol",1e-15);
     end
 end
 
@@ -70,7 +70,7 @@ methods (Test, ParameterCombination="pairwise", TestTags=["vector" "inner"])
         reference = references.inner.(op){dim1,dim2};
 
         % perform assertion
-        test_case.verifyEqualPolynomial(actual,reference,"RelTol",1e-15)
+        test_case.verifyEqualPolynomial(actual,reference,"RelTol",1e-15);
     end
 
     function test_ldivide_inner(test_case, test_values, references, dim1, dim2)
@@ -82,7 +82,7 @@ methods (Test, ParameterCombination="pairwise", TestTags=["vector" "inner"])
         reference = references.inner.ldivide{dim1,dim2};
 
         % perform assertion
-        test_case.verifyEqualPolynomial(actual,reference,"RelTol",1e-15)
+        test_case.verifyEqualPolynomial(actual,reference,"RelTol",1e-15);
     end
 
     function test_rdivide_inner(test_case, test_values, references, dim1, dim2)
@@ -94,7 +94,7 @@ methods (Test, ParameterCombination="pairwise", TestTags=["vector" "inner"])
         reference = references.inner.rdivide{dim1,dim2};
 
         % perform assertion
-        test_case.verifyEqualPolynomial(actual,reference,"RelTol",1e-15)
+        test_case.verifyEqualPolynomial(actual,reference,"RelTol",1e-15);
     end
 end
 
@@ -105,7 +105,7 @@ methods (Test, ParameterCombination="pairwise", TestTags=["vector" "outer"])
         reference = references.outer.(op){dim1,dim2};
 
         % perform assertion
-        test_case.verifyEqualPolynomial(actual,reference,"RelTol",1e-15)
+        test_case.verifyEqualPolynomial(actual,reference,"RelTol",1e-15);
     end
 
     function test_ldivide_outer(test_case, test_values, references, dim1, dim2)
@@ -117,7 +117,7 @@ methods (Test, ParameterCombination="pairwise", TestTags=["vector" "outer"])
         reference = references.outer.ldivide{dim1,dim2};
 
         % perform assertion
-        test_case.verifyEqualPolynomial(actual,reference,"RelTol",1e-15)
+        test_case.verifyEqualPolynomial(actual,reference,"RelTol",1e-15);
     end
 
     function test_rdivide_outer(test_case, test_values, references, dim1, dim2)
@@ -129,7 +129,7 @@ methods (Test, ParameterCombination="pairwise", TestTags=["vector" "outer"])
         reference = references.outer.rdivide{dim1,dim2};
 
         % perform assertion
-        test_case.verifyEqualPolynomial(actual,reference,"RelTol",1e-15)
+        test_case.verifyEqualPolynomial(actual,reference,"RelTol",1e-15);
     end
 end
 
@@ -142,7 +142,7 @@ methods (Test, ParameterCombination="pairwise", TestTags=["matrix"])
         if (~isrow(val1) && ~isrow(val2) && size(val1,1) ~= size(val2,1)) ...
                     || (~iscolumn(val1) && ~iscolumn(val2) && size(val1,2) ~= size(val2,2))
             % dimension mismatch
-            test_case.verifyError(@() feval(op,val1,val2),?MException)
+            test_case.verifyError(@() feval(op,val1,val2),?MException);
             return
         end
 
@@ -151,7 +151,7 @@ methods (Test, ParameterCombination="pairwise", TestTags=["matrix"])
         reference = references.matrix.(op){dim1,dim2};
 
         % perform assertion
-        test_case.verifyEqualPolynomial(actual,reference,"RelTol",1e-15)
+        test_case.verifyEqualPolynomial(actual,reference,"RelTol",1e-15);
     end
 
     function test_ldivide_matrix(test_case, test_values, references, dim1, dim2)
@@ -164,7 +164,7 @@ methods (Test, ParameterCombination="pairwise", TestTags=["matrix"])
         if (~isrow(val1) && ~isrow(val2) && size(val1,1) ~= size(val2,1)) ...
                     || (~iscolumn(val1) && ~iscolumn(val2) && size(val1,2) ~= size(val2,2))
             % dimension mismatch
-            test_case.verifyError(@() ldivide(val1,val2),?MException)
+            test_case.verifyError(@() ldivide(val1,val2),?MException);
             return
         end
 
@@ -173,7 +173,7 @@ methods (Test, ParameterCombination="pairwise", TestTags=["matrix"])
         reference = references.matrix.ldivide{dim1,dim2};
 
         % perform assertion
-        test_case.verifyEqualPolynomial(actual,reference,"RelTol",1e-15)
+        test_case.verifyEqualPolynomial(actual,reference,"RelTol",1e-15);
     end
 
     function test_rdivide_matrix(test_case, test_values, references, dim1, dim2)
@@ -186,7 +186,7 @@ methods (Test, ParameterCombination="pairwise", TestTags=["matrix"])
         if (~isrow(val1) && ~isrow(val2) && size(val1,1) ~= size(val2,1)) ...
                 || (~iscolumn(val1) && ~iscolumn(val2) && size(val1,2) ~= size(val2,2))
             % dimension mismatch
-            test_case.verifyError(@() rdivide(val1,val2),?MException)
+            test_case.verifyError(@() rdivide(val1,val2),?MException);
             return
         end
 
@@ -195,7 +195,7 @@ methods (Test, ParameterCombination="pairwise", TestTags=["matrix"])
         reference = references.matrix.rdivide{dim1,dim2};
 
         % perform assertion
-        test_case.verifyEqualPolynomial(actual,reference,"RelTol",1e-15)
+        test_case.verifyEqualPolynomial(actual,reference,"RelTol",1e-15);
     end
 end
 
