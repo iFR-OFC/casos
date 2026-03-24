@@ -11,6 +11,8 @@ properties (TestParameter)
     test_values  % test polynmials
     references   % reference solutions
 
+    dim1 = {1 2 3 4 5 6};
+    dim2 = {1 2 3 4 5 6};
     arg1         % index argument 1
     arg2         % index argument 2
 end
@@ -20,18 +22,40 @@ methods (TestParameterDefinition, Static)
         % Initialize test data for dot operations.
         [test_values,references] = TestDot.loadTestData("dot");
 
-        arg1 = num2cell(1:size(test_values{:},2));
-        arg2 = num2cell(1:size(test_values{:},2));
+        arg1 = num2cell(1:size(test_values{:}.scalar,2));
+        arg2 = num2cell(1:size(test_values{:}.scalar,2));
     end
 end
 
-methods (Test, ParameterCombination="pairwise")
+methods (Test, ParameterCombination="pairwise", TestTags="scalar")
     function test_dot(test_case, test_values, references, arg1, arg2)
-        % Test dot operation.
-        actual = dot(test_values{1,arg1},test_values{2,arg2});
-        reference = references.dot{arg1,arg2};
+        % Test dot operation on scalar values.
+        actual = dot(test_values.scalar{1,arg1},test_values.scalar{2,arg2});
+        reference = references.scalar{arg1,arg2};
 
-        % Perform assertions if needed
+        % perform assertion
+        test_case.verifyClass(actual,?casadi.DM);
+        test_case.verifyEqual(full(actual),reference,"RelTol",1e-15);
+    end
+end
+
+methods (Test, ParameterCombination="pairwise", TestTags="matrix")
+    function test_dot_matrix(test_case, test_values, references, dim1, dim2)
+        % Test dot operation on matrix values.
+        val1 = test_values.matrix{1,dim1};
+        val2 = test_values.matrix{2,dim2};
+
+        if ~isequal(size(val1), size(val2))
+            % size mismatch
+            test_case.verifyError(@() dot(val1,val2),?MException);
+            return
+        end
+
+        % else
+        actual = dot(val1,val2);
+        reference = references.matrix{dim1,dim2};
+
+        % perform assertion
         test_case.verifyClass(actual,?casadi.DM);
         test_case.verifyEqual(full(actual),reference,"RelTol",1e-15);
     end
