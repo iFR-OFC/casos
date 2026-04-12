@@ -9,6 +9,15 @@ function ref = multipoly2struct(poly)
 
 sz = size(poly);
 
+if isempty(poly)
+    % convert empty polynomial
+    ref = struct('sz',sz,'i',zeros(1,0),'j',zeros(1,0));
+    ref.degrees = [];
+    ref.indets = {};
+    ref.coeffs = zeros(0,1);
+    return
+end
+
 coeffs = poly.coefficient;
 degmat = poly.degmat;
 
