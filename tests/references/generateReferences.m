@@ -147,12 +147,13 @@ for op = ["plus" "minus" "times" "ldivide" "rdivide"]
         for d2 = 1:maxdim
             arg1 = reference_values.vector{1,d1};
             arg2 = reference_values.vector{2,d2}';
+
             reference_solutions.outer.(op){d1,d2} = multipoly2struct(eval_binary(op,arg1,arg2));
         end
     end
 
     % on matrix values
-    reference_solutions.outer.(op) = cell(maxdim,maxdim);
+    reference_solutions.matrix.(op) = cell(maxdim,maxdim);
     for d1 = 1:maxdim
         for d2 = 1:maxdim
             arg1 = reference_values.matrix{1,d1};
@@ -221,51 +222,102 @@ disp("========================================");
 disp("Starting: mtimes operation");
 disp("========================================")
 
-reference_solutions = struct;
+reference_solutions = struct('scalar',struct, ...
+                             'inner',struct, ...
+                             'outer',struct, ...
+                             'matrix',struct ...
+);
 
-% matrix multiplication
-reference_solutions.mtimes = cell(noPoly,noPoly);
-for k1 = 1:noPoly
-    for k2 = 1:noPoly
-        reference_solutions.mtimes{k1,k2} = multipoly2struct(mtimes(reference_values{1,k1},reference_values{2,k2}));
+% matrix multiplication and Kronecker product
+for op = ["mtimes" "kron"]
+    % on scalar values
+    reference_solutions.scalar.(op) = cell(noPoly,noPoly);
+    for k1 = 1:noPoly
+        for k2 = 1:noPoly
+            arg1 = reference_values.scalar{1,k1};
+            arg2 = reference_values.scalar{2,k2};
+            reference_solutions.scalar.(op){k1,k2} = multipoly2struct(feval(op,arg1,arg2));
+        end
     end
-end
 
-% Kronecker product
-reference_solutions.kron = cell(noPoly,noPoly);
-for k1 = 1:noPoly
-    for k2 = 1:noPoly
-        reference_solutions.kron{k1,k2} = multipoly2struct(kron(reference_values{1,k1},reference_values{2,k2}));
+    % on row-by-column values
+    reference_solutions.inner.(op) = cell(maxdim,maxdim);
+    for d1 = 1:maxdim
+        for d2 = 1:maxdim
+            arg1 = reference_values.vector{1,d1}';
+            arg2 = reference_values.vector{2,d2};
+
+            if ~isequal(op,"kron") && (size(arg1,2) ~= size(arg2,1))
+                % dimension mismatch
+                continue
+            end
+
+            reference_solutions.inner.(op){d1,d2} = multipoly2struct(feval(op,arg1,arg2));
+        end
+    end
+
+    % on column-by-row values
+    reference_solutions.outer.(op) = cell(maxdim,maxdim);
+    for d1 = 1:maxdim
+        for d2 = 1:maxdim
+            arg1 = reference_values.vector{1,d1};
+            arg2 = reference_values.vector{2,d2}';
+            
+            reference_solutions.outer.(op){d1,d2} = multipoly2struct(feval(op,arg1,arg2));
+        end
+    end
+
+    % on matrix values
+    reference_solutions.matrix.(op) = cell(maxdim,maxdim);
+    for d1 = 1:maxdim
+        for d2 = 1:maxdim
+            arg1 = reference_values.matrix{1,d1};
+            arg2 = reference_values.matrix{3,d2};
+
+            if ~isequal(op,"kron") && (size(arg1,2) ~= size(arg2,1))
+                % dimension mismatch
+                continue
+            end
+
+            reference_solutions.matrix.(op){d1,d2} = multipoly2struct(feval(op,arg1,arg2));
+        end
     end
 end
 
 % left-side matrix division B\A
-reference_solutions.mldivide = cell(noPoly,noPoly);
+reference_solutions.scalar.mldivide = cell(noPoly,noPoly);
 for k1 = 1:noPoly
-    vars = reference_values{1,k1}.varname;
-    reference_value_double = double(subs(reference_values{1,k1},vars,ones(size(vars))));
+    arg1 = reference_values.scalar{1,k1};
+
+    vars = arg1.varname;
+    reference_value_double = double(subs(arg1,vars,ones(size(vars))));
 
     for k2 = 1:noPoly
-        reference_solutions.mldivide{k1,k2} = multipoly2struct(mtimes(inv(reference_value_double),reference_values{2,k2}));
+        arg2 = reference_values.scalar{2,k2};
+        reference_solutions.scalar.mldivide{k1,k2} = multipoly2struct(mtimes(inv(reference_value_double),arg2));
     end
 end
 
 % right-side matrix division A/B
-reference_solutions.mrdivide = cell(noPoly,noPoly);
+reference_solutions.scalar.mrdivide = cell(noPoly,noPoly);
 for k2 = 1:noPoly
-    vars = reference_values{2,k2}.varname;
-    reference_value_double = double(subs(reference_values{2,k2},vars,ones(size(vars))));
+    arg2 = reference_values.scalar{2,k2};
+
+    vars = arg2.varname;
+    reference_value_double = double(subs(arg2,vars,ones(size(vars))));
 
     for k1 = 1:noPoly
-        reference_solutions.mrdivide{k1,k2} = multipoly2struct(mrdivide(reference_values{1,k1},reference_value_double));
+        arg1 = reference_values.scalar{1,k1};
+        reference_solutions.scalar.mrdivide{k1,k2} = multipoly2struct(mrdivide(arg1,reference_value_double));
     end
 end
 
 % matrix power with scalar exponents
-reference_solutions.mpower = cell(noPoly,3);
-for pow = (2:4)
+reference_solutions.scalar.mpower = cell(noPoly,4);
+for pow = (0:3)
     for k = 1:noPoly
-        reference_solutions.mpower{k,pow-1} = multipoly2struct(mpower(reference_values{k},pow));
+        arg1 = reference_values.scalar{1,k};
+        reference_solutions.scalar.mpower{k,pow+1} = multipoly2struct(mpower(arg1,pow));
     end
 end
 
