@@ -33,28 +33,23 @@ methods (Static)
 end
 
 methods
-    function verifyEqualPolynomial(test_case,actual,reference,varargin)
+    function verifyEqualPolynomial(test_case,actual,reference,Name,Value)
         % Verify that actual polynomial is equal to reference structure.
         test_case.assertClass(reference,?struct,'Reference must be a structure.')
 
-        test_case.verifySize(actual,reference.sz,'Size does not match.');
+        if nargin < 4
+            options = {};
+        elseif strcmp(Name,"RelTol")
+            tolerance = matlab.unittest.constraints.RelativeTolerance(Value);
+            options = {"Within" tolerance};
+        elseif strcmp(Name,"AbsTol")
+            tolerance = matlab.unittest.constraints.AbsoluteTolerance(Value);
+            options = {"Within" tolerance};
+        else
+            error('Unknown option "%s".', Name)
+        end
 
-        % verify indeterminates
-        reference_indets = casos.Indeterminates(reference.indets{:});
-        test_case.verifyEqual(actual.indeterminates,reference_indets,'Indeterminate variables do not match.');
-
-        % only compare nonzero terms
-        actual_sparse = sparsify(actual);
-
-        % verify nonzero coefficients
-        test_case.verifyEqual(full(poly2basis(actual_sparse)),reference.coeffs,'Nonzero coefficients do not match.',varargin{:});
-
-        % verify tuplet
-        [i,j,degrees] = get_tuplet(sparsity(actual_sparse));
-
-        test_case.verifyEqual(i,reference.i,'Rows do not match.');
-        test_case.verifyEqual(j,reference.j,'Columns do not match.');
-        test_case.verifyEqual(degrees,reference.degrees,'Degrees do not match.');
+        test_case.verifyThat(actual,IsEqualPolynomialTo(reference,options{:}));
     end
 end
 
