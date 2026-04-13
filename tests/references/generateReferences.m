@@ -331,35 +331,65 @@ disp("========================================");
 disp("Starting: nabla operation");
 disp("========================================")
 
-reference_solutions = struct;
+reference_solutions = struct('scalar',struct, ...
+                             'column',struct, ...
+                             'row',struct, ...
+                             'matrix',struct ...
+);
 
 % nabla with respect to single variable (derivative)
-reference_solutions.derivative = cell(noPoly,4);
-for ivar = 1:4
-    for k = 1:noPoly
-        vars = reference_values{k}.varname;
-        if ivar > length(vars)
-            % variable not in polynomial
-            var = {'y'};
-        else
-            var = vars(ivar);
-        end
+reference_solutions.scalar.derivative = cell(noPoly,4);
+reference_solutions.column.derivative = cell(maxdim,4);
+reference_solutions.row.derivative = cell(maxdim,4);
+reference_solutions.matrix.derivative = cell(maxdim,4);
 
-        reference_solutions.derivative{k,ivar} = multipoly2struct(jacobian(reference_values{k},var));
+for ivar = 1:4
+    % on scalar values
+    for k = 1:noPoly
+        reference_solutions.scalar.derivative{k,ivar} = multipoly2struct(eval_nabla("single",reference_values.scalar{1,k},ivar));
+    end
+
+    % on column vector values
+    for d = 1:maxdim
+        reference_solutions.column.derivative{d,ivar} = multipoly2struct(eval_nabla("single",reference_values.vector{1,d},ivar));
+    end
+
+    % on row vector values
+    for d = 1:maxdim
+        reference_solutions.row.derivative{d,ivar} = multipoly2struct(eval_nabla("single",reference_values.vector{2,d}',ivar));
+    end
+
+    % on matrix values
+    for d = 1:maxdim
+        reference_solutions.matrix.derivative{d,ivar} = multipoly2struct(eval_nabla("single",reference_values.matrix{1,d},ivar));
     end
 end
 
 % nabla with respect to multiple variables (gradient)
-reference_solutions.gradient = cell(noPoly,4);
-for ivar = 1:4
-    for k = 1:noPoly
-        vars = reference_values{k}.varname;
-        if ivar <= length(vars)
-            % replace variable
-            vars(ivar) = {'y'};
-        end
+reference_solutions.scalar.gradient = cell(noPoly,4);
+reference_solutions.column.gradient = cell(maxdim,4);
+reference_solutions.row.gradient = cell(maxdim,4);
+reference_solutions.matrix.gradient = cell(maxdim,4);
 
-        reference_solutions.gradient{k,ivar} = multipoly2struct(jacobian(reference_values{k},vars));
+for ivar = 1:4
+    % on scalar values
+    for k = 1:noPoly
+        reference_solutions.scalar.gradient{k,ivar} = multipoly2struct(eval_nabla("multiple",reference_values.scalar{2,k},ivar));
+    end
+
+    % on column vector values
+    for d = 1:maxdim
+        reference_solutions.column.gradient{d,ivar} = multipoly2struct(eval_nabla("multiple",reference_values.vector{2,d},ivar));
+    end
+
+    % on row vector values
+    for d = 1:maxdim
+        reference_solutions.row.gradient{d,ivar} = multipoly2struct(eval_nabla("multiple",reference_values.vector{1,d}',ivar));
+    end
+
+    % on matrix values
+    for d = 1:maxdim
+        reference_solutions.matrix.gradient{d,ivar} = multipoly2struct(eval_nabla("multiple",reference_values.matrix{2,d},ivar));
     end
 end
 
