@@ -21,11 +21,11 @@ switch (nargin)
         return
 
     case 2
-        allvars = [varargin{1}.variables varargin{2}.variables];
+        allvars = horzcat(varargin{1}.variables, varargin{2}.variables);    % ensure row vector
 
     otherwise
         allvars = cellfun(@(a) a.variables, varargin, 'UniformOutput', false);
-        allvars = [allvars{:}];
+        allvars = horzcat(allvars{:});      % ensure row vector
 end
 
 % remove duplicates and sort

@@ -40,13 +40,13 @@ methods
         % pvar / mpvar syntax
         if nargin == 1 && ischar(var)
             % syntax Indeterminates('x')
-            obj.variables = {var};
+            variables = {var};
 
         elseif ischar([arg{:}])
             % syntax Indeterminates('x','y',...)
-            obj.variables = unique(varargin,'stable');
+            variables = unique(varargin,'stable');
 
-            if length(obj.variables) < nargin
+            if length(variables) < nargin
                 warning('Duplicate variables removed.')
             end
 
@@ -54,11 +54,14 @@ methods
             % syntax Indeterminates('x',m,n)
             N = numel(zeros(arg{:},1));     % number of variables
             l = floor(log10(N))+1;          % number of places
-            obj.variables = compose(['%s_%0' num2str(l) 'd'],var,1:N);
+            variables = compose(['%s_%0' num2str(l) 'd'],var,1:N);
 
         else
             error('Undefined syntax.')
         end
+
+        % ensure that names are stored as row vector
+        obj.variables = reshape(variables,1,[]);
     end
 
     %% Getter
