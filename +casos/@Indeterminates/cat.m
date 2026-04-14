@@ -19,7 +19,7 @@ if ~all([tf{:}])
 end
 
 % else:
-vars = [vars{:}];
+vars = horzcat(vars{:});    % ensure row vector
 
 % concatenate variables
 v = casos.Indeterminates(vars{:});

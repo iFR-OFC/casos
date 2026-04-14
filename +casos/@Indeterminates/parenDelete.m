@@ -28,6 +28,6 @@ vars = obj.variables;
 vars(i{:}) = [];
 
 % return
-obj.variables = vars;
+obj.variables = reshape(vars,1,[]);     % ensure row vector
 
 end
