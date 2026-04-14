@@ -121,9 +121,9 @@ methods (Access=private)
         % only compare nonzero terms
         actual_sparse = sparsify(actual);
         % get indeterminates
-        actuals.indets = actual.indeterminates;
+        actuals.indets = actual_sparse.indeterminates;
         % get nonzero coefficients
-        actuals.coeffs = full(poly2basis(actual));
+        actuals.coeffs = full(poly2basis(actual_sparse));
         % get tuplet
         [actuals.i,actuals.j,actuals.degrees] = get_tuplet(sparsity(actual_sparse));
 
