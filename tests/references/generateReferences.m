@@ -403,13 +403,67 @@ disp("========================================");
 disp("Starting: poly2basis operation");
 disp("========================================")
 
-reference_solutions = struct;
+reference_solutions = struct('scalar',struct, ...
+                             'column',struct, ...
+                             'row',struct, ...
+                             'matrix',struct ...
+);
 
-reference_solutions.poly2basis = cell(noPoly,noPoly);
+% on scalar values
+reference_solutions.scalar.poly2basis = cell(noPoly,noPoly);
 for k1 = 1:noPoly
-    basis = monomials(reference_values{1,k1});
     for k2 = 1:noPoly
-        reference_solutions.poly2basis{k1,k2} = poly2basis(reference_values{2,k2},basis);
+        arg1 = reference_values.scalar{1,k1};
+        arg2 = reference_values.scalar{2,k2};
+        reference_solutions.scalar.poly2basis{k1,k2} = eval_poly2basis(arg1,arg2);
+    end
+end
+
+% on column vector values
+reference_solutions.column.poly2basis = cell(maxdim,maxdim);
+for d1 = 1:maxdim
+    for d2 = 1:maxdim
+        arg1 = reference_values.vector{1,d1};
+        arg2 = reference_values.vector{2,d2};
+
+        if ~isequal(size(arg1),size(arg2))
+            % size mismatch
+            continue;
+        end
+
+        reference_solutions.column.poly2basis{d1,d2} = eval_poly2basis(arg1,arg2);
+    end
+end
+
+% on row vector values
+reference_solutions.row.poly2basis = cell(maxdim,maxdim);
+for d1 = 1:maxdim
+    for d2 = 1:maxdim
+        arg1 = reference_values.vector{1,d1}';
+        arg2 = reference_values.vector{2,d2}';
+
+        if ~isequal(size(arg1),size(arg2))
+            % size mismatch
+            continue;
+        end
+
+        reference_solutions.row.poly2basis{d1,d2} = eval_poly2basis(arg1,arg2);
+    end
+end
+
+% on matrix values
+reference_solutions.matrix.poly2basis = cell(maxdim,maxdim);
+for d1 = 1:maxdim
+    for d2 = 1:maxdim
+        arg1 = reference_values.matrix{1,d1};
+        arg2 = reference_values.matrix{2,d2};
+
+        if ~isequal(size(arg1),size(arg2))
+            % size mismatch
+            continue;
+        end
+
+        reference_solutions.matrix.poly2basis{d1,d2} = eval_poly2basis(arg1,arg2);
     end
 end
 
