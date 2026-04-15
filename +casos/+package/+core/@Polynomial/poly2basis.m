@@ -17,7 +17,7 @@ elseif isempty(obj) || (isscalar(obj) && isempty(S)) || (islogical(S) && all(~S)
     % empty polynomial, selection, or projection
     assert(~isempty(obj) || isempty(S),'Cannot project empty polynomial.')
 
-    c = sparse(0,1);
+    c = obj.new_coeff(0,1);
     S = casos.Sparsity(0,0);
     return
 
