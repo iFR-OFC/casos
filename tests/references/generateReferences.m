@@ -477,14 +477,48 @@ disp("========================================");
 disp("Starting: remove_coeffs operation");
 disp("========================================")
 
-reference_solutions = struct;
+reference_solutions = struct('scalar',struct, ...
+                             'column',struct, ...
+                             'row',struct, ...
+                             'matrix',struct ...
+);
 
-reference_solutions.remove_coeffs = cell(noPoly,3);
+reference_solutions.scalar.remove_coeffs = cell(noPoly,3);
+reference_solutions.column.remove_coeffs = cell(maxdim,3);
+reference_solutions.row.remove_coeffs = cell(maxdim,3);
+reference_solutions.matrix.remove_coeffs = cell(maxdim,3);
+
 for decade = 1:3
+    % on scalar values
     for k = 1:noPoly
-        tol = prctile(coordinates(reference_values{k}),10*decade);
+        arg1 = reference_values.scalar{1,k};
+        arg2 = reference_values.scalar{2,k};
     
-        reference_solutions.remove_coeffs{k,decade} = multipoly2struct(cleanpoly(reference_values{k}, tol));
+        reference_solutions.scalar.remove_coeffs{k,decade} = multipoly2struct(eval_remove_coeffs(arg1,arg2,10*decade));
+    end
+
+    % on column vector values
+    for d = 1:maxdim
+        arg1 = reference_values.vector{1,d};
+        arg2 = reference_values.vector{2,d};
+
+        reference_solutions.column.remove_coeffs{d,decade} = multipoly2struct(eval_remove_coeffs(arg1,arg2,10*decade));
+    end
+
+    % on row vector values
+    for d = 1:maxdim
+        arg1 = reference_values.vector{1,d}';
+        arg2 = reference_values.vector{2,d}';
+
+        reference_solutions.row.remove_coeffs{d,decade} = multipoly2struct(eval_remove_coeffs(arg1,arg2,10*decade));
+    end
+
+    % on matrix values
+    for d = 1:maxdim
+        arg1 = reference_values.matrix{1,d};
+        arg2 = reference_values.matrix{2,d};
+
+        reference_solutions.matrix.remove_coeffs{d,decade} = multipoly2struct(eval_remove_coeffs(arg1,arg2,10*decade));
     end
 end
 
