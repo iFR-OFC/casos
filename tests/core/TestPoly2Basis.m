@@ -30,10 +30,10 @@ end
 methods (Test, ParameterCombination="pairwise", TestTags="scalar")
     function test_poly2basis(test_case, test_values, references, arg1, arg2)
         % Test poly2basis operation.
-        argument = test_values.scalar{1,arg1};
+        value = test_values.scalar{1,arg1};
         basis = sparsity(test_values.scalar{2,arg2});
 
-        actual = poly2basis(argument,basis);
+        actual = poly2basis(value,basis);
         reference = references.scalar.poly2basis{arg1,arg2};
 
         % perform assertion
@@ -45,17 +45,17 @@ end
 methods (Test, ParameterCombination="pairwise", TestTags=["vector" "column"])
     function test_poly2basis_column(test_case, test_values, references, dim1, dim2)
         % Test poly2basis operation on column vectors.
-        argument = test_values.vector{1,dim1};
+        value = test_values.vector{1,dim1};
         basis = sparsity(test_values.vector{2,dim2});
         
-        if ~isequal(size(argument),size(basis))
+        if ~isequal(size(value),size(basis))
             % size mismatch
-            test_case.verifyError(@() poly2basis(argument,basis),?MException);
+            test_case.verifyError(@() poly2basis(value,basis),?MException);
             return
         end
 
         % else
-        actual = poly2basis(argument,basis);
+        actual = poly2basis(value,basis);
         reference = references.column.poly2basis{dim1,dim2};
 
         % perform assertion
@@ -67,17 +67,17 @@ end
 methods (Test, ParameterCombination="pairwise", TestTags=["vector" "row"])
     function test_poly2basis_row(test_case, test_values, references, dim1, dim2)
         % Test poly2basis operation on row vectors.
-        argument = test_values.vector{1,dim1}';
+        value = test_values.vector{1,dim1}';
         basis = sparsity(test_values.vector{2,dim2}');
         
-        if ~isequal(size(argument),size(basis))
+        if ~isequal(size(value),size(basis))
             % size mismatch
-            test_case.verifyError(@() poly2basis(argument,basis),?MException);
+            test_case.verifyError(@() poly2basis(value,basis),?MException);
             return
         end
 
         % else
-        actual = poly2basis(argument,basis);
+        actual = poly2basis(value,basis);
         reference = references.row.poly2basis{dim1,dim2};
 
         % perform assertion
@@ -89,17 +89,17 @@ end
 methods (Test, ParameterCombination="pairwise", TestTags="matrix")
     function test_poly2basis_matrix(test_case, test_values, references, dim1, dim2)
         % Test poly2basis operation on matrices.
-        argument = test_values.matrix{1,dim1};
+        value = test_values.matrix{1,dim1};
         basis = sparsity(test_values.matrix{2,dim2});
         
-        if ~isequal(size(argument),size(basis))
+        if ~isequal(size(value),size(basis))
             % size mismatch
-            test_case.verifyError(@() poly2basis(argument,basis),?MException);
+            test_case.verifyError(@() poly2basis(value,basis),?MException);
             return
         end
 
         % else
-        actual = poly2basis(argument,basis);
+        actual = poly2basis(value,basis);
         reference = references.matrix.poly2basis{dim1,dim2};
 
         % perform assertion
