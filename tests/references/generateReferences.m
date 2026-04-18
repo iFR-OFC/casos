@@ -532,40 +532,89 @@ disp("========================================");
 disp("Starting: subs operation");
 disp("========================================")
 
-reference_solutions = struct;
+reference_solutions = struct('scalar',struct, ...
+                             'column',struct, ...
+                             'row',struct, ...
+                             'matrix',struct ...
+);
 
 % substitute single variable
-reference_solutions.single = cell(noPoly,4);
-for ivar = 1:4
-    for k = 1:noPoly
-        vars = reference_values{1,k}.varname;
-        if ivar > length(vars)
-            % variable not in polynomial
-            var = {'y'};
-        else
-            var = vars(ivar);
-        end
+reference_solutions.scalar.single = cell(noPoly,4);
+reference_solutions.column.single = cell(maxdim,4);
+reference_solutions.row.single = cell(maxdim,4);
+reference_solutions.matrix.single = cell(maxdim,4);
 
-        reference_solutions.single{k,ivar} = multipoly2struct(subs(reference_values{1,k},var,reference_values{2,k}));
+for ivar = 1:4
+    % on scalar values
+    for k = 1:noPoly
+        arg = reference_values.scalar{1,k};
+        new = reference_values.scalar{2,k};
+
+        reference_solutions.scalar.single{k,ivar} = multipoly2struct(eval_subs("single",arg,ivar,new));
+    end
+
+    % on column vector values
+    for d = 1:maxdim
+        arg = reference_values.vector{1,d};
+        new = reference_values.scalar{1,d};
+
+        reference_solutions.column.single{d,ivar} = multipoly2struct(eval_subs("single",arg,ivar,new));
+    end
+
+    % on row vector values
+    for d = 1:maxdim
+        arg = reference_values.vector{2,d}';
+        new = reference_values.scalar{2,d};
+
+        reference_solutions.row.single{d,ivar} = multipoly2struct(eval_subs("single",arg,ivar,new));
+    end
+
+    % on matrix values
+    for d = 1:maxdim
+        arg = reference_values.matrix{2,d};
+        new = reference_values.scalar{1,d};
+
+        reference_solutions.matrix.single{d,ivar} = multipoly2struct(eval_subs("single",arg,ivar,new));
     end
 end
 
 % substitute multiple variables
-reference_solutions.multiple = cell(noPoly,4);
-for ivar = 1:4
-    for k = 1:noPoly
-        vars = reference_values{1,k}.varname;
-        if ivar <= length(vars)
-            % replace variable
-            vars(ivar) = {'y'};
-        end
-        if k < noPoly/2
-            new = vertcat(reference_values{2,k+(1:length(vars))});
-        else
-            new = vertcat(reference_values{2,(end-k)+(1:length(vars))});
-        end
+reference_solutions.scalar.multiple = cell(noPoly,4);
+reference_solutions.column.multiple = cell(maxdim,4);
+reference_solutions.row.multiple = cell(maxdim,4);
+reference_solutions.matrix.multiple = cell(maxdim,4);
 
-        reference_solutions.multiple{k,ivar} = multipoly2struct(subs(reference_values{1,k},vars,new));
+for ivar = 1:4
+    % on scalar values
+    for k = 1:noPoly
+        arg = reference_values.scalar{2,k};
+        new = reference_values.vector{2,arg.nvars+1};
+
+        reference_solutions.scalar.multiple{k,ivar} = multipoly2struct(eval_subs("multiple",arg,ivar,new));
+    end
+
+    % on column vector values
+    for d = 1:maxdim
+        arg = reference_values.vector{2,d};
+        new = reference_values.vector{1,arg.nvars+1};
+
+        reference_solutions.column.multiple{d,ivar} = multipoly2struct(eval_subs("multiple",arg,ivar,new));
+    end
+
+    % on row vector values
+    for d = 1:maxdim
+        arg = reference_values.vector{1,d}';
+        new = reference_values.vector{2,arg.nvars+1};
+
+        reference_solutions.row.multiple{d,ivar} = multipoly2struct(eval_subs("multiple",arg,ivar,new));
+    end
+
+    % on matrix values
+    for d = 1:maxdim
+        arg = reference_values.matrix{1,d};
+        new = reference_values.vector{1,arg.nvars+1};
+
+        reference_solutions.matrix.multiple{d,ivar} = multipoly2struct(eval_subs("multiple",arg,ivar,new));
     end
 end
 
