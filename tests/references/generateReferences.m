@@ -4,9 +4,10 @@
 %
 % SPDX-License-Identifier: GPL-3.0-only
 
+%% References
 rng(0)
 
-% Generate reference solutions from multipoly
+% generate reference solutions from multipoly
 disp("========================================");
 disp("Starting: Generate test polynomials");
 disp("========================================");
@@ -628,57 +629,98 @@ disp("========================================");
 disp("Starting: concat operation");
 disp("========================================")
 
-reference_solutions = struct;
+reference_solutions = struct('scalar',struct, ...
+                             'column',struct, ...
+                             'row',struct, ...
+                             'matrix',struct ...
+);
 
-% concatenate to m-by-n matrix
-reference_solutions.concat = cell(2,5);
-for dim1 = 1:5
-    dim2 = 6-dim1;
+% concatenate to m-by-n matrix from scalars
+reference_solutions.scalar.concat = cell(2,5);
+for nrow = 1:5
+    ncol = 6-nrow;
 
     for k = 1:2
-        args_to_vertcat = mat2cell(reference_values(k,1:(dim1*dim2)), 1, repmat(dim1,1,dim2));
+        args_to_vertcat = mat2cell(reference_values.scalar(k,1:(nrow*ncol)), 1, repmat(nrow,1,ncol));
         args_to_horzcat = cellfun(@(c) vertcat(c{:}), args_to_vertcat, 'UniformOutput', false);
 
-        reference_solutions.concat{k,dim1} = multipoly2struct(horzcat(args_to_horzcat{:}));
+        reference_solutions.scalar.concat{k,nrow} = multipoly2struct(horzcat(args_to_horzcat{:}));
     end
 end
 
-% horizontal concatenation
-reference_solutions.horzcat = cell(1,4);
-for dim1 = 1:4
-    dim2 = 5-dim1;
-    dim3 = 6-dim1;
+% concatenation of column vectors
+reference_solutions.column.diagcat = cell(maxdim,maxdim);
+reference_solutions.column.horzcat = cell(maxdim,maxdim);
+reference_solutions.column.vertcat = cell(maxdim,maxdim);
 
-    p1 = reshape([reference_values{1,1:(dim1*dim2)}],dim1,dim2);
-    p2 = reshape([reference_values{2,1:(dim1*dim3)}],dim1,dim3);
+for d1 = 1:maxdim
+    for d2 = 1:maxdim
+        arg1 = reference_values.vector{1,d1};
+        arg2 = reference_values.vector{2,d2};
 
-    reference_solutions.horzcat{dim1} = multipoly2struct(horzcat(p1,p2));
+        % diagonal concatenation
+        reference_solutions.column.diagcat{d1,d2} = multipoly2struct(blkdiag(arg1,arg2));
+        % horizontal concatenation
+        if isempty(arg1) || isempty(arg2) || size(arg1,1) == size(arg2,1)
+            reference_solutions.column.horzcat{d1,d2} = multipoly2struct(horzcat(arg1,arg2));
+        end
+        % vertical concatenation 
+        if isempty(arg1) || isempty(arg2) || size(arg1,2) == size(arg2,2)
+            reference_solutions.column.vertcat{d1,d2} = multipoly2struct(vertcat(arg1,arg2));
+        end
+    end
 end
 
-% vertical concatenation
-reference_solutions.vertcat = cell(1,4);
-for dim3 = 1:4
-    dim1 = 5-dim3;
-    dim2 = 6-dim3;
+% concatenation of row vectors
+reference_solutions.row.diagcat = cell(maxdim,maxdim);
+reference_solutions.row.horzcat = cell(maxdim,maxdim);
+reference_solutions.row.vertcat = cell(maxdim,maxdim);
 
-    p1 = reshape([reference_values{1,1:(dim1*dim3)}],dim1,dim3);
-    p2 = reshape([reference_values{2,1:(dim2*dim3)}],dim2,dim3);
+for d1 = 1:maxdim
+    for d2 = 1:maxdim
+        arg1 = reference_values.vector{1,d1}';
+        arg2 = reference_values.vector{2,d2}';
 
-    reference_solutions.vertcat{dim3} = multipoly2struct(vertcat(p1,p2));
+        % diagonal concatenation
+        reference_solutions.row.diagcat{d1,d2} = multipoly2struct(blkdiag(arg1,arg2));
+        % horizontal concatenation
+        if isempty(arg1) || isempty(arg2) || size(arg1,1) == size(arg2,1)
+            reference_solutions.row.horzcat{d1,d2} = multipoly2struct(horzcat(arg1,arg2));
+        end
+        % vertical concatenation 
+        if isempty(arg1) || isempty(arg2) || size(arg1,2) == size(arg2,2)
+            reference_solutions.row.vertcat{d1,d2} = multipoly2struct(vertcat(arg1,arg2));
+        end
+    end
 end
 
-% diagonal concatenation
-reference_solutions.diagcat = cell(4,4);
-for dim1 = 1:4
-for dim3 = 1:4
-    dim2 = 5-dim1;
-    dim4 = 6-dim3;
+% concatenation of matrices
+reference_solutions.matrix.diagcat = cell(maxdim,maxdim);
+reference_solutions.matrix.horzcat = cell(maxdim,maxdim);
+reference_solutions.matrix.vertcat = cell(maxdim,maxdim);
 
-    p1 = reshape([reference_values{1,1:(dim1*dim2)}],dim1,dim2);
-    p2 = reshape([reference_values{2,1:(dim3*dim4)}],dim3,dim4);
+for d1 = 1:maxdim
+    for d2 = 1:maxdim
+        arg1 = reference_values.matrix{1,d1};
+        arg2 = reference_values.matrix{2,d2};
 
-    reference_solutions.diagcat{dim1,dim3} = multipoly2struct(blkdiag(p1,p2));
-end
+        % diagonal concatenation
+        reference_solutions.matrix.diagcat{d1,d2} = multipoly2struct(blkdiag(arg1,arg2));
+        if isempty(arg1) && isempty(arg2)
+            % empty concatenation
+            reference_solutions.matrix.horzcat{d1,d2} = multipoly2struct(polynomial);
+            reference_solutions.matrix.vertcat{d1,d2} = multipoly2struct(polynomial);
+            continue
+        end
+        % horizontal concatenation
+        if isempty(arg1) || isempty(arg2) || size(arg1,1) == size(arg2,1)
+            reference_solutions.matrix.horzcat{d1,d2} = multipoly2struct(horzcat(arg1,arg2));
+        end
+        % vertical concatenation 
+        if isempty(arg1) || isempty(arg2) || size(arg1,2) == size(arg2,2)
+            reference_solutions.matrix.vertcat{d1,d2} = multipoly2struct(vertcat(arg1,arg2));
+        end
+    end
 end
 
 save("reference_concat.mat","test_values_struct","reference_solutions")
