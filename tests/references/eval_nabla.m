@@ -16,7 +16,7 @@ switch (mode)
         res = jacobian(arg,var);
 
     case "multiple"
-        % nable with respect to multiple variables (gradient / jacobian)
+        % nabla with respect to multiple variables (gradient / jacobian)
         if ivar <= length(vars)
             % replace variable
             vars(ivar) = {'y'};
