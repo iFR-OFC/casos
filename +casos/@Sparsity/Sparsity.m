@@ -199,6 +199,8 @@ methods (Static)
     S = diag(varargin);
     S = dense(varargin);
 
+    S = tuplet(n,m,i,j,x,degrees);
+
     function S = band(n,p,varargin)
         % Create band sparsity pattern.
         S = casos.Sparsity(casadi.Sparsity.band(n,p),varargin{:});
@@ -245,6 +247,18 @@ methods
     function [i,j] = get_triplet(obj)
         % Return triplets for polynomial sparsity pattern.
         [i,j] = matrix_triplet(obj); % TODO
+    end
+
+    function [i,j,degrees] = get_tuplet(obj)
+        % Return tuplets for polynomial sparsity pattern.
+        [row,col] = get_triplet(obj.coeffs); % 0-index
+        % columns are elements
+        [i1,j1] = ind2sub(size(obj),col+1); % 1-index
+        % return 0-indices
+        i = i1-1;
+        j = j1-1;
+        % rows are degrees
+        degrees = full(obj.degmat(row+1,:)); % 1-index
     end
 
     function z = monomials(obj)

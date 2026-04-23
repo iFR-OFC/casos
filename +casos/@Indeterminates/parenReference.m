@@ -14,7 +14,8 @@ vars = obj.variables.(idx);
 
 % new indeterminates
 out = casos.Indeterminates;
-out.variables = vars;
+% ensure that names are stored as row vector
+out.variables = reshape(vars,1,[]);
 
 if length(indexOp) > 1
     % forward reference
