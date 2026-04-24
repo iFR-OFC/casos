@@ -50,7 +50,8 @@ methods (Test, ParameterCombination="pairwise", TestTags=["vector" "column"])
         
         if ~isequal(size(value),size(basis))
             % size mismatch
-            test_case.verifyError(@() poly2basis(value,basis),?MException);
+            diagtext = sprintf('Dimension mismatch expected: %s vs. %s.',mat2str(size(val1)),mat2str(size(val2)));
+            test_case.verifyError(@() poly2basis(value,basis),?MException,diagtext);
             return
         end
 
@@ -72,7 +73,8 @@ methods (Test, ParameterCombination="pairwise", TestTags=["vector" "row"])
         
         if ~isequal(size(value),size(basis))
             % size mismatch
-            test_case.verifyError(@() poly2basis(value,basis),?MException);
+            diagtext = sprintf('Dimension mismatch expected: %s vs. %s.',mat2str(size(val1)),mat2str(size(val2)));
+            test_case.verifyError(@() poly2basis(value,basis),?MException,diagtext);
             return
         end
 
@@ -94,7 +96,8 @@ methods (Test, ParameterCombination="pairwise", TestTags="matrix")
         
         if ~isequal(size(value),size(basis))
             % size mismatch
-            test_case.verifyError(@() poly2basis(value,basis),?MException);
+            diagtext = sprintf('Dimension mismatch expected: %s vs. %s.',mat2str(size(val1)),mat2str(size(val2)));
+            test_case.verifyError(@() poly2basis(value,basis),?MException,diagtext);
             return
         end
 

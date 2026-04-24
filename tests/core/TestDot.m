@@ -47,7 +47,8 @@ methods (Test, ParameterCombination="pairwise", TestTags="matrix")
 
         if ~isequal(size(val1), size(val2))
             % size mismatch
-            test_case.verifyError(@() dot(val1,val2),?MException);
+            diagtext = sprintf('Dimension mismatch expected: %s vs. %s.',mat2str(size(val1)),mat2str(size(val2)));
+            test_case.verifyError(@() dot(val1,val2),?MException,diagtext);
             return
         end
 

@@ -60,8 +60,9 @@ methods (Test, ParameterCombination="pairwise", TestTags=["vector" "column"])
 
         if ~isempty(val1) && ~isempty(val2) && size(val1,1) ~= size(val2,1)
             % first dimension mismatch
-            test_case.verifyError(@() horzcat(val1,val2),?MException);
-            test_case.verifyError(@() cat(2,val1,val2),?MException);
+            diagtext = sprintf('First dimension mismatch expected: %d vs. %d.',size(val1,1),size(val2,1));
+            test_case.verifyError(@() horzcat(val1,val2),?MException,diagtext);
+            test_case.verifyError(@() cat(2,val1,val2),?MException,diagtext);
             return
         end
 
@@ -81,8 +82,9 @@ methods (Test, ParameterCombination="pairwise", TestTags=["vector" "column"])
 
         if ~isempty(val1) && ~isempty(val2) && size(val1,2) ~= size(val2,2)
             % second dimension mismatch
-            test_case.verifyError(@() vertcat(val1,val2),?MException);
-            test_case.verifyError(@() cat(1,val1,val2),?MException);
+            diagtext = sprintf('Second dimension mismatch expected: %d vs. %d.',size(val1,2),size(val2,2));
+            test_case.verifyError(@() vertcat(val1,val2),?MException,diagtext);
+            test_case.verifyError(@() cat(1,val1,val2),?MException,diagtext);
             return
         end
 
@@ -117,8 +119,9 @@ methods (Test, ParameterCombination="pairwise", TestTags=["vector" "row"])
 
         if ~isempty(val1) && ~isempty(val2) && size(val1,1) ~= size(val2,1)
             % first dimension mismatch
-            test_case.verifyError(@() horzcat(val1,val2),?MException);
-            test_case.verifyError(@() cat(2,val1,val2),?MException);
+            diagtext = sprintf('First dimension mismatch expected: %d vs. %d.',size(val1,1),size(val2,1));
+            test_case.verifyError(@() horzcat(val1,val2),?MException,diagtext);
+            test_case.verifyError(@() cat(2,val1,val2),?MException,diagtext);
             return
         end
 
@@ -138,8 +141,9 @@ methods (Test, ParameterCombination="pairwise", TestTags=["vector" "row"])
 
         if ~isempty(val1) && ~isempty(val2) && size(val1,2) ~= size(val2,2)
             % second dimension mismatch
-            test_case.verifyError(@() vertcat(val1,val2),?MException);
-            test_case.verifyError(@() cat(1,val1,val2),?MException);
+            diagtext = sprintf('Second dimension mismatch expected: %d vs. %d.',size(val1,2),size(val2,2));
+            test_case.verifyError(@() vertcat(val1,val2),?MException,diagtext);
+            test_case.verifyError(@() cat(1,val1,val2),?MException,diagtext);
             return
         end
 
@@ -174,8 +178,9 @@ methods (Test, ParameterCombination="pairwise", TestTags="matrix")
 
         if ~isempty(val1) && ~isempty(val2) && size(val1,1) ~= size(val2,1)
             % first dimension mismatch
-            test_case.verifyError(@() horzcat(val1,val2),?MException);
-            test_case.verifyError(@() cat(2,val1,val2),?MException);
+            diagtext = sprintf('First dimension mismatch expected: %d vs. %d.',size(val1,1),size(val2,1));
+            test_case.verifyError(@() horzcat(val1,val2),?MException,diagtext);
+            test_case.verifyError(@() cat(2,val1,val2),?MException,diagtext);
             return
         end
 
@@ -195,8 +200,9 @@ methods (Test, ParameterCombination="pairwise", TestTags="matrix")
 
         if ~isempty(val1) && ~isempty(val2) && size(val1,2) ~= size(val2,2)
             % second dimension mismatch
-            test_case.verifyError(@() vertcat(val1,val2),?MException);
-            test_case.verifyError(@() cat(1,val1,val2),?MException);
+            diagtext = sprintf('Second dimension mismatch expected: %d vs. %d.',size(val1,2),size(val2,2));
+            test_case.verifyError(@() vertcat(val1,val2),?MException,diagtext);
+            test_case.verifyError(@() cat(1,val1,val2),?MException,diagtext);
             return
         end
 

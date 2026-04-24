@@ -89,7 +89,8 @@ methods (Test, ParameterCombination="pairwise", TestTags=["vector" "inner"])
 
         if (size(val1,2) ~= size(val2,1))
             % inner dimension mismatch
-            test_case.verifyError(@() mtimes(val1,val2),?MException);
+            diagtext = sprintf('Inner dimension mismatch expected: %d vs. %d.',size(val1,2),size(val2,1));
+            test_case.verifyError(@() mtimes(val1,val2),?MException,diagtext);
             return
         end
 
@@ -148,7 +149,8 @@ methods (Test, ParameterCombination="pairwise", TestTags="matrix")
 
         if (size(val1,2) ~= size(val2,1))
             % inner dimension mismatch
-            test_case.verifyError(@() mtimes(val1,val2),?MException);
+            diagtext = sprintf('Inner dimension mismatch expected: %d vs. %d.',size(val1,2),size(val2,1));
+            test_case.verifyError(@() mtimes(val1,val2),?MException,diagtext);
             return
         end
 

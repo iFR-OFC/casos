@@ -142,7 +142,8 @@ methods (Test, ParameterCombination="pairwise", TestTags=["matrix"])
         if (~isrow(val1) && ~isrow(val2) && size(val1,1) ~= size(val2,1)) ...
                     || (~iscolumn(val1) && ~iscolumn(val2) && size(val1,2) ~= size(val2,2))
             % dimension mismatch
-            test_case.verifyError(@() feval(op,val1,val2),?MException);
+            diagtext = sprintf('Dimension mismatch expected: %s vs. %s.',mat2str(size(val1)),mat2str(size(val2)));
+            test_case.verifyError(@() feval(op,val1,val2),?MException,diagtext);
             return
         end
 
@@ -164,7 +165,8 @@ methods (Test, ParameterCombination="pairwise", TestTags=["matrix"])
         if (~isrow(val1) && ~isrow(val2) && size(val1,1) ~= size(val2,1)) ...
                     || (~iscolumn(val1) && ~iscolumn(val2) && size(val1,2) ~= size(val2,2))
             % dimension mismatch
-            test_case.verifyError(@() ldivide(val1,val2),?MException);
+            diagtext = sprintf('Dimension mismatch expected: %s vs. %s.',mat2str(size(val1)),mat2str(size(val2)));
+            test_case.verifyError(@() ldivide(val1,val2),?MException,diagtext);
             return
         end
 
@@ -186,7 +188,8 @@ methods (Test, ParameterCombination="pairwise", TestTags=["matrix"])
         if (~isrow(val1) && ~isrow(val2) && size(val1,1) ~= size(val2,1)) ...
                 || (~iscolumn(val1) && ~iscolumn(val2) && size(val1,2) ~= size(val2,2))
             % dimension mismatch
-            test_case.verifyError(@() rdivide(val1,val2),?MException);
+            diagtext = sprintf('Dimension mismatch expected: %s vs. %s.',mat2str(size(val1)),mat2str(size(val2)));
+            test_case.verifyError(@() rdivide(val1,val2),?MException,diagtext);
             return
         end
 
