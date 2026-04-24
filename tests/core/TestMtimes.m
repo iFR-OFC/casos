@@ -21,7 +21,7 @@ end
 methods (TestParameterDefinition, Static)
     function [test_values,references,arg1,arg2] = initializeTestData()
         % Initialize test data for matrix multiplication operations.
-        [test_values,references] = TestPolynomialOperations.loadTestData("mtimes");
+        [test_values,references] = TestMtimes.loadTestData("mtimes");
 
         arg1 = num2cell(1:size(test_values{:}.scalar,2));
         arg2 = num2cell(1:size(test_values{:}.scalar,2));

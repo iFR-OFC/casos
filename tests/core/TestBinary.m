@@ -21,7 +21,7 @@ end
 methods (TestParameterDefinition, Static)
     function [test_values,references,arg1,arg2] = initializeTestData()
         % Initialize test data for binary operations.
-        [test_values,references] = TestPolynomialOperations.loadTestData("binary");
+        [test_values,references] = TestBinary.loadTestData("binary");
 
         arg1 = num2cell(1:size(test_values{:}.scalar,2));
         arg2 = num2cell(1:size(test_values{:}.scalar,2));

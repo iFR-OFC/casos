@@ -10,8 +10,9 @@ classdef (Abstract) TestPolynomialOperations < matlab.unittest.TestCase
 methods (Static)
     function [test_values,references] = loadTestData(op)
         % Load test data for given polynomial operations.
-        load(compose("../references/reference_%s.mat", op),"test_values_struct","reference_solutions")
+        S = load("../references/reference_values.mat","test_values_struct","reference_"+op);
 
+        test_values_struct = S.test_values_struct;
         test_value = struct;
         
         for type = ["scalar" "vector" "matrix"]
@@ -28,7 +29,7 @@ methods (Static)
         end
 
         test_values = {test_value};
-        references  = {reference_solutions};
+        references  = {S.("reference_"+op)};
     end
 end
 

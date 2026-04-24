@@ -20,7 +20,7 @@ end
 methods (TestParameterDefinition, Static)
     function [test_values,references,arg] = initializeTestData()
         % Initialize test data for unary operations.
-        [test_values,references] = TestPolynomialOperations.loadTestData("unary");
+        [test_values,references] = TestUnary.loadTestData("unary");
 
         arg = num2cell(1:size(test_values{:}.scalar,2));
     end

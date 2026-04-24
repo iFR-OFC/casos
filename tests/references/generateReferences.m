@@ -58,7 +58,7 @@ for dim = 1:maxdim
         generateTestPolynomials([dim maxdim-dim],variables,maxdeg);
 end
 
-save("test_values.mat","test_values_struct");
+save("reference_values.mat","test_values_struct");
 
 disp("Completed: Generate test polynomials");
 disp(" ");
@@ -68,41 +68,41 @@ disp("========================================");
 disp("Starting: unary operation");
 disp("========================================")
 
-reference_solutions = struct('scalar',struct, ...
-                             'matrix',struct ...
+reference_unary = struct('scalar',struct, ...
+                         'matrix',struct ...
 );
 
 % unary plus and minus
 for op = ["uplus" "uminus"]
     % on scalar values
-    reference_solutions.scalar.(op) = cell(noPoly,1);
+    reference_unary.scalar.(op) = cell(noPoly,1);
     for k = 1:noPoly
-       reference_solutions.scalar.(op){k} = multipoly2struct(feval(op,reference_values.scalar{1,k}));
+       reference_unary.scalar.(op){k} = multipoly2struct(feval(op,reference_values.scalar{1,k}));
     end
 
     % on matrix values
-    reference_solutions.matrix.(op) = cell(maxdim,1);
+    reference_unary.matrix.(op) = cell(maxdim,1);
     for dim = 1:maxdim
-        reference_solutions.matrix.(op){dim} = multipoly2struct(feval(op,reference_values.matrix{1,dim}));
+        reference_unary.matrix.(op){dim} = multipoly2struct(feval(op,reference_values.matrix{1,dim}));
     end
 end
 
 % element-wise power with scalar exponent
-reference_solutions.scalar.power = cell(noPoly,4);
-reference_solutions.matrix.power = cell(maxdim,3);
+reference_unary.scalar.power = cell(noPoly,4);
+reference_unary.matrix.power = cell(maxdim,3);
 for pow = (0:3)
     % on scalar values
     for k = 1:noPoly
-        reference_solutions.scalar.power{k,pow+1} = multipoly2struct(power(reference_values.scalar{1,k},pow));
+        reference_unary.scalar.power{k,pow+1} = multipoly2struct(power(reference_values.scalar{1,k},pow));
     end
 
     % on matrix values
     for dim = 1:maxdim
-        reference_solutions.matrix.power{dim,pow+1} = multipoly2struct(power(reference_values.matrix{1,dim},pow));
+        reference_unary.matrix.power{dim,pow+1} = multipoly2struct(power(reference_values.matrix{1,dim},pow));
     end
 end
 
-save("reference_unary.mat","test_values_struct","reference_solutions")
+save("reference_values.mat","reference_unary","-append")
 
 disp("Completed: unary operation");
 disp(" ");
@@ -112,7 +112,7 @@ disp("========================================");
 disp("Starting: binary operation");
 disp("========================================") 
 
-reference_solutions = struct('scalar',struct, ...
+reference_binary = struct('scalar',struct, ...
                              'inner',struct, ...
                              'outer',struct, ...
                              'matrix',struct ...
@@ -122,39 +122,39 @@ reference_solutions = struct('scalar',struct, ...
 % as well as left-side (B.\A) and right-side (A./B) division
 for op = ["plus" "minus" "times" "ldivide" "rdivide"]
     % on scalar values
-    reference_solutions.scalar.(op) = cell(noPoly,noPoly);
+    reference_binary.scalar.(op) = cell(noPoly,noPoly);
     for k1 = 1:noPoly
         for k2 = 1:noPoly
             arg1 = reference_values.scalar{1,k1};
             arg2 = reference_values.scalar{2,k2};
-            reference_solutions.scalar.(op){k1,k2} = multipoly2struct(eval_binary(op,arg1,arg2));
+            reference_binary.scalar.(op){k1,k2} = multipoly2struct(eval_binary(op,arg1,arg2));
         end
     end
 
     % on row-by-column values
-    reference_solutions.inner.(op) = cell(maxdim,maxdim);
+    reference_binary.inner.(op) = cell(maxdim,maxdim);
     for d1 = 1:maxdim
         for d2 = 1:maxdim
             arg1 = reference_values.vector{1,d1}';
             arg2 = reference_values.vector{2,d2};
-            
-            reference_solutions.inner.(op){d1,d2} = multipoly2struct(eval_binary(op,arg1,arg2));
+
+            reference_binary.inner.(op){d1,d2} = multipoly2struct(eval_binary(op,arg1,arg2));
         end
     end
 
     % on column-by-row values
-    reference_solutions.outer.(op) = cell(maxdim,maxdim);
+    reference_binary.outer.(op) = cell(maxdim,maxdim);
     for d1 = 1:maxdim
         for d2 = 1:maxdim
             arg1 = reference_values.vector{1,d1};
             arg2 = reference_values.vector{2,d2}';
 
-            reference_solutions.outer.(op){d1,d2} = multipoly2struct(eval_binary(op,arg1,arg2));
+            reference_binary.outer.(op){d1,d2} = multipoly2struct(eval_binary(op,arg1,arg2));
         end
     end
 
     % on matrix values
-    reference_solutions.matrix.(op) = cell(maxdim,maxdim);
+    reference_binary.matrix.(op) = cell(maxdim,maxdim);
     for d1 = 1:maxdim
         for d2 = 1:maxdim
             arg1 = reference_values.matrix{1,d1};
@@ -166,12 +166,12 @@ for op = ["plus" "minus" "times" "ldivide" "rdivide"]
                 continue
             end
 
-            reference_solutions.matrix.(op){d1,d2} = multipoly2struct(eval_binary(op,arg1,arg2));
+            reference_binary.matrix.(op){d1,d2} = multipoly2struct(eval_binary(op,arg1,arg2));
         end
     end    
 end
 
-save("reference_binary.mat","test_values_struct","reference_solutions")
+save("reference_values.mat","reference_binary","-append")
 
 disp("Completed: binary operation");
 disp(" ");
@@ -181,22 +181,24 @@ disp("========================================");
 disp("Starting: dot operation");
 disp("========================================");
 
-reference_solutions = struct;
+reference_dot = struct('scalar',struct, ...
+                        'matrix',struct ...
+);
 
 % dot product on scalar values
-reference_solutions.scalar = cell(noPoly,noPoly);
+reference_dot.scalar.dot = cell(noPoly,noPoly);
 for k1 = 1:noPoly
     arg1 = reference_values.scalar{1,k1};
     basis = monomials(arg1);
 
     for k2 = 1:noPoly
         arg2 = reference_values.scalar{2,k2};
-        reference_solutions.scalar{k1,k2} = full(dot(coordinates(arg1), coordinates(arg2,basis)));
+        reference_dot.scalar.dot{k1,k2} = full(dot(coordinates(arg1), coordinates(arg2,basis)));
     end
 end
 
 % dot product on matrix values
-reference_solutions.matrix = cell(maxdim,maxdim);
+reference_dot.matrix.dot = cell(maxdim,maxdim);
 for d1 = 1:maxdim
     arg1 = reference_values.matrix{1,d1};
     basis = monomials(arg1);
@@ -209,11 +211,11 @@ for d1 = 1:maxdim
             continue
         end
 
-        reference_solutions.matrix{d1,d2} = full(dot(coordinates(arg1,basis), coordinates(arg2,basis)));
+        reference_dot.matrix.dot{d1,d2} = full(dot(coordinates(arg1,basis), coordinates(arg2,basis)));
     end
 end
 
-save("reference_dot.mat","test_values_struct","reference_solutions")
+save("reference_values.mat","reference_dot","-append")
 
 disp("Completed: dot operation");
 disp(" ");
@@ -223,7 +225,7 @@ disp("========================================");
 disp("Starting: mtimes operation");
 disp("========================================")
 
-reference_solutions = struct('scalar',struct, ...
+reference_mtimes = struct('scalar',struct, ...
                              'inner',struct, ...
                              'outer',struct, ...
                              'matrix',struct ...
@@ -232,17 +234,17 @@ reference_solutions = struct('scalar',struct, ...
 % matrix multiplication and Kronecker product
 for op = ["mtimes" "kron"]
     % on scalar values
-    reference_solutions.scalar.(op) = cell(noPoly,noPoly);
+    reference_mtimes.scalar.(op) = cell(noPoly,noPoly);
     for k1 = 1:noPoly
         for k2 = 1:noPoly
             arg1 = reference_values.scalar{1,k1};
             arg2 = reference_values.scalar{2,k2};
-            reference_solutions.scalar.(op){k1,k2} = multipoly2struct(feval(op,arg1,arg2));
+            reference_mtimes.scalar.(op){k1,k2} = multipoly2struct(feval(op,arg1,arg2));
         end
     end
 
     % on row-by-column values
-    reference_solutions.inner.(op) = cell(maxdim,maxdim);
+    reference_mtimes.inner.(op) = cell(maxdim,maxdim);
     for d1 = 1:maxdim
         for d2 = 1:maxdim
             arg1 = reference_values.vector{1,d1}';
@@ -253,23 +255,23 @@ for op = ["mtimes" "kron"]
                 continue
             end
 
-            reference_solutions.inner.(op){d1,d2} = multipoly2struct(feval(op,arg1,arg2));
+            reference_mtimes.inner.(op){d1,d2} = multipoly2struct(feval(op,arg1,arg2));
         end
     end
 
     % on column-by-row values
-    reference_solutions.outer.(op) = cell(maxdim,maxdim);
+    reference_mtimes.outer.(op) = cell(maxdim,maxdim);
     for d1 = 1:maxdim
         for d2 = 1:maxdim
             arg1 = reference_values.vector{1,d1};
             arg2 = reference_values.vector{2,d2}';
-            
-            reference_solutions.outer.(op){d1,d2} = multipoly2struct(feval(op,arg1,arg2));
+
+            reference_mtimes.outer.(op){d1,d2} = multipoly2struct(feval(op,arg1,arg2));
         end
     end
 
     % on matrix values
-    reference_solutions.matrix.(op) = cell(maxdim,maxdim);
+    reference_mtimes.matrix.(op) = cell(maxdim,maxdim);
     for d1 = 1:maxdim
         for d2 = 1:maxdim
             arg1 = reference_values.matrix{1,d1};
@@ -280,13 +282,13 @@ for op = ["mtimes" "kron"]
                 continue
             end
 
-            reference_solutions.matrix.(op){d1,d2} = multipoly2struct(feval(op,arg1,arg2));
+            reference_mtimes.matrix.(op){d1,d2} = multipoly2struct(feval(op,arg1,arg2));
         end
     end
 end
 
 % left-side matrix division B\A
-reference_solutions.scalar.mldivide = cell(noPoly,noPoly);
+reference_mtimes.scalar.mldivide = cell(noPoly,noPoly);
 for k1 = 1:noPoly
     arg1 = reference_values.scalar{1,k1};
 
@@ -295,12 +297,12 @@ for k1 = 1:noPoly
 
     for k2 = 1:noPoly
         arg2 = reference_values.scalar{2,k2};
-        reference_solutions.scalar.mldivide{k1,k2} = multipoly2struct(mtimes(inv(reference_value_double),arg2));
+        reference_mtimes.scalar.mldivide{k1,k2} = multipoly2struct(mtimes(inv(reference_value_double),arg2));
     end
 end
 
 % right-side matrix division A/B
-reference_solutions.scalar.mrdivide = cell(noPoly,noPoly);
+reference_mtimes.scalar.mrdivide = cell(noPoly,noPoly);
 for k2 = 1:noPoly
     arg2 = reference_values.scalar{2,k2};
 
@@ -309,20 +311,20 @@ for k2 = 1:noPoly
 
     for k1 = 1:noPoly
         arg1 = reference_values.scalar{1,k1};
-        reference_solutions.scalar.mrdivide{k1,k2} = multipoly2struct(mrdivide(arg1,reference_value_double));
+        reference_mtimes.scalar.mrdivide{k1,k2} = multipoly2struct(mrdivide(arg1,reference_value_double));
     end
 end
 
 % matrix power with scalar exponents
-reference_solutions.scalar.mpower = cell(noPoly,4);
+reference_mtimes.scalar.mpower = cell(noPoly,4);
 for pow = (0:3)
     for k = 1:noPoly
         arg1 = reference_values.scalar{1,k};
-        reference_solutions.scalar.mpower{k,pow+1} = multipoly2struct(mpower(arg1,pow));
+        reference_mtimes.scalar.mpower{k,pow+1} = multipoly2struct(mpower(arg1,pow));
     end
 end
 
-save("reference_mtimes.mat","test_values_struct","reference_solutions")
+save("reference_values.mat","reference_mtimes","-append")
 
 disp("Completed: mtimes operation");
 disp(" ");
@@ -332,69 +334,69 @@ disp("========================================");
 disp("Starting: nabla operation");
 disp("========================================")
 
-reference_solutions = struct('scalar',struct, ...
-                             'column',struct, ...
-                             'row',struct, ...
-                             'matrix',struct ...
+reference_nabla = struct('scalar',struct, ...
+                         'column',struct, ...
+                         'row',struct, ...
+                         'matrix',struct ...
 );
 
 % nabla with respect to single variable (derivative)
-reference_solutions.scalar.derivative = cell(noPoly,4);
-reference_solutions.column.derivative = cell(maxdim,4);
-reference_solutions.row.derivative = cell(maxdim,4);
-reference_solutions.matrix.derivative = cell(maxdim,4);
+reference_nabla.scalar.derivative = cell(noPoly,4);
+reference_nabla.column.derivative = cell(maxdim,4);
+reference_nabla.row.derivative = cell(maxdim,4);
+reference_nabla.matrix.derivative = cell(maxdim,4);
 
 for ivar = 1:4
     % on scalar values
     for k = 1:noPoly
-        reference_solutions.scalar.derivative{k,ivar} = multipoly2struct(eval_nabla("single",reference_values.scalar{1,k},ivar));
+        reference_nabla.scalar.derivative{k,ivar} = multipoly2struct(eval_nabla("single",reference_values.scalar{1,k},ivar));
     end
 
     % on column vector values
     for d = 1:maxdim
-        reference_solutions.column.derivative{d,ivar} = multipoly2struct(eval_nabla("single",reference_values.vector{1,d},ivar));
+        reference_nabla.column.derivative{d,ivar} = multipoly2struct(eval_nabla("single",reference_values.vector{1,d},ivar));
     end
 
     % on row vector values
     for d = 1:maxdim
-        reference_solutions.row.derivative{d,ivar} = multipoly2struct(eval_nabla("single",reference_values.vector{2,d}',ivar));
+        reference_nabla.row.derivative{d,ivar} = multipoly2struct(eval_nabla("single",reference_values.vector{2,d}',ivar));
     end
 
     % on matrix values
     for d = 1:maxdim
-        reference_solutions.matrix.derivative{d,ivar} = multipoly2struct(eval_nabla("single",reference_values.matrix{1,d},ivar));
+        reference_nabla.matrix.derivative{d,ivar} = multipoly2struct(eval_nabla("single",reference_values.matrix{1,d},ivar));
     end
 end
 
 % nabla with respect to multiple variables (gradient)
-reference_solutions.scalar.gradient = cell(noPoly,4);
-reference_solutions.column.gradient = cell(maxdim,4);
-reference_solutions.row.gradient = cell(maxdim,4);
-reference_solutions.matrix.gradient = cell(maxdim,4);
+reference_nabla.scalar.gradient = cell(noPoly,4);
+reference_nabla.column.gradient = cell(maxdim,4);
+reference_nabla.row.gradient = cell(maxdim,4);
+reference_nabla.matrix.gradient = cell(maxdim,4);
 
 for ivar = 1:4
     % on scalar values
     for k = 1:noPoly
-        reference_solutions.scalar.gradient{k,ivar} = multipoly2struct(eval_nabla("multiple",reference_values.scalar{2,k},ivar));
+        reference_nabla.scalar.gradient{k,ivar} = multipoly2struct(eval_nabla("multiple",reference_values.scalar{2,k},ivar));
     end
 
     % on column vector values
     for d = 1:maxdim
-        reference_solutions.column.gradient{d,ivar} = multipoly2struct(eval_nabla("multiple",reference_values.vector{2,d},ivar));
+        reference_nabla.column.gradient{d,ivar} = multipoly2struct(eval_nabla("multiple",reference_values.vector{2,d},ivar));
     end
 
     % on row vector values
     for d = 1:maxdim
-        reference_solutions.row.gradient{d,ivar} = multipoly2struct(eval_nabla("multiple",reference_values.vector{1,d}',ivar));
+        reference_nabla.row.gradient{d,ivar} = multipoly2struct(eval_nabla("multiple",reference_values.vector{1,d}',ivar));
     end
 
     % on matrix values
     for d = 1:maxdim
-        reference_solutions.matrix.gradient{d,ivar} = multipoly2struct(eval_nabla("multiple",reference_values.matrix{2,d},ivar));
+        reference_nabla.matrix.gradient{d,ivar} = multipoly2struct(eval_nabla("multiple",reference_values.matrix{2,d},ivar));
     end
 end
 
-save("reference_nabla.mat","test_values_struct","reference_solutions")
+save("reference_values.mat","reference_nabla","-append")
 
 disp("Completed: nabla operation");
 disp(" ");
@@ -404,24 +406,24 @@ disp("========================================");
 disp("Starting: poly2basis operation");
 disp("========================================")
 
-reference_solutions = struct('scalar',struct, ...
-                             'column',struct, ...
-                             'row',struct, ...
-                             'matrix',struct ...
+reference_poly2basis = struct('scalar',struct, ...
+                                 'column',struct, ...
+                                 'row',struct, ...
+                                 'matrix',struct ...
 );
 
 % on scalar values
-reference_solutions.scalar.poly2basis = cell(noPoly,noPoly);
+reference_poly2basis.scalar.poly2basis = cell(noPoly,noPoly);
 for k1 = 1:noPoly
     for k2 = 1:noPoly
         arg1 = reference_values.scalar{1,k1};
         arg2 = reference_values.scalar{2,k2};
-        reference_solutions.scalar.poly2basis{k1,k2} = eval_poly2basis(arg1,arg2);
+        reference_poly2basis.scalar.poly2basis{k1,k2} = eval_poly2basis(arg1,arg2);
     end
 end
 
 % on column vector values
-reference_solutions.column.poly2basis = cell(maxdim,maxdim);
+reference_poly2basis.column.poly2basis = cell(maxdim,maxdim);
 for d1 = 1:maxdim
     for d2 = 1:maxdim
         arg1 = reference_values.vector{1,d1};
@@ -432,12 +434,12 @@ for d1 = 1:maxdim
             continue;
         end
 
-        reference_solutions.column.poly2basis{d1,d2} = eval_poly2basis(arg1,arg2);
+        reference_poly2basis.column.poly2basis{d1,d2} = eval_poly2basis(arg1,arg2);
     end
 end
 
 % on row vector values
-reference_solutions.row.poly2basis = cell(maxdim,maxdim);
+reference_poly2basis.row.poly2basis = cell(maxdim,maxdim);
 for d1 = 1:maxdim
     for d2 = 1:maxdim
         arg1 = reference_values.vector{1,d1}';
@@ -448,12 +450,12 @@ for d1 = 1:maxdim
             continue;
         end
 
-        reference_solutions.row.poly2basis{d1,d2} = eval_poly2basis(arg1,arg2);
+        reference_poly2basis.row.poly2basis{d1,d2} = eval_poly2basis(arg1,arg2);
     end
 end
 
 % on matrix values
-reference_solutions.matrix.poly2basis = cell(maxdim,maxdim);
+reference_poly2basis.matrix.poly2basis = cell(maxdim,maxdim);
 for d1 = 1:maxdim
     for d2 = 1:maxdim
         arg1 = reference_values.matrix{1,d1};
@@ -464,11 +466,11 @@ for d1 = 1:maxdim
             continue;
         end
 
-        reference_solutions.matrix.poly2basis{d1,d2} = eval_poly2basis(arg1,arg2);
+        reference_poly2basis.matrix.poly2basis{d1,d2} = eval_poly2basis(arg1,arg2);
     end
 end
 
-save("reference_poly2basis.mat","test_values_struct","reference_solutions")
+save("reference_values.mat","reference_poly2basis","-append")
 
 disp("Completed: coordinates operation");
 disp(" ");
@@ -478,24 +480,24 @@ disp("========================================");
 disp("Starting: remove_coeffs operation");
 disp("========================================")
 
-reference_solutions = struct('scalar',struct, ...
-                             'column',struct, ...
-                             'row',struct, ...
-                             'matrix',struct ...
+reference_remove_coeffs = struct('scalar',struct, ...
+                                 'column',struct, ...
+                                 'row',struct, ...
+                                 'matrix',struct ...
 );
 
-reference_solutions.scalar.remove_coeffs = cell(noPoly,3);
-reference_solutions.column.remove_coeffs = cell(maxdim,3);
-reference_solutions.row.remove_coeffs = cell(maxdim,3);
-reference_solutions.matrix.remove_coeffs = cell(maxdim,3);
+reference_remove_coeffs.scalar.remove_coeffs = cell(noPoly,3);
+reference_remove_coeffs.column.remove_coeffs = cell(maxdim,3);
+reference_remove_coeffs.row.remove_coeffs = cell(maxdim,3);
+reference_remove_coeffs.matrix.remove_coeffs = cell(maxdim,3);
 
 for decade = 1:3
     % on scalar values
     for k = 1:noPoly
         arg1 = reference_values.scalar{1,k};
         arg2 = reference_values.scalar{2,k};
-    
-        reference_solutions.scalar.remove_coeffs{k,decade} = multipoly2struct(eval_remove_coeffs(arg1,arg2,10*decade));
+
+        reference_remove_coeffs.scalar.remove_coeffs{k,decade} = multipoly2struct(eval_remove_coeffs(arg1,arg2,10*decade));
     end
 
     % on column vector values
@@ -503,7 +505,7 @@ for decade = 1:3
         arg1 = reference_values.vector{1,d};
         arg2 = reference_values.vector{2,d};
 
-        reference_solutions.column.remove_coeffs{d,decade} = multipoly2struct(eval_remove_coeffs(arg1,arg2,10*decade));
+        reference_remove_coeffs.column.remove_coeffs{d,decade} = multipoly2struct(eval_remove_coeffs(arg1,arg2,10*decade));
     end
 
     % on row vector values
@@ -511,7 +513,7 @@ for decade = 1:3
         arg1 = reference_values.vector{1,d}';
         arg2 = reference_values.vector{2,d}';
 
-        reference_solutions.row.remove_coeffs{d,decade} = multipoly2struct(eval_remove_coeffs(arg1,arg2,10*decade));
+        reference_remove_coeffs.row.remove_coeffs{d,decade} = multipoly2struct(eval_remove_coeffs(arg1,arg2,10*decade));
     end
 
     % on matrix values
@@ -519,11 +521,11 @@ for decade = 1:3
         arg1 = reference_values.matrix{1,d};
         arg2 = reference_values.matrix{2,d};
 
-        reference_solutions.matrix.remove_coeffs{d,decade} = multipoly2struct(eval_remove_coeffs(arg1,arg2,10*decade));
+        reference_remove_coeffs.matrix.remove_coeffs{d,decade} = multipoly2struct(eval_remove_coeffs(arg1,arg2,10*decade));
     end
 end
 
-save("reference_remove_coeffs.mat","test_values_struct","reference_solutions")
+save("reference_values.mat","reference_remove_coeffs","-append")
 
 disp("Completed: remove_coeffs operation");
 disp(" ");
@@ -533,17 +535,17 @@ disp("========================================");
 disp("Starting: subs operation");
 disp("========================================")
 
-reference_solutions = struct('scalar',struct, ...
-                             'column',struct, ...
-                             'row',struct, ...
-                             'matrix',struct ...
+reference_subs = struct('scalar',struct, ...
+                         'column',struct, ...
+                         'row',struct, ...
+                         'matrix',struct ...
 );
 
 % substitute single variable
-reference_solutions.scalar.single = cell(noPoly,4);
-reference_solutions.column.single = cell(maxdim,4);
-reference_solutions.row.single = cell(maxdim,4);
-reference_solutions.matrix.single = cell(maxdim,4);
+reference_subs.scalar.single = cell(noPoly,4);
+reference_subs.column.single = cell(maxdim,4);
+reference_subs.row.single = cell(maxdim,4);
+reference_subs.matrix.single = cell(maxdim,4);
 
 for ivar = 1:4
     % on scalar values
@@ -551,7 +553,7 @@ for ivar = 1:4
         arg = reference_values.scalar{1,k};
         new = reference_values.scalar{2,k};
 
-        reference_solutions.scalar.single{k,ivar} = multipoly2struct(eval_subs("single",arg,ivar,new));
+        reference_subs.scalar.single{k,ivar} = multipoly2struct(eval_subs("single",arg,ivar,new));
     end
 
     % on column vector values
@@ -559,7 +561,7 @@ for ivar = 1:4
         arg = reference_values.vector{1,d};
         new = reference_values.scalar{1,d};
 
-        reference_solutions.column.single{d,ivar} = multipoly2struct(eval_subs("single",arg,ivar,new));
+        reference_subs.column.single{d,ivar} = multipoly2struct(eval_subs("single",arg,ivar,new));
     end
 
     % on row vector values
@@ -567,7 +569,7 @@ for ivar = 1:4
         arg = reference_values.vector{2,d}';
         new = reference_values.scalar{2,d};
 
-        reference_solutions.row.single{d,ivar} = multipoly2struct(eval_subs("single",arg,ivar,new));
+        reference_subs.row.single{d,ivar} = multipoly2struct(eval_subs("single",arg,ivar,new));
     end
 
     % on matrix values
@@ -575,15 +577,15 @@ for ivar = 1:4
         arg = reference_values.matrix{2,d};
         new = reference_values.scalar{1,d};
 
-        reference_solutions.matrix.single{d,ivar} = multipoly2struct(eval_subs("single",arg,ivar,new));
+        reference_subs.matrix.single{d,ivar} = multipoly2struct(eval_subs("single",arg,ivar,new));
     end
 end
 
 % substitute multiple variables
-reference_solutions.scalar.multiple = cell(noPoly,4);
-reference_solutions.column.multiple = cell(maxdim,4);
-reference_solutions.row.multiple = cell(maxdim,4);
-reference_solutions.matrix.multiple = cell(maxdim,4);
+reference_subs.scalar.multiple = cell(noPoly,4);
+reference_subs.column.multiple = cell(maxdim,4);
+reference_subs.row.multiple = cell(maxdim,4);
+reference_subs.matrix.multiple = cell(maxdim,4);
 
 for ivar = 1:4
     % on scalar values
@@ -591,7 +593,7 @@ for ivar = 1:4
         arg = reference_values.scalar{2,k};
         new = reference_values.vector{2,arg.nvars+1};
 
-        reference_solutions.scalar.multiple{k,ivar} = multipoly2struct(eval_subs("multiple",arg,ivar,new));
+        reference_subs.scalar.multiple{k,ivar} = multipoly2struct(eval_subs("multiple",arg,ivar,new));
     end
 
     % on column vector values
@@ -599,7 +601,7 @@ for ivar = 1:4
         arg = reference_values.vector{2,d};
         new = reference_values.vector{1,arg.nvars+1};
 
-        reference_solutions.column.multiple{d,ivar} = multipoly2struct(eval_subs("multiple",arg,ivar,new));
+        reference_subs.column.multiple{d,ivar} = multipoly2struct(eval_subs("multiple",arg,ivar,new));
     end
 
     % on row vector values
@@ -607,7 +609,7 @@ for ivar = 1:4
         arg = reference_values.vector{1,d}';
         new = reference_values.vector{2,arg.nvars+1};
 
-        reference_solutions.row.multiple{d,ivar} = multipoly2struct(eval_subs("multiple",arg,ivar,new));
+        reference_subs.row.multiple{d,ivar} = multipoly2struct(eval_subs("multiple",arg,ivar,new));
     end
 
     % on matrix values
@@ -615,11 +617,11 @@ for ivar = 1:4
         arg = reference_values.matrix{1,d};
         new = reference_values.vector{1,arg.nvars+1};
 
-        reference_solutions.matrix.multiple{d,ivar} = multipoly2struct(eval_subs("multiple",arg,ivar,new));
+        reference_subs.matrix.multiple{d,ivar} = multipoly2struct(eval_subs("multiple",arg,ivar,new));
     end
 end
 
-save("reference_subs.mat","test_values_struct","reference_solutions")
+save("reference_values.mat","reference_subs","-append")
 
 disp("Completed: subs operation");
 disp(" ");
@@ -629,14 +631,14 @@ disp("========================================");
 disp("Starting: concat operation");
 disp("========================================")
 
-reference_solutions = struct('scalar',struct, ...
+reference_concat = struct('scalar',struct, ...
                              'column',struct, ...
                              'row',struct, ...
                              'matrix',struct ...
 );
 
 % concatenate to m-by-n matrix from scalars
-reference_solutions.scalar.concat = cell(2,5);
+reference_concat.scalar.concat = cell(2,5);
 for nrow = 1:5
     ncol = 6-nrow;
 
@@ -644,14 +646,14 @@ for nrow = 1:5
         args_to_vertcat = mat2cell(reference_values.scalar(k,1:(nrow*ncol)), 1, repmat(nrow,1,ncol));
         args_to_horzcat = cellfun(@(c) vertcat(c{:}), args_to_vertcat, 'UniformOutput', false);
 
-        reference_solutions.scalar.concat{k,nrow} = multipoly2struct(horzcat(args_to_horzcat{:}));
+        reference_concat.scalar.concat{k,nrow} = multipoly2struct(horzcat(args_to_horzcat{:}));
     end
 end
 
 % concatenation of column vectors
-reference_solutions.column.diagcat = cell(maxdim,maxdim);
-reference_solutions.column.horzcat = cell(maxdim,maxdim);
-reference_solutions.column.vertcat = cell(maxdim,maxdim);
+reference_concat.column.diagcat = cell(maxdim,maxdim);
+reference_concat.column.horzcat = cell(maxdim,maxdim);
+reference_concat.column.vertcat = cell(maxdim,maxdim);
 
 for d1 = 1:maxdim
     for d2 = 1:maxdim
@@ -659,22 +661,22 @@ for d1 = 1:maxdim
         arg2 = reference_values.vector{2,d2};
 
         % diagonal concatenation
-        reference_solutions.column.diagcat{d1,d2} = multipoly2struct(blkdiag(arg1,arg2));
+        reference_concat.column.diagcat{d1,d2} = multipoly2struct(blkdiag(arg1,arg2));
         % horizontal concatenation
         if isempty(arg1) || isempty(arg2) || size(arg1,1) == size(arg2,1)
-            reference_solutions.column.horzcat{d1,d2} = multipoly2struct(horzcat(arg1,arg2));
+            reference_concat.column.horzcat{d1,d2} = multipoly2struct(horzcat(arg1,arg2));
         end
         % vertical concatenation 
         if isempty(arg1) || isempty(arg2) || size(arg1,2) == size(arg2,2)
-            reference_solutions.column.vertcat{d1,d2} = multipoly2struct(vertcat(arg1,arg2));
+            reference_concat.column.vertcat{d1,d2} = multipoly2struct(vertcat(arg1,arg2));
         end
     end
 end
 
 % concatenation of row vectors
-reference_solutions.row.diagcat = cell(maxdim,maxdim);
-reference_solutions.row.horzcat = cell(maxdim,maxdim);
-reference_solutions.row.vertcat = cell(maxdim,maxdim);
+reference_concat.row.diagcat = cell(maxdim,maxdim);
+reference_concat.row.horzcat = cell(maxdim,maxdim);
+reference_concat.row.vertcat = cell(maxdim,maxdim);
 
 for d1 = 1:maxdim
     for d2 = 1:maxdim
@@ -682,22 +684,22 @@ for d1 = 1:maxdim
         arg2 = reference_values.vector{2,d2}';
 
         % diagonal concatenation
-        reference_solutions.row.diagcat{d1,d2} = multipoly2struct(blkdiag(arg1,arg2));
+        reference_concat.row.diagcat{d1,d2} = multipoly2struct(blkdiag(arg1,arg2));
         % horizontal concatenation
         if isempty(arg1) || isempty(arg2) || size(arg1,1) == size(arg2,1)
-            reference_solutions.row.horzcat{d1,d2} = multipoly2struct(horzcat(arg1,arg2));
+            reference_concat.row.horzcat{d1,d2} = multipoly2struct(horzcat(arg1,arg2));
         end
         % vertical concatenation 
         if isempty(arg1) || isempty(arg2) || size(arg1,2) == size(arg2,2)
-            reference_solutions.row.vertcat{d1,d2} = multipoly2struct(vertcat(arg1,arg2));
+            reference_concat.row.vertcat{d1,d2} = multipoly2struct(vertcat(arg1,arg2));
         end
     end
 end
 
 % concatenation of matrices
-reference_solutions.matrix.diagcat = cell(maxdim,maxdim);
-reference_solutions.matrix.horzcat = cell(maxdim,maxdim);
-reference_solutions.matrix.vertcat = cell(maxdim,maxdim);
+reference_concat.matrix.diagcat = cell(maxdim,maxdim);
+reference_concat.matrix.horzcat = cell(maxdim,maxdim);
+reference_concat.matrix.vertcat = cell(maxdim,maxdim);
 
 for d1 = 1:maxdim
     for d2 = 1:maxdim
@@ -705,29 +707,28 @@ for d1 = 1:maxdim
         arg2 = reference_values.matrix{2,d2};
 
         % diagonal concatenation
-        reference_solutions.matrix.diagcat{d1,d2} = multipoly2struct(blkdiag(arg1,arg2));
+        reference_concat.matrix.diagcat{d1,d2} = multipoly2struct(blkdiag(arg1,arg2));
         if isempty(arg1) && isempty(arg2)
             % empty concatenation
-            reference_solutions.matrix.horzcat{d1,d2} = multipoly2struct(polynomial);
-            reference_solutions.matrix.vertcat{d1,d2} = multipoly2struct(polynomial);
+            reference_concat.matrix.horzcat{d1,d2} = multipoly2struct(polynomial);
+            reference_concat.matrix.vertcat{d1,d2} = multipoly2struct(polynomial);
             continue
         end
         % horizontal concatenation
         if isempty(arg1) || isempty(arg2) || size(arg1,1) == size(arg2,1)
-            reference_solutions.matrix.horzcat{d1,d2} = multipoly2struct(horzcat(arg1,arg2));
+            reference_concat.matrix.horzcat{d1,d2} = multipoly2struct(horzcat(arg1,arg2));
         end
         % vertical concatenation 
         if isempty(arg1) || isempty(arg2) || size(arg1,2) == size(arg2,2)
-            reference_solutions.matrix.vertcat{d1,d2} = multipoly2struct(vertcat(arg1,arg2));
+            reference_concat.matrix.vertcat{d1,d2} = multipoly2struct(vertcat(arg1,arg2));
         end
     end
 end
 
-save("reference_concat.mat","test_values_struct","reference_solutions")
+save("reference_values.mat","reference_concat","-append")
 
 disp("Completed: concat operation");
 disp(" ");
-
 
 % %% sum
 % disp("========================================");
@@ -743,7 +744,7 @@ disp(" ");
 %    reference_solutions.multiple{k} = multipoly2struct(sum(reference_values_flat{k}, 1)));
 % end
 % 
-% save("reference_sum.mat","test_values_struct","reference_solutions")
+% save("reference_values.mat","reference_solutions","-append")
 % 
 % disp("Completed: sum operation");
 % disp(" ");
@@ -781,7 +782,7 @@ disp(" ");
 %    reference_solutions.multiple{k} = multipoly2struct(transpose(reference_values_flat{k})));
 % end
 % 
-% save("reference_transpose.mat","test_values_struct","reference_solutions")
+% save("reference_values.mat","reference_solutions","-append")
 % 
 % disp("Completed: transpose operation");
 % disp(" ");

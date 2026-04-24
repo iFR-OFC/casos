@@ -10,8 +10,9 @@ classdef (Abstract) TestSymbolicOperations < matlab.unittest.TestCase
 methods (Static)
     function [test_values] = loadTestData()
         % Load test data for symbolic operations.
-        load("../references/test_values.mat","test_values_struct")
+        S = load("../references/reference_values.mat","test_values_struct");
 
+        test_values_struct = S.test_values_struct;
         test_value = struct;
         
         for type = ["scalar" "vector" "matrix"]

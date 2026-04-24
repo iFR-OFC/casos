@@ -31,7 +31,7 @@ methods (Test, ParameterCombination="pairwise", TestTags="scalar")
     function test_dot(test_case, test_values, references, arg1, arg2)
         % Test dot operation on scalar values.
         actual = dot(test_values.scalar{1,arg1},test_values.scalar{2,arg2});
-        reference = references.scalar{arg1,arg2};
+        reference = references.scalar.dot{arg1,arg2};
 
         % perform assertion
         test_case.verifyClass(actual,?casadi.DM);
@@ -53,7 +53,7 @@ methods (Test, ParameterCombination="pairwise", TestTags="matrix")
 
         % else
         actual = dot(val1,val2);
-        reference = references.matrix{dim1,dim2};
+        reference = references.matrix.dot{dim1,dim2};
 
         % perform assertion
         test_case.verifyClass(actual,?casadi.DM);
