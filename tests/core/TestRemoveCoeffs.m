@@ -89,6 +89,4 @@ methods (Test, ParameterCombination="pairwise", TestTags="matrix")
     end
 end
 
-
-
 end
