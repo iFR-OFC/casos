@@ -7,6 +7,10 @@
 classdef TestSubs < TestPolynomialOperations
 % Test substitution.
 
+properties (Constant)
+    nnz_threshold = 100;
+end
+
 properties (SetAccess=protected)
     values       % test polynmials
     references   % reference solutions
@@ -35,6 +39,9 @@ methods (Test, ParameterCombination="pairwise", TestTags="scalar")
         val = test_case.values.scalar{1,arg};
         new = test_case.values.scalar{2,arg};
 
+        test_case.assumeLessThan(nnz(val),test_case.nnz_threshold,'Number of nonzero coefficients exceeds threshold.')
+        test_case.assumeLessThan(nnz(new),test_case.nnz_threshold,'Number of nonzero coefficients exceeds threshold.')
+
         vars = val.indeterminates;
         if ivar > length(vars)
             % variable not in polynomial
@@ -54,6 +61,9 @@ methods (Test, ParameterCombination="pairwise", TestTags="scalar")
         % Test substitution of multiple variables.
         val = test_case.values.scalar{2,arg};
         new = test_case.values.vector{2,val.nvars+1};
+
+        test_case.assumeLessThan(nnz(val),test_case.nnz_threshold,'Number of nonzero coefficients exceeds threshold.')
+        test_case.assumeLessThan(nnz(new),test_case.nnz_threshold,'Number of nonzero coefficients exceeds threshold.')
 
         vars = val.indeterminates;
         if ivar <= length(vars)
@@ -75,6 +85,9 @@ methods (Test, ParameterCombination="pairwise", TestTags=["vector" "column"])
         val = test_case.values.vector{1,dim};
         new = test_case.values.scalar{1,dim};
 
+        test_case.assumeLessThan(nnz(val),test_case.nnz_threshold,'Number of nonzero coefficients exceeds threshold.')
+        test_case.assumeLessThan(nnz(new),test_case.nnz_threshold,'Number of nonzero coefficients exceeds threshold.')
+
         vars = val.indeterminates;
         if ivar > length(vars)
             % variable not in polynomial
@@ -94,6 +107,9 @@ methods (Test, ParameterCombination="pairwise", TestTags=["vector" "column"])
         % Test substitution of multiple variables in a column vector.
         val = test_case.values.vector{2,dim};
         new = test_case.values.vector{1,val.nvars+1};
+
+        test_case.assumeLessThan(nnz(val),test_case.nnz_threshold,'Number of nonzero coefficients exceeds threshold.')
+        test_case.assumeLessThan(nnz(new),test_case.nnz_threshold,'Number of nonzero coefficients exceeds threshold.')
 
         vars = val.indeterminates;
         if ivar <= length(vars)
@@ -115,6 +131,9 @@ methods (Test, ParameterCombination="pairwise", TestTags=["vector" "row"])
         val = test_case.values.vector{2,dim}';
         new = test_case.values.scalar{2,dim};
 
+        test_case.assumeLessThan(nnz(val),test_case.nnz_threshold,'Number of nonzero coefficients exceeds threshold.')
+        test_case.assumeLessThan(nnz(new),test_case.nnz_threshold,'Number of nonzero coefficients exceeds threshold.')
+
         vars = val.indeterminates;
         if ivar > length(vars)
             % variable not in polynomial
@@ -134,6 +153,9 @@ methods (Test, ParameterCombination="pairwise", TestTags=["vector" "row"])
         % Test substitution of multiple variables in a row vector.
         val = test_case.values.vector{1,dim}';
         new = test_case.values.vector{2,val.nvars+1};
+
+        test_case.assumeLessThan(nnz(val),test_case.nnz_threshold,'Number of nonzero coefficients exceeds threshold.')
+        test_case.assumeLessThan(nnz(new),test_case.nnz_threshold,'Number of nonzero coefficients exceeds threshold.')
 
         vars = val.indeterminates;
         if ivar <= length(vars)
@@ -155,6 +177,9 @@ methods (Test, ParameterCombination="pairwise", TestTags="matrix")
         val = test_case.values.matrix{2,dim};
         new = test_case.values.scalar{1,dim};
 
+        test_case.assumeLessThan(nnz(val),test_case.nnz_threshold,'Number of nonzero coefficients exceeds threshold.')
+        test_case.assumeLessThan(nnz(new),test_case.nnz_threshold,'Number of nonzero coefficients exceeds threshold.')
+
         vars = val.indeterminates;
         if ivar > length(vars)
             % variable not in polynomial
@@ -174,6 +199,9 @@ methods (Test, ParameterCombination="pairwise", TestTags="matrix")
         % Test substitution of multiple variables in a column vector.
         val = test_case.values.matrix{1,dim};
         new = test_case.values.vector{1,val.nvars+1};
+
+        test_case.assumeLessThan(nnz(val),test_case.nnz_threshold,'Number of nonzero coefficients exceeds threshold.')
+        test_case.assumeLessThan(nnz(new),test_case.nnz_threshold,'Number of nonzero coefficients exceeds threshold.')
 
         vars = val.indeterminates;
         if ivar <= length(vars)
