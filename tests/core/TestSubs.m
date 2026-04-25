@@ -7,29 +7,33 @@
 classdef TestSubs < TestPolynomialOperations
 % Test substitution.
 
-properties (TestParameter)
-    test_values  % test polynmials
+properties (SetAccess=protected)
+    values       % test polynmials
     references   % reference solutions
-
-    ivar = {1 2 3 4};
-    dim = {1 2 3 4 5 6};
-    arg          % index argument
 end
 
-methods (TestParameterDefinition, Static)
-    function [test_values,references,arg] = initializeTestData()
-        % Initialize test data for substitution operation.
-        [test_values,references] = TestSubs.loadTestData("subs");
+properties (TestParameter)
+    ivar = num2cell(1:4);
+    dim =  num2cell(1:6);
+    arg = num2cell(1:10);
+end
 
-        arg = num2cell(1:size(test_values{:}.scalar,2));
+methods (TestClassSetup)
+    function initializeTestData(test_case)
+        % Initialize test data for substitution operation.
+        test_case.loadTestData("subs");
+
+        test_case.fatalAssertLength(test_case.ivar,size(test_case.references.scalar.single,2));
+        test_case.fatalAssertLength(test_case.dim,size(test_case.references.matrix.single,1));
+        test_case.fatalAssertLength(test_case.arg,size(test_case.references.scalar.single,1));
     end
 end
 
 methods (Test, ParameterCombination="pairwise", TestTags="scalar")
-    function test_subs_single(test_case, test_values, references, ivar, arg)
+    function test_subs_single(test_case, ivar, arg)
         % Test substitution of a single variable.
-        val = test_values.scalar{1,arg};
-        new = test_values.scalar{2,arg};
+        val = test_case.values.scalar{1,arg};
+        new = test_case.values.scalar{2,arg};
 
         vars = val.indeterminates;
         if ivar > length(vars)
@@ -40,16 +44,16 @@ methods (Test, ParameterCombination="pairwise", TestTags="scalar")
         end
 
         actual = subs(val,var,new);
-        reference = references.scalar.single{arg,ivar};
+        reference = test_case.references.scalar.single{arg,ivar};
 
         % perform assertion
         test_case.verifyEqualPolynomial(actual,reference,"RelTol",1e-12);
     end
 
-    function test_subs_multiple(test_case, test_values, references, ivar, arg)
+    function test_subs_multiple(test_case, ivar, arg)
         % Test substitution of multiple variables.
-        val = test_values.scalar{2,arg};
-        new = test_values.vector{2,val.nvars+1};
+        val = test_case.values.scalar{2,arg};
+        new = test_case.values.vector{2,val.nvars+1};
 
         vars = val.indeterminates;
         if ivar <= length(vars)
@@ -58,7 +62,7 @@ methods (Test, ParameterCombination="pairwise", TestTags="scalar")
         end
         
         actual = subs(val,vars,new);
-        reference = references.scalar.multiple{arg,ivar};
+        reference = test_case.references.scalar.multiple{arg,ivar};
 
         % perform assertion
         test_case.verifyEqualPolynomial(actual,reference,"RelTol",1e-12);
@@ -66,10 +70,10 @@ methods (Test, ParameterCombination="pairwise", TestTags="scalar")
 end
 
 methods (Test, ParameterCombination="pairwise", TestTags=["vector" "column"])
-    function test_subs_single_column(test_case, test_values, references, ivar, dim)
+    function test_subs_single_column(test_case, ivar, dim)
         % Test substitution of a single variable in a column vector.
-        val = test_values.vector{1,dim};
-        new = test_values.scalar{1,dim};
+        val = test_case.values.vector{1,dim};
+        new = test_case.values.scalar{1,dim};
 
         vars = val.indeterminates;
         if ivar > length(vars)
@@ -80,16 +84,16 @@ methods (Test, ParameterCombination="pairwise", TestTags=["vector" "column"])
         end
 
         actual = subs(val,var,new);
-        reference = references.column.single{dim,ivar};
+        reference = test_case.references.column.single{dim,ivar};
 
         % perform assertion
         test_case.verifyEqualPolynomial(actual,reference,"RelTol",1e-12);
     end
 
-    function test_subs_multiple_column(test_case, test_values, references, ivar, dim)
+    function test_subs_multiple_column(test_case, ivar, dim)
         % Test substitution of multiple variables in a column vector.
-        val = test_values.vector{2,dim};
-        new = test_values.vector{1,val.nvars+1};
+        val = test_case.values.vector{2,dim};
+        new = test_case.values.vector{1,val.nvars+1};
 
         vars = val.indeterminates;
         if ivar <= length(vars)
@@ -98,7 +102,7 @@ methods (Test, ParameterCombination="pairwise", TestTags=["vector" "column"])
         end
         
         actual = subs(val,vars,new);
-        reference = references.column.multiple{dim,ivar};
+        reference = test_case.references.column.multiple{dim,ivar};
 
         % perform assertion
         test_case.verifyEqualPolynomial(actual,reference,"RelTol",1e-12);
@@ -106,10 +110,10 @@ methods (Test, ParameterCombination="pairwise", TestTags=["vector" "column"])
 end
 
 methods (Test, ParameterCombination="pairwise", TestTags=["vector" "row"])
-    function test_subs_single_row(test_case, test_values, references, ivar, dim)
+    function test_subs_single_row(test_case, ivar, dim)
         % Test substitution of a single variable in a row vector.
-        val = test_values.vector{2,dim}';
-        new = test_values.scalar{2,dim};
+        val = test_case.values.vector{2,dim}';
+        new = test_case.values.scalar{2,dim};
 
         vars = val.indeterminates;
         if ivar > length(vars)
@@ -120,16 +124,16 @@ methods (Test, ParameterCombination="pairwise", TestTags=["vector" "row"])
         end
 
         actual = subs(val,var,new);
-        reference = references.row.single{dim,ivar};
+        reference = test_case.references.row.single{dim,ivar};
 
         % perform assertion
         test_case.verifyEqualPolynomial(actual,reference,"RelTol",1e-12);
     end
 
-    function test_subs_multiple_row(test_case, test_values, references, ivar, dim)
+    function test_subs_multiple_row(test_case, ivar, dim)
         % Test substitution of multiple variables in a row vector.
-        val = test_values.vector{1,dim}';
-        new = test_values.vector{2,val.nvars+1};
+        val = test_case.values.vector{1,dim}';
+        new = test_case.values.vector{2,val.nvars+1};
 
         vars = val.indeterminates;
         if ivar <= length(vars)
@@ -138,7 +142,7 @@ methods (Test, ParameterCombination="pairwise", TestTags=["vector" "row"])
         end
         
         actual = subs(val,vars,new);
-        reference = references.row.multiple{dim,ivar};
+        reference = test_case.references.row.multiple{dim,ivar};
 
         % perform assertion
         test_case.verifyEqualPolynomial(actual,reference,"RelTol",1e-12);
@@ -146,10 +150,10 @@ methods (Test, ParameterCombination="pairwise", TestTags=["vector" "row"])
 end
 
 methods (Test, ParameterCombination="pairwise", TestTags="matrix")
-    function test_subs_single_matrix(test_case, test_values, references, ivar, dim)
+    function test_subs_single_matrix(test_case, ivar, dim)
         % Test substitution of a single variable in a matrix.
-        val = test_values.matrix{2,dim};
-        new = test_values.scalar{1,dim};
+        val = test_case.values.matrix{2,dim};
+        new = test_case.values.scalar{1,dim};
 
         vars = val.indeterminates;
         if ivar > length(vars)
@@ -160,16 +164,16 @@ methods (Test, ParameterCombination="pairwise", TestTags="matrix")
         end
 
         actual = subs(val,var,new);
-        reference = references.matrix.single{dim,ivar};
+        reference = test_case.references.matrix.single{dim,ivar};
 
         % perform assertion
         test_case.verifyEqualPolynomial(actual,reference,"RelTol",1e-12);
     end
 
-    function test_subs_multiple_matrix(test_case, test_values, references, ivar, dim)
+    function test_subs_multiple_matrix(test_case, ivar, dim)
         % Test substitution of multiple variables in a column vector.
-        val = test_values.matrix{1,dim};
-        new = test_values.vector{1,val.nvars+1};
+        val = test_case.values.matrix{1,dim};
+        new = test_case.values.vector{1,val.nvars+1};
 
         vars = val.indeterminates;
         if ivar <= length(vars)
@@ -178,7 +182,7 @@ methods (Test, ParameterCombination="pairwise", TestTags="matrix")
         end
         
         actual = subs(val,vars,new);
-        reference = references.matrix.multiple{dim,ivar};
+        reference = test_case.references.matrix.multiple{dim,ivar};
 
         % perform assertion
         test_case.verifyEqualPolynomial(actual,reference,"RelTol",1e-12);

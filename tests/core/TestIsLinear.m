@@ -7,131 +7,135 @@
 classdef TestIsLinear < TestSymbolicOperations
 % Test is_linear of symbolic operations.
 
-properties (TestParameter)
-    test_values  % test polynmials
+properties (SetAccess=protected)
+    values       % test polynmials
+end
 
+properties (TestParameter)
     op1 = {"uplus" "uminus"}; 
     op2 = {"plus" "minus" "times"};
     symb1 = {false true};
     symb2 = {false true};
 
-    dim1 = {1 2 3 4 5 6};
-    dim2 = {1 2 3 4 5 6};
-    arg1         % index argument 1
-    arg2         % index argument 2
+    dim1 = num2cell(1:6);
+    dim2 = num2cell(1:6);
+    arg1 = num2cell(1:10);
+    arg2 = num2cell(1:10);
 end
 
-methods (TestParameterDefinition, Static)
-    function [test_values,arg1,arg2] = initializeTestData()
+methods (TestClassSetup)
+    function initializeTestData(test_case)
         % Initialize test values.
-        [test_values] = TestIsLinear.loadTestData();
+        test_case.loadTestData();
 
-        arg1 = num2cell(1:size(test_values{:}.scalar,2));
-        arg2 = num2cell(1:size(test_values{:}.scalar,2));
+        test_case.fatalAssertLength(test_case.dim1,size(test_case.values.matrix,2));
+        test_case.fatalAssertLength(test_case.dim2,size(test_case.values.matrix,2));
+        test_case.fatalAssertLength(test_case.arg1,size(test_case.values.scalar,2));
+        test_case.fatalAssertLength(test_case.arg2,size(test_case.values.scalar,2));
     end
 end
 
 methods (Test, ParameterCombination="pairwise", TestTags="scalar")
-    function test_unary(test_case, test_values, op1, symb1, arg1)
+    function test_unary(test_case, op1, symb1, arg1)
         % Test is_linear of a unary operation.
-        val1 = test_values.scalar{1,arg1};
-        val2 = test_values.scalar{2,arg1};
+        val1 = test_case.values.scalar{1,arg1};
+        val2 = test_case.values.scalar{2,arg1};
         
         test_case.evaluate_unary(op1,symb1,val1,val2);
     end
 
-    function test_bilinear(test_case, test_values, op2, symb1, arg1)
+    function test_bilinear(test_case, op2, symb1, arg1)
         % Test is_linear of a bilinear operation.
-        val1 = test_values.scalar{1,arg1};
-        val2 = test_values.scalar{2,arg1};
+        val1 = test_case.values.scalar{1,arg1};
+        val2 = test_case.values.scalar{2,arg1};
 
         test_case.evaluate_bilinear(op2,symb1,val1,val2,false);
     end
 
-    function test_binary(test_case, test_values, op2, symb1, symb2, arg1, arg2)
+    function test_binary(test_case, op2, symb1, symb2, arg1, arg2)
         % Test is_linear of a binary operation.
-        val1 = test_values.scalar{1,arg1};
-        val2 = test_values.scalar{2,arg2};
-        val3 = test_values.scalar{arg1+arg2};
+        val1 = test_case.values.scalar{1,arg1};
+        val2 = test_case.values.scalar{2,arg2};
+        val3 = test_case.values.scalar{arg1+arg2};
 
         test_case.evaluate_binary(op2,symb1,symb2,val1,val2,val3);
     end
 end
 
 methods (Test, ParameterCombination="pairwise", TestTags="vector")
-    function test_unary_column(test_case, test_values, op1, symb1, dim1)
+    function test_unary_column(test_case, op1, symb1, dim1)
         % Test is_linear of a unary operation on column vectors.
-        val1 = test_values.vector{1,dim1};
-        val2 = test_values.vector{2,dim1};
+        val1 = test_case.values.vector{1,dim1};
+        val2 = test_case.values.vector{2,dim1};
         
         test_case.evaluate_unary(op1,symb1,val1,val2);
     end
 
-    function test_unary_row(test_case, test_values, op1, symb1, dim1)
+    function test_unary_row(test_case, op1, symb1, dim1)
         % Test is_linear of a unary operation on row vectors.
-        val1 = test_values.vector{1,dim1}';
-        val2 = test_values.vector{2,dim1}';
+        val1 = test_case.values.vector{1,dim1}';
+        val2 = test_case.values.vector{2,dim1}';
         
         test_case.evaluate_unary(op1,symb1,val1,val2);
     end
 
-    function test_bilinear_inner(test_case, test_values, op2, symb1, dim1)
+    function test_bilinear_inner(test_case, op2, symb1, dim1)
         % Test is_linear of a bilinear (inner) operation on vectors.
-        val1 = test_values.vector{1,dim1};
-        val2 = test_values.vector{2,dim1};
+        val1 = test_case.values.vector{1,dim1};
+        val2 = test_case.values.vector{2,dim1};
 
         test_case.evaluate_bilinear(op2,symb1,val1,val2,true);
     end
 
-    function test_bilinear_outer(test_case, test_values, op2, symb1, dim1)
+    function test_bilinear_outer(test_case, op2, symb1, dim1)
         % Test is_linear of a bilinear (outer) operation on vectors.
-        val1 = test_values.vector{1,dim1}';
-        val2 = test_values.vector{2,dim1};
+        val1 = test_case.values.vector{1,dim1}';
+        val2 = test_case.values.vector{2,dim1};
 
         test_case.evaluate_bilinear(op2,symb1,val1,val2,true);
     end
 
-    function test_binary_inner(test_case, test_values, op2, symb1, symb2, dim1, dim2)
+    function test_binary_inner(test_case, op2, symb1, symb2, dim1, dim2)
         % Test is_linear of a binary (inner) operation on vectors.
-        val1 = test_values.vector{1,dim1}';
-        val2 = test_values.vector{2,dim2};
-        val3 = test_values.vector{dim1+dim2};
+        val1 = test_case.values.vector{1,dim1}';
+        val2 = test_case.values.vector{2,dim2};
+        val3 = test_case.values.vector{dim1+dim2};
 
         test_case.evaluate_binary(op2,symb1,symb2,val1,val2,val3);
     end
 
-    function test_binary_outer(test_case, test_values, op2, symb1, symb2, dim1, dim2)
+    function test_binary_outer(test_case, op2, symb1, symb2, dim1, dim2)
         % Test is_linear of a binary (outer) operation on vectors.
-        val1 = test_values.vector{1,dim1};
-        val2 = test_values.vector{2,dim2}';
-        val3 = test_values.vector{dim1+dim2};
+        val1 = test_case.values.vector{1,dim1};
+        val2 = test_case.values.vector{2,dim2}';
+        val3 = test_case.values.vector{dim1+dim2};
 
         test_case.evaluate_binary(op2,symb1,symb2,val1,val2,val3);
     end
 end
 
 methods (Test, ParameterCombination="pairwise", TestTags="matrix")
-    function test_unary_matrix(test_case, test_values, op1, symb1, dim1)
+    function test_unary_matrix(test_case, op1, symb1, dim1)
         % Test is_linear of a unary operation on matrices.
-        val1 = test_values.matrix{1,dim1};
-        val2 = test_values.matrix{2,dim1};
+        val1 = test_case.values.matrix{1,dim1};
+        val2 = test_case.values.matrix{2,dim1};
         
         test_case.evaluate_unary(op1,symb1,val1,val2);
     end
 
-    function test_bilinear_matrix(test_case, test_values, op2, symb1, dim1)
+    function test_bilinear_matrix(test_case, op2, symb1, dim1)
         % Test is_linear of a bilinear operation on matrices.
-        val1 = test_values.matrix{1,dim1};
-        val2 = test_values.matrix{2,dim1};
+        val1 = test_case.values.matrix{1,dim1};
+        val2 = test_case.values.matrix{2,dim1};
 
         test_case.evaluate_bilinear(op2,symb1,val1,val2,false);
     end
 
-    function test_binary_matrix(test_case, test_values, op2, symb1, symb2, dim1, dim2)
+    function test_binary_matrix(test_case, op2, symb1, symb2, dim1, dim2)
         % Test is_linear of a binary operation on matrices.
-        val1 = test_values.matrix{1,dim1};
-        val2 = test_values.matrix{2,dim2};
-        val3 = test_values.matrix{dim1+dim2};
+        val1 = test_case.values.matrix{1,dim1};
+        val2 = test_case.values.matrix{2,dim2};
+        val3 = test_case.values.matrix{dim1+dim2};
 
         test_case.evaluate_binary(op2,symb1,symb2,val1,val2,val3);
     end

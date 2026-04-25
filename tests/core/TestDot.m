@@ -7,31 +7,35 @@
 classdef TestDot < TestPolynomialOperations
 % Test dot operation.
 
-properties (TestParameter)
-    test_values  % test polynmials
+properties (SetAccess=protected)
+    values       % test polynmials
     references   % reference solutions
-
-    dim1 = {1 2 3 4 5 6};
-    dim2 = {1 2 3 4 5 6};
-    arg1         % index argument 1
-    arg2         % index argument 2
 end
 
-methods (TestParameterDefinition, Static)
-    function [test_values,references,arg1,arg2] = initializeTestData()
-        % Initialize test data for dot operations.
-        [test_values,references] = TestDot.loadTestData("dot");
+properties (TestParameter)
+    dim1 = num2cell(1:6);
+    dim2 = num2cell(1:6);
+    arg1 = num2cell(1:10);
+    arg2 = num2cell(1:10);
+end
 
-        arg1 = num2cell(1:size(test_values{:}.scalar,2));
-        arg2 = num2cell(1:size(test_values{:}.scalar,2));
+methods (TestClassSetup)
+    function initializeTestData(test_case)
+        % Initialize test data for dot operations.
+        test_case.loadTestData("dot");
+
+        test_case.fatalAssertLength(test_case.dim1,size(test_case.references.matrix.dot,1));
+        test_case.fatalAssertLength(test_case.dim2,size(test_case.references.matrix.dot,2));
+        test_case.fatalAssertLength(test_case.arg1,size(test_case.references.scalar.dot,1));
+        test_case.fatalAssertLength(test_case.arg2,size(test_case.references.scalar.dot,2));
     end
 end
 
 methods (Test, ParameterCombination="pairwise", TestTags="scalar")
-    function test_dot(test_case, test_values, references, arg1, arg2)
+    function test_dot(test_case, arg1, arg2)
         % Test dot operation on scalar values.
-        actual = dot(test_values.scalar{1,arg1},test_values.scalar{2,arg2});
-        reference = references.scalar.dot{arg1,arg2};
+        actual = dot(test_case.values.scalar{1,arg1},test_case.values.scalar{2,arg2});
+        reference = test_case.references.scalar.dot{arg1,arg2};
 
         % perform assertion
         test_case.verifyClass(actual,?casadi.DM);
@@ -40,10 +44,10 @@ methods (Test, ParameterCombination="pairwise", TestTags="scalar")
 end
 
 methods (Test, ParameterCombination="pairwise", TestTags="matrix")
-    function test_dot_matrix(test_case, test_values, references, dim1, dim2)
+    function test_dot_matrix(test_case, dim1, dim2)
         % Test dot operation on matrix values.
-        val1 = test_values.matrix{1,dim1};
-        val2 = test_values.matrix{2,dim2};
+        val1 = test_case.values.matrix{1,dim1};
+        val2 = test_case.values.matrix{2,dim2};
 
         if ~isequal(size(val1), size(val2))
             % size mismatch
@@ -54,7 +58,7 @@ methods (Test, ParameterCombination="pairwise", TestTags="matrix")
 
         % else
         actual = dot(val1,val2);
-        reference = references.matrix.dot{dim1,dim2};
+        reference = test_case.references.matrix.dot{dim1,dim2};
 
         % perform assertion
         test_case.verifyClass(actual,?casadi.DM);

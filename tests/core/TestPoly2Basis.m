@@ -7,34 +7,38 @@
 classdef TestPoly2Basis < TestPolynomialOperations
 % Test poly2basis operation.
 
-properties (TestParameter)
-    test_values  % test polynmials
+properties (SetAccess=protected)
+    values       % test polynmials
     references   % reference solutions
-
-    dim1 = {1 2 3 4 5 6};
-    dim2 = {1 2 3 4 5 6};
-    arg1         % index argument 1
-    arg2         % index argument 2
 end
 
-methods (TestParameterDefinition, Static)
-    function [test_values,references,arg1,arg2] = initializeTestData()
-        % Initialize test data for poly2basis operation.
-        [test_values,references] = TestPoly2Basis.loadTestData("poly2basis");
+properties (TestParameter)
+    dim1 = num2cell(1:6);
+    dim2 = num2cell(1:6);
+    arg1 = num2cell(1:10);
+    arg2 = num2cell(1:10);
+end
 
-        arg1 = num2cell(1:size(test_values{:}.scalar,2));
-        arg2 = num2cell(1:size(test_values{:}.scalar,2));
+methods (TestClassSetup)
+    function initializeTestData(test_case)
+        % Initialize test data for poly2basis operation.
+        test_case.loadTestData("poly2basis");
+
+        test_case.fatalAssertLength(test_case.dim1,size(test_case.references.matrix.poly2basis,1));
+        test_case.fatalAssertLength(test_case.dim2,size(test_case.references.matrix.poly2basis,2));
+        test_case.fatalAssertLength(test_case.arg1,size(test_case.references.scalar.poly2basis,1));
+        test_case.fatalAssertLength(test_case.arg2,size(test_case.references.scalar.poly2basis,2));
     end
 end
 
 methods (Test, ParameterCombination="pairwise", TestTags="scalar")
-    function test_poly2basis(test_case, test_values, references, arg1, arg2)
+    function test_poly2basis(test_case, arg1, arg2)
         % Test poly2basis operation.
-        value = test_values.scalar{1,arg1};
-        basis = sparsity(test_values.scalar{2,arg2});
+        value = test_case.values.scalar{1,arg1};
+        basis = sparsity(test_case.values.scalar{2,arg2});
 
         actual = poly2basis(value,basis);
-        reference = references.scalar.poly2basis{arg1,arg2};
+        reference = test_case.references.scalar.poly2basis{arg1,arg2};
 
         % perform assertion
         test_case.verifyClass(actual,?casadi.DM);
@@ -43,21 +47,21 @@ methods (Test, ParameterCombination="pairwise", TestTags="scalar")
 end
 
 methods (Test, ParameterCombination="pairwise", TestTags=["vector" "column"])
-    function test_poly2basis_column(test_case, test_values, references, dim1, dim2)
+    function test_poly2basis_column(test_case, dim1, dim2)
         % Test poly2basis operation on column vectors.
-        value = test_values.vector{1,dim1};
-        basis = sparsity(test_values.vector{2,dim2});
+        value = test_case.values.vector{1,dim1};
+        basis = sparsity(test_case.values.vector{2,dim2});
         
         if ~isequal(size(value),size(basis))
             % size mismatch
-            diagtext = sprintf('Dimension mismatch expected: %s vs. %s.',mat2str(size(val1)),mat2str(size(val2)));
+            diagtext = sprintf('Dimension mismatch expected: %s vs. %s.',mat2str(size(value)),mat2str(size(basis)));
             test_case.verifyError(@() poly2basis(value,basis),?MException,diagtext);
             return
         end
 
         % else
         actual = poly2basis(value,basis);
-        reference = references.column.poly2basis{dim1,dim2};
+        reference = test_case.references.column.poly2basis{dim1,dim2};
 
         % perform assertion
         test_case.verifyClass(actual,?casadi.DM);
@@ -66,21 +70,21 @@ methods (Test, ParameterCombination="pairwise", TestTags=["vector" "column"])
 end
 
 methods (Test, ParameterCombination="pairwise", TestTags=["vector" "row"])
-    function test_poly2basis_row(test_case, test_values, references, dim1, dim2)
+    function test_poly2basis_row(test_case, dim1, dim2)
         % Test poly2basis operation on row vectors.
-        value = test_values.vector{1,dim1}';
-        basis = sparsity(test_values.vector{2,dim2}');
+        value = test_case.values.vector{1,dim1}';
+        basis = sparsity(test_case.values.vector{2,dim2}');
         
         if ~isequal(size(value),size(basis))
             % size mismatch
-            diagtext = sprintf('Dimension mismatch expected: %s vs. %s.',mat2str(size(val1)),mat2str(size(val2)));
+            diagtext = sprintf('Dimension mismatch expected: %s vs. %s.',mat2str(size(value)),mat2str(size(basis)));
             test_case.verifyError(@() poly2basis(value,basis),?MException,diagtext);
             return
         end
 
         % else
         actual = poly2basis(value,basis);
-        reference = references.row.poly2basis{dim1,dim2};
+        reference = test_case.references.row.poly2basis{dim1,dim2};
 
         % perform assertion
         test_case.verifyClass(actual,?casadi.DM);
@@ -89,21 +93,21 @@ methods (Test, ParameterCombination="pairwise", TestTags=["vector" "row"])
 end
 
 methods (Test, ParameterCombination="pairwise", TestTags="matrix")
-    function test_poly2basis_matrix(test_case, test_values, references, dim1, dim2)
+    function test_poly2basis_matrix(test_case, dim1, dim2)
         % Test poly2basis operation on matrices.
-        value = test_values.matrix{1,dim1};
-        basis = sparsity(test_values.matrix{2,dim2});
+        value = test_case.values.matrix{1,dim1};
+        basis = sparsity(test_case.values.matrix{2,dim2});
         
         if ~isequal(size(value),size(basis))
             % size mismatch
-            diagtext = sprintf('Dimension mismatch expected: %s vs. %s.',mat2str(size(val1)),mat2str(size(val2)));
+            diagtext = sprintf('Dimension mismatch expected: %s vs. %s.',mat2str(size(value)),mat2str(size(basis)));
             test_case.verifyError(@() poly2basis(value,basis),?MException,diagtext);
             return
         end
 
         % else
         actual = poly2basis(value,basis);
-        reference = references.matrix.poly2basis{dim1,dim2};
+        reference = test_case.references.matrix.poly2basis{dim1,dim2};
 
         % perform assertion
         test_case.verifyClass(actual,?casadi.DM);
