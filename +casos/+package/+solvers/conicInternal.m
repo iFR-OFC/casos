@@ -23,6 +23,10 @@ switch lower(solver)
     case 'clarabel'
         % solve conic problem using Clarabel
         sol = casos.package.solvers.ClarabelInterface(name,conic,varargin{:});
+
+    case 'cdcs'
+        % solve conic problem using CDCS
+        sol = casos.package.solvers.CDCSInterface(name,conic,varargin{:});
         
     otherwise
         % fall back to CasADi conic interface
