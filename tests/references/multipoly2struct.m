@@ -16,6 +16,10 @@ if isempty(poly)
     ref.indets = {};
     ref.coeffs = zeros(0,1);
     return
+
+else
+    % ensure polynomial
+    poly = polynomial(poly);
 end
 
 coeffs = poly.coefficient;
