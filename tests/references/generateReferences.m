@@ -406,24 +406,20 @@ disp("========================================");
 disp("Starting: poly2basis operation");
 disp("========================================")
 
-reference_poly2basis = struct('scalar',struct, ...
-                                 'column',struct, ...
-                                 'row',struct, ...
-                                 'matrix',struct ...
-);
+reference_poly2basis = struct;
 
 % on scalar values
-reference_poly2basis.scalar.poly2basis = cell(noPoly,noPoly);
+reference_poly2basis.scalar = cell(noPoly,noPoly);
 for k1 = 1:noPoly
     for k2 = 1:noPoly
         arg1 = reference_values.scalar{1,k1};
         arg2 = reference_values.scalar{2,k2};
-        reference_poly2basis.scalar.poly2basis{k1,k2} = eval_poly2basis(arg1,arg2);
+        reference_poly2basis.scalar{k1,k2} = eval_poly2basis(arg1,arg2);
     end
 end
 
 % on column vector values
-reference_poly2basis.column.poly2basis = cell(maxdim,maxdim);
+reference_poly2basis.column = cell(maxdim,maxdim);
 for d1 = 1:maxdim
     for d2 = 1:maxdim
         arg1 = reference_values.vector{1,d1};
@@ -434,12 +430,12 @@ for d1 = 1:maxdim
             continue;
         end
 
-        reference_poly2basis.column.poly2basis{d1,d2} = eval_poly2basis(arg1,arg2);
+        reference_poly2basis.column{d1,d2} = eval_poly2basis(arg1,arg2);
     end
 end
 
 % on row vector values
-reference_poly2basis.row.poly2basis = cell(maxdim,maxdim);
+reference_poly2basis.row = cell(maxdim,maxdim);
 for d1 = 1:maxdim
     for d2 = 1:maxdim
         arg1 = reference_values.vector{1,d1}';
@@ -450,12 +446,12 @@ for d1 = 1:maxdim
             continue;
         end
 
-        reference_poly2basis.row.poly2basis{d1,d2} = eval_poly2basis(arg1,arg2);
+        reference_poly2basis.row{d1,d2} = eval_poly2basis(arg1,arg2);
     end
 end
 
 % on matrix values
-reference_poly2basis.matrix.poly2basis = cell(maxdim,maxdim);
+reference_poly2basis.matrix = cell(maxdim,maxdim);
 for d1 = 1:maxdim
     for d2 = 1:maxdim
         arg1 = reference_values.matrix{1,d1};
@@ -466,13 +462,83 @@ for d1 = 1:maxdim
             continue;
         end
 
-        reference_poly2basis.matrix.poly2basis{d1,d2} = eval_poly2basis(arg1,arg2);
+        reference_poly2basis.matrix{d1,d2} = eval_poly2basis(arg1,arg2);
     end
 end
 
 save("reference_values.mat","reference_poly2basis","-append")
 
-disp("Completed: coordinates operation");
+disp("Completed: poly2basis operation");
+disp(" ");
+
+%% project
+disp("========================================");
+disp("Starting: project operation");
+disp("========================================")
+
+reference_project = struct;
+
+% on scalar values
+reference_project.scalar = cell(noPoly,noPoly);
+for k1 = 1:noPoly
+    for k2 = 1:noPoly
+        arg1 = reference_values.scalar{1,k1};
+        arg2 = reference_values.scalar{2,k2};
+        reference_project.scalar{k1,k2} = multipoly2struct(eval_project(arg1,arg2));
+    end
+end
+
+% on column vector values
+reference_project.column = cell(maxdim,maxdim);
+for d1 = 1:maxdim
+    for d2 = 1:maxdim
+        arg1 = reference_values.vector{1,d1};
+        arg2 = reference_values.vector{2,d2};
+
+        if ~isequal(size(arg1),size(arg2))
+            % size mismatch
+            continue;
+        end
+
+        reference_project.column{d1,d2} = multipoly2struct(eval_project(arg1,arg2));
+    end
+end
+
+% on row vector values
+reference_project.row = cell(maxdim,maxdim);
+for d1 = 1:maxdim
+    for d2 = 1:maxdim
+        arg1 = reference_values.vector{1,d1}';
+        arg2 = reference_values.vector{2,d2}';
+
+        if ~isequal(size(arg1),size(arg2))
+            % size mismatch
+            continue;
+        end
+
+        reference_project.row{d1,d2} = multipoly2struct(eval_project(arg1,arg2));
+    end
+end
+
+% on matrix values
+reference_project.matrix = cell(maxdim,maxdim);
+for d1 = 1:maxdim
+    for d2 = 1:maxdim
+        arg1 = reference_values.matrix{1,d1};
+        arg2 = reference_values.matrix{2,d2};
+
+        if ~isequal(size(arg1),size(arg2))
+            % size mismatch
+            continue;
+        end
+
+        reference_project.matrix{d1,d2} = multipoly2struct(eval_project(arg1,arg2));
+    end
+end
+
+save("reference_values.mat","reference_project","-append")
+
+disp("Completed: project operation");
 disp(" ");
 
 %% remove_coeffs
