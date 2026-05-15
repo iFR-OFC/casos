@@ -24,10 +24,10 @@ methods (TestClassSetup)
         % Initialize test data for poly2basis operation.
         test_case.loadTestData("poly2basis");
 
-        test_case.fatalAssertLength(test_case.dim1,size(test_case.references.matrix.poly2basis,1));
-        test_case.fatalAssertLength(test_case.dim2,size(test_case.references.matrix.poly2basis,2));
-        test_case.fatalAssertLength(test_case.arg1,size(test_case.references.scalar.poly2basis,1));
-        test_case.fatalAssertLength(test_case.arg2,size(test_case.references.scalar.poly2basis,2));
+        test_case.fatalAssertLength(test_case.dim1,size(test_case.references.matrix,1));
+        test_case.fatalAssertLength(test_case.dim2,size(test_case.references.matrix,2));
+        test_case.fatalAssertLength(test_case.arg1,size(test_case.references.scalar,1));
+        test_case.fatalAssertLength(test_case.arg2,size(test_case.references.scalar,2));
     end
 end
 
@@ -38,7 +38,7 @@ methods (Test, ParameterCombination="pairwise", TestTags="scalar")
         basis = sparsity(test_case.values.scalar{2,arg2});
 
         actual = poly2basis(value,basis);
-        reference = test_case.references.scalar.poly2basis{arg1,arg2};
+        reference = test_case.references.scalar{arg1,arg2};
 
         % perform assertion
         test_case.verifyClass(actual,?casadi.DM);
@@ -61,7 +61,7 @@ methods (Test, ParameterCombination="pairwise", TestTags=["vector" "column"])
 
         % else
         actual = poly2basis(value,basis);
-        reference = test_case.references.column.poly2basis{dim1,dim2};
+        reference = test_case.references.column{dim1,dim2};
 
         % perform assertion
         test_case.verifyClass(actual,?casadi.DM);
@@ -84,7 +84,7 @@ methods (Test, ParameterCombination="pairwise", TestTags=["vector" "row"])
 
         % else
         actual = poly2basis(value,basis);
-        reference = test_case.references.row.poly2basis{dim1,dim2};
+        reference = test_case.references.row{dim1,dim2};
 
         % perform assertion
         test_case.verifyClass(actual,?casadi.DM);
@@ -107,7 +107,7 @@ methods (Test, ParameterCombination="pairwise", TestTags="matrix")
 
         % else
         actual = poly2basis(value,basis);
-        reference = test_case.references.matrix.poly2basis{dim1,dim2};
+        reference = test_case.references.matrix{dim1,dim2};
 
         % perform assertion
         test_case.verifyClass(actual,?casadi.DM);
