@@ -8,7 +8,7 @@ classdef (Abstract) TestPolynomialOperations < matlab.unittest.TestCase
 % Base class for tests of polynomial operations.
 
 properties (Abstract, SetAccess=protected)
-    values       % test polynmials
+    values       % test polynomials
     references   % reference solutions
 end
 

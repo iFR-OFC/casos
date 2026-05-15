@@ -8,7 +8,7 @@ classdef TestTranspose < TestPolynomialOperations
 % Test transpose.
 
 properties (SetAccess=protected)
-    values       % test polynmials
+    values       % test polynomials
     references   % reference solutions
 end
 

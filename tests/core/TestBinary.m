@@ -8,7 +8,7 @@ classdef TestBinary < TestPolynomialOperations
 % Test binary (element-wise) operations.
 
 properties (SetAccess=protected)
-    values       % test polynmials
+    values       % test polynomials
     references   % reference solutions
 end
 

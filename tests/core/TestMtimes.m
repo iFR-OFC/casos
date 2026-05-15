@@ -8,7 +8,7 @@ classdef TestMtimes < TestPolynomialOperations
 % Test matrix multiplication operations.
 
 properties (SetAccess=protected)
-    values       % test polynmials
+    values       % test polynomials
     references   % reference solutions
 end
 

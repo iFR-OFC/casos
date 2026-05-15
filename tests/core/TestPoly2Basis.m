@@ -8,7 +8,7 @@ classdef TestPoly2Basis < TestPolynomialOperations
 % Test poly2basis operation.
 
 properties (SetAccess=protected)
-    values       % test polynmials
+    values       % test polynomials
     references   % reference solutions
 end
 

@@ -8,7 +8,7 @@ classdef TestDot < TestPolynomialOperations
 % Test dot operation.
 
 properties (SetAccess=protected)
-    values       % test polynmials
+    values       % test polynomials
     references   % reference solutions
 end
 

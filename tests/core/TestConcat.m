@@ -8,7 +8,7 @@ classdef TestConcat < TestPolynomialOperations
 % Test concatenation operations.
 
 properties (SetAccess=protected)
-    values       % test polynmials
+    values       % test polynomials
     references   % reference solutions
 end
 

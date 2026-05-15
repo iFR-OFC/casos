@@ -8,7 +8,7 @@ classdef TestNabla < TestPolynomialOperations
 % Test nabla operations.
 
 properties (SetAccess=protected)
-    values       % test polynmials
+    values       % test polynomials
     references   % reference solutions
 end
 

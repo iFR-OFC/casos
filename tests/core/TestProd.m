@@ -8,7 +8,7 @@ classdef TestProd < TestPolynomialOperations
 % Test matrix product.
 
 properties (SetAccess=protected)
-    values       % test polynmials
+    values       % test polynomials
     references   % reference solutions
 end
 

@@ -8,7 +8,7 @@ classdef TestSum < TestPolynomialOperations
 % Test matrix sum.
 
 properties (SetAccess=protected)
-    values       % test polynmials
+    values       % test polynomials
     references   % reference solutions
 end
 

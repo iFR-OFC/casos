@@ -8,7 +8,7 @@ classdef TestProject < TestPolynomialOperations
 % Test project operation.
 
 properties (SetAccess=protected)
-    values       % test polynmials
+    values       % test polynomials
     references   % reference solutions
 end
 

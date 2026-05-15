@@ -8,7 +8,7 @@ classdef TestRemoveCoeffs < TestPolynomialOperations
 % Test remove_coeffs operation.
 
 properties (SetAccess=protected)
-    values       % test polynmials
+    values       % test polynomials
     references   % reference solutions
 end
 

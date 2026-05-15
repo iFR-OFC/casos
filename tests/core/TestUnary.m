@@ -8,7 +8,7 @@ classdef TestUnary < TestPolynomialOperations
 % Test unary operations.
 
 properties (SetAccess=protected)
-    values       % test polynmials
+    values       % test polynomials
     references   % reference solutions
 end
 

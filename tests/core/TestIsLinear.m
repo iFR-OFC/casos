@@ -8,7 +8,7 @@ classdef TestIsLinear < TestSymbolicOperations
 % Test is_linear of symbolic operations.
 
 properties (SetAccess=protected)
-    values       % test polynmials
+    values       % test polynomials
 end
 
 properties (TestParameter)
