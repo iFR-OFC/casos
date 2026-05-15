@@ -730,62 +730,137 @@ save("reference_values.mat","reference_concat","-append")
 disp("Completed: concat operation");
 disp(" ");
 
-% %% sum
-% disp("========================================");
-% disp("Starting: sum operation");
-% disp("========================================")
-% 
-% reference_solutions = struct;
-% reference_solutions.single = cell(1,1);
-% reference_solutions.single{1} = multipoly2struct(sum(reference_values_flat{1}, 2)));
-% 
-% reference_solutions.multiple = cell(10,1);
-% for k = 1:10
-%    reference_solutions.multiple{k} = multipoly2struct(sum(reference_values_flat{k}, 1)));
-% end
-% 
-% save("reference_values.mat","reference_solutions","-append")
-% 
-% disp("Completed: sum operation");
-% disp(" ");
-% 
-% %% prod
-% disp("========================================");
-% disp("Starting: prod operation");
-% disp("========================================")
-% 
-% reference_solutions = struct;
-% reference_solutions.single = cell(1,1);
-% reference_solutions.single{1} = multipoly2struct(prod(reference_values_flat{1}, 1)));
-% 
-% reference_solutions.multiple = cell(10,1);
-% for k = 1:10
-%    reference_solutions.multiple{k} = multipoly2struct(prod(reference_values_flat{k}, 2)));
-% end
-% 
-% save("reference_prod.mat","test_values_struct","reference_solutions")
-% 
-% disp("Completed: prod operation");
-% disp(" ");
-% 
-% %% transpose
-% disp("========================================");
-% disp("Starting: transpose operation");
-% disp("========================================")
-% 
-% reference_solutions = struct;
-% reference_solutions.single = cell(1,1);
-% reference_solutions.single{1} = multipoly2struct(transpose(reference_values_flat{1})));
-% 
-% reference_solutions.multiple = cell(10,1);
-% for k = 1:10
-%    reference_solutions.multiple{k} = multipoly2struct(transpose(reference_values_flat{k})));
-% end
-% 
-% save("reference_values.mat","reference_solutions","-append")
-% 
-% disp("Completed: transpose operation");
-% disp(" ");
+%% transpose
+disp("========================================");
+disp("Starting: transpose operation");
+disp("========================================")
+
+reference_transpose = struct;
+
+% transpose column vector
+reference_transpose.column = cell(maxdim,1);
+
+for d1 = 1:maxdim
+    arg = reference_values.vector{1,d1};
+
+    reference_transpose.column{d1} = multipoly2struct(transpose(arg));
+end
+
+% transpose row vector
+reference_transpose.row = cell(maxdim,1);
+
+for d1 = 1:maxdim
+    arg = reference_values.vector{2,d1}';
+
+    reference_transpose.row{d1} = multipoly2struct(transpose(arg));
+end
+
+% transpose matrix
+reference_transpose.matrix = cell(maxdim,1);
+
+for d1 = 1:maxdim
+    arg = reference_values.matrix{3,d1};
+
+    reference_transpose.matrix{d1} = multipoly2struct(transpose(arg));
+end
+
+save("reference_values.mat","reference_transpose","-append")
+
+disp("Completed: transpose operation");
+disp(" ");
+
+%% sum
+disp("========================================");
+disp("Starting: sum operation");
+disp("========================================")
+
+reference_sum = struct('vector',struct, ...
+                        'matrix',struct ...
+);
+
+% sum of column and row vectors
+reference_sum.vector.column = cell(maxdim,1);
+reference_sum.vector.row    = cell(maxdim,1);
+
+for d1 = 1:maxdim
+    arg1 = reference_values.vector{1,d1};
+    arg2 = reference_values.vector{2,d1}';
+
+    reference_sum.vector.column{d1} = multipoly2struct(sum(arg1));
+    reference_sum.vector.row{d1}    = multipoly2struct(sum(arg2));
+end
+
+% sum of matrix along dimension
+reference_sum.matrix.dim = cell(maxdim,2);
+for d1 = 1:maxdim
+    for dim = 1:2
+        arg = reference_values.matrix{dim,d1};
+
+        reference_sum.matrix.dim{d1,dim} = multipoly2struct(sum(arg,dim));
+    end
+end
+
+% sum of all elements in matrix
+reference_sum.matrix.all = cell(maxdim,1);
+for d1 = 1:maxdim
+    arg = reference_values.matrix{3,d1};
+
+    reference_sum.matrix.all{d1} = multipoly2struct(sum(arg(:)));
+end
+
+save("reference_values.mat","reference_sum","-append")
+
+disp("Completed: sum operation");
+disp(" ");
+
+%% prod
+disp("========================================");
+disp("Starting: prod operation");
+disp("========================================")
+
+reference_prod = struct('vector',struct, ...
+                        'matrix',struct ...
+);
+
+% product of column and row vectors
+reference_prod.vector.column = cell(maxdim,1);
+reference_prod.vector.row    = cell(maxdim,1);
+
+for d1 = 1:maxdim
+    arg1 = reference_values.vector{1,d1};
+    arg2 = reference_values.vector{2,d1}';
+
+    reference_prod.vector.column{d1} = multipoly2struct(prod(arg1));
+    reference_prod.vector.row{d1}    = multipoly2struct(prod(arg2));
+end
+
+% product of matrix along dimension
+reference_prod.matrix.dim = cell(maxdim,2);
+for d1 = 1:maxdim
+    for dim = 1:2
+        arg = reference_values.matrix{dim,d1};
+
+        if isempty(arg)
+            % compute empty product using matlab
+            arg = zeros(size(arg));
+        end
+
+        reference_prod.matrix.dim{d1,dim} = multipoly2struct(prod(arg,dim));
+    end
+end
+
+% product of all elements in matrix
+reference_prod.matrix.all = cell(maxdim,1);
+for d1 = 1:maxdim
+    arg = reference_values.matrix{3,d1};
+
+    reference_prod.matrix.all{d1} = multipoly2struct(prod(arg(:)));
+end
+
+save("reference_values.mat","reference_prod","-append")
+
+disp("Completed: prod operation");
+disp(" ");
 
 %% Fini
 disp("========================================");
