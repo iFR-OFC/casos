@@ -329,6 +329,78 @@ save("reference_values.mat","reference_mtimes","-append")
 disp("Completed: mtimes operation");
 disp(" ");
 
+%% int
+disp("========================================");
+disp("Starting: int operation");
+disp("========================================")
+
+reference_int = struct('scalar',struct, ...
+                         'column',struct, ...
+                         'row',struct, ...
+                         'matrix',struct ...
+);
+
+% integrate with respect to single variable
+reference_int.scalar.int1 = cell(noPoly,4);
+reference_int.column.int1 = cell(maxdim,4);
+reference_int.row.int1 = cell(maxdim,4);
+reference_int.matrix.int1 = cell(maxdim,4);
+
+for ivar = 1:4
+    % on scalar values
+    for k = 1:noPoly
+        reference_int.scalar.int1{k,ivar} = multipoly2struct(eval_int("single",reference_values.scalar{1,k},ivar));
+    end
+
+    % on column vector values
+    for d = 1:maxdim
+        reference_int.column.int1{d,ivar} = multipoly2struct(eval_int("single",reference_values.vector{1,d},ivar));
+    end
+
+    % on row vector values
+    for d = 1:maxdim
+        reference_int.row.int1{d,ivar} = multipoly2struct(eval_int("single",reference_values.vector{2,d}',ivar));
+    end
+
+    % on matrix values
+    for d = 1:maxdim
+        reference_int.matrix.int1{d,ivar} = multipoly2struct(eval_int("single",reference_values.matrix{1,d},ivar));
+    end
+end
+
+% integrate with respect to multiple variables
+reference_int.scalar.intN = cell(noPoly,4);
+reference_int.column.intN = cell(maxdim,4);
+reference_int.row.intN = cell(maxdim,4);
+reference_int.matrix.intN = cell(maxdim,4);
+
+for ivar = 1:4
+    % on scalar values
+    for k = 1:noPoly
+        reference_int.scalar.intN{k,ivar} = multipoly2struct(eval_int("multiple",reference_values.scalar{2,k},ivar));
+    end
+
+    % on column vector values
+    for d = 1:maxdim
+        reference_int.column.intN{d,ivar} = multipoly2struct(eval_int("multiple",reference_values.vector{2,d},ivar));
+    end
+
+    % on row vector values
+    for d = 1:maxdim
+        reference_int.row.intN{d,ivar} = multipoly2struct(eval_int("multiple",reference_values.vector{1,d}',ivar));
+    end
+
+    % on matrix values
+    for d = 1:maxdim
+        reference_int.matrix.intN{d,ivar} = multipoly2struct(eval_int("multiple",reference_values.matrix{2,d},ivar));
+    end
+end
+
+save("reference_values.mat","reference_int","-append")
+
+disp("Completed: int operation");
+disp(" ");
+
 %% nabla
 disp("========================================");
 disp("Starting: nabla operation");
