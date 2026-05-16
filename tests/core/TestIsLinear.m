@@ -9,6 +9,7 @@ classdef TestIsLinear < TestSymbolicOperations
 
 properties (SetAccess=protected)
     values       % test polynomials
+    references = [];    % no references
 end
 
 properties (TestParameter)
@@ -144,13 +145,7 @@ end
 methods 
     function evaluate_unary(test_case, op1, symb1, val1, val2)
         % Evaluate unary operation.
-        if (symb1)
-            % symbolic operand
-            p = casos.PS.sym('p',sparsity(val1));
-        else
-            % numeric operand
-            p = val1;
-        end
+        p = test_case.get_operand(symb1,val1);
 
         % symbolic polynomial
         x = casos.PS.sym('x',sparsity(val2));
@@ -174,13 +169,8 @@ methods
 
     function evaluate_bilinear(test_case, op2, symb1, val1, val2, trans)
         % Evaluate bilinear operation.
-        if (symb1)
-            % symbolic operand
-            p = casos.PS.sym('p',sparsity(val1));
-        else
-            % numeric operand
-            p = val1;
-        end
+        p = test_case.get_operand(symb1,val1);
+
         if (trans)
             % transpose first argument
             p1 = p';
@@ -212,21 +202,8 @@ methods
 
     function evaluate_binary(test_case, op2, symb1, symb2, val1, val2, val3)
         % Evaluate binary operation.
-        if (symb1)
-            % symbolic operand
-            p = casos.PS.sym('p',sparsity(val1));
-        else
-            % numeric operand
-            p = val1;
-        end
-
-        if (symb2)
-            % symbolic operand
-            q = casos.PS.sym('q',sparsity(val2));
-        else
-            % numeric operand
-            q = val2;
-        end
+        p = test_case.get_operand(symb1,val1);
+        q = test_case.get_operand(symb2,val2);
 
         % symbolic polynomial
         x = casos.PS.sym('x',sparsity(val3));

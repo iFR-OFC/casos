@@ -15,13 +15,23 @@ end
 methods (Access=protected)
     function loadTestData(test_case,op)
         % Load test data for given polynomial operations.
+        if (nargin > 1)
+            % load references for operation
+            refs = compose("reference_%s",op);
+        else
+            % no references
+            refs = {};
+        end
+
         try
-            S = load("../references/reference_values.mat","test_values_struct","reference_"+op);
+            % load test values and (optional) references
+            S = load("../references/reference_values.mat","test_values_struct",refs{:});
 
         catch e
             test_case.fatalAssertFail("Error loading reference values: " + e.message);
         end
 
+        % store test values as polynomials
         test_case.values = struct;
         
         for type = ["scalar" "vector" "matrix"]
@@ -37,7 +47,10 @@ methods (Access=protected)
             end
         end
 
-        test_case.references  = S.("reference_"+op);
+        % store references
+        if ~isempty(refs)
+            test_case.references  = S.(refs(1));
+        end
     end
 end
 

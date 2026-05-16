@@ -4,36 +4,27 @@
 %
 % SPDX-License-Identifier: GPL-3.0-only
 
-classdef (Abstract) TestSymbolicOperations < matlab.unittest.TestCase
+classdef (Abstract) TestSymbolicOperations < TestPolynomialOperations
 % Base class for tests of symbolic (polynomial) operations.
 
-properties (Abstract, SetAccess=protected)
-    values;
-end
+methods (Static, Access=protected)
+    function [p,symbol,argument] = get_operand(is_symbolic,value)
+        % Return symbolic or numeric operand.
+        if (is_symbolic)
+            % symbolic operand
+            p = casos.PS.sym('p',sparsity(value));
 
-methods (Access=protected)
-    function loadTestData(test_case)
-        % Load test data for symbolic operations.
-        try
-            S = load("../references/reference_values.mat","test_values_struct");
+            % return symbol and argument
+            symbol = {p};
+            argument = {value};
 
-        catch e
-            test_case.fatalAssertFail("Error loading reference values: " + e.message);
-        end
+        else
+            % numeric operand
+            p = value;
 
-        test_case.values = struct;
-
-        for type = ["scalar" "vector" "matrix"]
-            test_case.values.(type) = cell(size(S.test_values_struct.(type{:})));
-
-            for k = 1:numel(S.test_values_struct.(type))
-                arg = S.test_values_struct.(type){k};
-    
-                x = casos.Indeterminates(arg.indets{:});
-                sp = casos.Sparsity.tuplet(arg.sz(1),arg.sz(2),arg.i,arg.j,x,arg.degrees);
-    
-                test_case.values.(type){k} = casos.PD(sp,arg.coeffs);
-            end
+            % empty symbol and argument
+            symbol = {};
+            argument = {};
         end
     end
 end
