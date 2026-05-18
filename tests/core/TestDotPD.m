@@ -4,8 +4,8 @@
 %
 % SPDX-License-Identifier: GPL-3.0-only
 
-classdef TestDot < TestPolynomialOperations
-% Test dot operation.
+classdef TestDotPD < TestPolynomialOperations
+% Test dot operation on constant polynomials.
 
 properties (SetAccess=protected)
     values       % test polynomials
@@ -34,7 +34,10 @@ end
 methods (Test, ParameterCombination="pairwise", TestTags="scalar")
     function test_dot(test_case, arg1, arg2)
         % Test dot operation on scalar values.
-        actual = dot(test_case.values.scalar{1,arg1},test_case.values.scalar{2,arg2});
+        value1 = test_case.values.scalar{1,arg1};
+        value2 = test_case.values.scalar{2,arg2};
+
+        actual = dot(value1,value2);
         reference = test_case.references.scalar.dot{arg1,arg2};
 
         % perform assertion
@@ -46,18 +49,18 @@ end
 methods (Test, ParameterCombination="pairwise", TestTags="matrix")
     function test_dot_matrix(test_case, dim1, dim2)
         % Test dot operation on matrix values.
-        val1 = test_case.values.matrix{1,dim1};
-        val2 = test_case.values.matrix{2,dim2};
+        value1 = test_case.values.matrix{1,dim1};
+        value2 = test_case.values.matrix{2,dim2};
 
-        if ~isequal(size(val1), size(val2))
+        if ~isequal(size(value1), size(value2))
             % size mismatch
-            diagtext = sprintf('Dimension mismatch expected: %s vs. %s.',mat2str(size(val1)),mat2str(size(val2)));
-            test_case.verifyError(@() dot(val1,val2),?MException,diagtext);
+            diagtext = sprintf('Dimension mismatch expected: %s vs. %s.',mat2str(size(value1)),mat2str(size(value2)));
+            test_case.verifyError(@() dot(value1,value2),?MException,diagtext);
             return
         end
 
         % else
-        actual = dot(val1,val2);
+        actual = dot(value1,value2);
         reference = test_case.references.matrix.dot{dim1,dim2};
 
         % perform assertion
