@@ -23,8 +23,10 @@ SPDX-License-Identifier: GPL-3.0-only
 
 ### Downloads
 
-- All platforms: [version 1.0.0](https://github.com/ifr-ofc/casos/releases/tag/v1.0.0) ([zip](https://github.com/ifr-ofc/casos/archive/refs/tags/v1.0.0.zip) | [tar.gz](https://github.com/ifr-ofc/casos/archive/refs/tags/v1.0.0.tar.gz))
+- All platforms: Stable [version 1.0.0](https://github.com/ifr-ofc/casos/releases/tag/v1.0.0) ([zip](https://github.com/ifr-ofc/casos/archive/refs/tags/v1.0.0.zip) | [tar.gz](https://github.com/ifr-ofc/casos/archive/refs/tags/v1.0.0.tar.gz))
+- Unstable: [version 1.0.1 Preview](https://github.com/iFR-OFC/casos/releases/tag/v1.0.1-pre) ([zip](https://github.com/iFR-OFC/casos/archive/refs/tags/v1.0.1-pre.zip) | [tar.gz](https://github.com/iFR-OFC/casos/archive/refs/tags/v1.0.1-pre.tar.gz))
 - CaΣoS [example package](https://github.com/ifr-ofc/casos-example-package) ([zip](https://github.com/ifr-ofc/casos-example-package/archive/refs/heads/main.zip))
+- [Reference values](https://github.com/iFR-OFC/casos/releases/download/v1.0.1-pre/reference_values.mat) for unit tests
 
 ### Quick links
 
@@ -42,7 +44,7 @@ If you use CaΣoS, please cite us:
 
 1. T. Cunis and J. Olucak, ‘CaΣoS: A nonlinear sum-of-squares optimization suite’, in _2025 American Control Conference_, (Denver, CO), pp. 1659–1666, 2025. [doi: 10.23919/ACC63710.2025.11107794](https://doi.org/10.23919/ACC63710.2025.11107794)
 
-2. J. Olucak and T. Cunis, ‘Sequential Quadratic Sum-of-squares Programming for Nonlinear Control Systems’, Pre-print. [arXiv: 2602.02394](https://arxiv.org/abs/2602.02394)
+2. J. Olucak and T. Cunis, ‘On the Practical Implementation of a Sequential Quadratic Programming Algorithm for Nonconvex Sum-of-squares Problems’, Pre-print. [arXiv: 2602.02394](https://arxiv.org/abs/2602.02394)
 
 <details>
 
@@ -60,7 +62,7 @@ If you use CaΣoS, please cite us:
 }
 
 @misc{Olucak2026,
-      title={Sequential Quadratic Sum-of-squares Programming for Nonlinear Control Systems}, 
+      title={On the Practical Implementation of a Sequential Quadratic Programming Algorithm for Nonconvex Sum-of-squares Problems}, 
       author={Olucak, Jan and Cunis, Torbjørn},
       year={2026},
       eprint={2602.02394},
