@@ -4,8 +4,8 @@
 %
 % SPDX-License-Identifier: GPL-3.0-only
 
-classdef TestUnary < TestPolynomialOperations
-% Test unary operations.
+classdef TestUnaryPD < TestPolynomialOperations
+% Test unary operations on constant polynomials.
 
 properties (SetAccess=protected)
     values       % test polynomials
@@ -33,7 +33,9 @@ end
 methods (Test, ParameterCombination="pairwise", TestTags="scalar")
     function test_unary(test_case, op, arg)
         % Test unary operation.
-        actual = feval(op,test_case.values.scalar{1,arg});
+        value = test_case.values.scalar{1,arg};
+
+        actual = feval(op,value);
         reference = test_case.references.scalar.(op){arg};
 
         % perform assertion
@@ -42,7 +44,9 @@ methods (Test, ParameterCombination="pairwise", TestTags="scalar")
 
     function test_power(test_case, arg, pow)
         % Test power operation (single exponent).
-        actual = power(test_case.values.scalar{1,arg},pow);
+        value = test_case.values.scalar{1,arg};
+
+        actual = power(value,pow);
         reference = test_case.references.scalar.power{arg,pow+1};
 
         % perform assertion
@@ -53,7 +57,9 @@ end
 methods (Test, ParameterCombination="pairwise", TestTags="matrix")
     function test_unary_matrix(test_case, op, dim)
         % Test unary operation on matrix values.
-        actual = feval(op,test_case.values.matrix{1,dim});
+        value = test_case.values.matrix{1,dim};
+
+        actual = feval(op,value);
         reference = test_case.references.matrix.(op){dim};
 
         % perform assertion
@@ -62,7 +68,9 @@ methods (Test, ParameterCombination="pairwise", TestTags="matrix")
 
     function test_power_matrix(test_case, dim, pow)
         % Test power operation on matrix values (single exponent).
-        actual = power(test_case.values.matrix{1,dim},pow);
+        value = test_case.values.matrix{1,dim};
+        
+        actual = power(value,pow);
         reference = test_case.references.matrix.power{dim,pow+1};
 
         % perform assertion
