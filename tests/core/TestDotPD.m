@@ -4,7 +4,7 @@
 %
 % SPDX-License-Identifier: GPL-3.0-only
 
-classdef TestDotPD < TestPolynomialOperations
+classdef (TestTags="PD") TestDotPD < TestPolynomialOperations
 % Test dot operation on constant polynomials.
 
 properties (SetAccess=protected)

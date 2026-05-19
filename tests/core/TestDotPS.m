@@ -4,7 +4,7 @@
 %
 % SPDX-License-Identifier: GPL-3.0-only
 
-classdef TestDotPS < TestSymbolicOperations
+classdef (TestTags="PS") TestDotPS < TestSymbolicOperations
 % Test dot operation on symbolic polynomials.
 
 properties (SetAccess=protected)

@@ -4,7 +4,7 @@
 %
 % SPDX-License-Identifier: GPL-3.0-only
 
-classdef TestUnaryPD < TestPolynomialOperations
+classdef (TestTags="PD") TestUnaryPD < TestPolynomialOperations
 % Test unary operations on constant polynomials.
 
 properties (SetAccess=protected)

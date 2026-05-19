@@ -4,7 +4,7 @@
 %
 % SPDX-License-Identifier: GPL-3.0-only
 
-classdef TestIsLinear < TestSymbolicOperations
+classdef (TestTags="PS") TestIsLinear < TestSymbolicOperations
 % Test is_linear of symbolic operations.
 
 properties (SetAccess=protected)

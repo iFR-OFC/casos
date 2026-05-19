@@ -4,7 +4,7 @@
 %
 % SPDX-License-Identifier: GPL-3.0-only
 
-classdef TestUnaryPS < TestSymbolicOperations
+classdef (TestTags="PS") TestUnaryPS < TestSymbolicOperations
 % Test unary operations on symbolic polynomials.
 
 properties (SetAccess=protected)
