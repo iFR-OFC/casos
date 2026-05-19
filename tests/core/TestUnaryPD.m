@@ -15,6 +15,7 @@ end
 properties (TestParameter)
     op = {"uplus" "uminus"};
     pow = num2cell(0:3);
+    
     dim = num2cell(1:6);
     arg = num2cell(1:10);
 end
