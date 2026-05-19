@@ -35,8 +35,8 @@ methods (TestClassSetup)
 end
 
 methods (Test, ParameterCombination="pairwise", TestTags="scalar")
-    function test_dot(test_case, symb1, symb2, arg1, arg2)
-        % Test dot operation on scalar values.
+    function test_dot_scalar(test_case, symb1, symb2, arg1, arg2)
+        % Test dot operation on scalars.
         value1 = test_case.values.scalar{1,arg1};
         value2 = test_case.values.scalar{2,arg2};
 
@@ -61,7 +61,7 @@ end
 
 methods (Test, ParameterCombination="pairwise", TestTags="matrix")
     function test_dot_matrix(test_case, symb1, symb2, dim1, dim2)
-        % Test dot operation on matrix values.
+        % Test dot operation on matrices.
         value1 = test_case.values.matrix{1,dim1};
         value2 = test_case.values.matrix{2,dim2};
 

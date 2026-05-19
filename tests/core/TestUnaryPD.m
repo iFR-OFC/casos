@@ -32,8 +32,8 @@ methods (TestClassSetup)
 end
 
 methods (Test, ParameterCombination="pairwise", TestTags="scalar")
-    function test_unary(test_case, op, arg)
-        % Test unary operation.
+    function test_unary_scalar(test_case, op, arg)
+        % Test unary operation on scalars.
         value = test_case.values.scalar{1,arg};
 
         actual = feval(op,value);
@@ -43,8 +43,8 @@ methods (Test, ParameterCombination="pairwise", TestTags="scalar")
         test_case.verifyEqualPolynomial(actual,reference,"RelTol",1e-15);
     end
 
-    function test_power(test_case, arg, pow)
-        % Test power operation (single exponent).
+    function test_power_scalar(test_case, arg, pow)
+        % Test power operation on scalars (single exponent).
         value = test_case.values.scalar{1,arg};
 
         actual = power(value,pow);
@@ -57,7 +57,7 @@ end
 
 methods (Test, ParameterCombination="pairwise", TestTags="matrix")
     function test_unary_matrix(test_case, op, dim)
-        % Test unary operation on matrix values.
+        % Test unary operation on matrices.
         value = test_case.values.matrix{1,dim};
 
         actual = feval(op,value);
@@ -68,7 +68,7 @@ methods (Test, ParameterCombination="pairwise", TestTags="matrix")
     end
 
     function test_power_matrix(test_case, dim, pow)
-        % Test power operation on matrix values (single exponent).
+        % Test power operation on matrices (single exponent).
         value = test_case.values.matrix{1,dim};
         
         actual = power(value,pow);

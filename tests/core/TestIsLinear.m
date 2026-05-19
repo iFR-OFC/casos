@@ -37,24 +37,24 @@ methods (TestClassSetup)
 end
 
 methods (Test, ParameterCombination="pairwise", TestTags="scalar")
-    function test_unary(test_case, op1, symb1, arg1)
-        % Test is_linear of a unary operation.
+    function test_unary_scalar(test_case, op1, symb1, arg1)
+        % Test is_linear of a unary operation on scalars.
         val1 = test_case.values.scalar{1,arg1};
         val2 = test_case.values.scalar{2,arg1};
         
         test_case.evaluate_unary(op1,symb1,val1,val2);
     end
 
-    function test_bilinear(test_case, op2, symb1, arg1)
-        % Test is_linear of a bilinear operation.
+    function test_bilinear_scalar(test_case, op2, symb1, arg1)
+        % Test is_linear of a bilinear operation on scalars.
         val1 = test_case.values.scalar{1,arg1};
         val2 = test_case.values.scalar{2,arg1};
 
         test_case.evaluate_bilinear(op2,symb1,val1,val2,false);
     end
 
-    function test_binary(test_case, op2, symb1, symb2, arg1, arg2)
-        % Test is_linear of a binary operation.
+    function test_binary_scalar(test_case, op2, symb1, symb2, arg1, arg2)
+        % Test is_linear of a binary operation on scalars.
         val1 = test_case.values.scalar{1,arg1};
         val2 = test_case.values.scalar{2,arg2};
         val3 = test_case.values.scalar{arg1+arg2};
