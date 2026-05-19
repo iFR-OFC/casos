@@ -54,7 +54,7 @@ methods (Test, ParameterCombination="pairwise", TestTags="scalar")
         reference = test_case.references.scalar.dot{arg1,arg2};
 
         % perform assertion
-        test_case.verifyClass(actual,?casadi.DM);
+        test_case.verifyClass(expression,?casadi.SX);
         test_case.verifyEqual(full(actual),reference,"RelTol",1e-15);
     end
 end
@@ -87,7 +87,7 @@ methods (Test, ParameterCombination="pairwise", TestTags="matrix")
         reference = test_case.references.matrix.dot{dim1,dim2};
 
         % perform assertion
-        test_case.verifyClass(actual,?casadi.DM);
+        test_case.verifyClass(expression,?casadi.SX);
         test_case.verifyEqual(full(actual),reference,"RelTol",1e-15);
     end
 end
