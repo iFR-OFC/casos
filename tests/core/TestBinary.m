@@ -46,7 +46,7 @@ methods (Test, ParameterCombination="pairwise", TestTags="scalar")
         % Test left-side division.
         val1 = test_case.values.scalar{1,arg1};
         vars = val1.indeterminates;
-        test_value_deg0 = subs(val1,vars,ones(length(vars),1));
+        test_value_deg0 = 1+subs(val1,vars,ones(length(vars),1));
         actual = ldivide(test_value_deg0,test_case.values.scalar{2,arg2});
         reference = test_case.references.scalar.ldivide{arg1,arg2};
 
@@ -58,7 +58,7 @@ methods (Test, ParameterCombination="pairwise", TestTags="scalar")
         % Test right-side division.
         val2 = test_case.values.scalar{2,arg2};
         vars = val2.indeterminates;
-        test_value_deg0 = subs(val2,vars,ones(length(vars),1));
+        test_value_deg0 = 1+subs(val2,vars,ones(length(vars),1));
         actual = rdivide(test_case.values.scalar{1,arg1},test_value_deg0);
         reference = test_case.references.scalar.rdivide{arg1,arg2};
 
