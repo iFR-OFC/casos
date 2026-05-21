@@ -4,8 +4,8 @@
 %
 % SPDX-License-Identifier: GPL-3.0-only
 
-classdef TestConcat < TestPolynomialOperations
-% Test concatenation operations.
+classdef (TestTags="PD") TestConcatPD < TestPolynomialOperations
+% Test concatenation operations on constant polynomials.
 
 properties (SetAccess=protected)
     values       % test polynomials
@@ -14,9 +14,10 @@ end
 
 properties (TestParameter)
     nrow = num2cell(1:5);   % numbers of rows to concat
+    arg = {1 2};
+
     dim1 = num2cell(1:6);
     dim2 = num2cell(1:6);
-    arg = {1 2};
 end
 
 methods (TestClassSetup)
@@ -35,8 +36,9 @@ methods (Test, ParameterCombination="pairwise", TestTags="scalar")
     function test_concat(test_case, nrow, arg)
         % Test concatenation to m-by-n matrix.
         ncol = 6-nrow;
+        value = test_case.values.scalar(arg,1:(nrow*ncol));
 
-        args_to_vertcat = mat2cell(test_case.values.scalar(arg,1:(nrow*ncol)), 1, repmat(nrow,1,ncol));
+        args_to_vertcat = mat2cell(value, 1, repmat(nrow,1,ncol));
         args_to_horzcat = cellfun(@(c) vertcat(c{:}), args_to_vertcat, 'UniformOutput', false);
 
         actual = horzcat(args_to_horzcat{:});
@@ -62,46 +64,22 @@ methods (Test, ParameterCombination="pairwise", TestTags=["vector" "column"])
 
     function test_horzcat_column(test_case, dim1, dim2)
         % Test horizontal concatenation of column vectors.
-        val1 = test_case.values.vector{1,dim1};
-        val2 = test_case.values.vector{2,dim2};
+        value1 = test_case.values.vector{1,dim1};
+        value2 = test_case.values.vector{2,dim2};
 
-        if ~isempty(val1) && ~isempty(val2) && size(val1,1) ~= size(val2,1)
-            % first dimension mismatch
-            diagtext = sprintf('First dimension mismatch expected: %d vs. %d.',size(val1,1),size(val2,1));
-            test_case.verifyError(@() horzcat(val1,val2),?MException,diagtext);
-            test_case.verifyError(@() cat(2,val1,val2),?MException,diagtext);
-            return
-        end
-
-        % else
-        actual1 = horzcat(val1,val2);
-        actual2 = cat(2,val1,val2);
         reference = test_case.references.column.horzcat{dim1,dim2};
 
-        test_case.verifyEqualPolynomial(actual1, reference);
-        test_case.verifyEqualPolynomial(actual2, reference);
+        test_case.evaluate_horzcat(value1,value2,reference);
     end
 
     function test_vertcat_column(test_case, dim1, dim2)
         % Test vertical concatenation of column vectors.
-        val1 = test_case.values.vector{1,dim1};
-        val2 = test_case.values.vector{2,dim2};
+        value1 = test_case.values.vector{1,dim1};
+        value2 = test_case.values.vector{2,dim2};
 
-        if ~isempty(val1) && ~isempty(val2) && size(val1,2) ~= size(val2,2)
-            % second dimension mismatch
-            diagtext = sprintf('Second dimension mismatch expected: %d vs. %d.',size(val1,2),size(val2,2));
-            test_case.verifyError(@() vertcat(val1,val2),?MException,diagtext);
-            test_case.verifyError(@() cat(1,val1,val2),?MException,diagtext);
-            return
-        end
-
-        % else
-        actual1 = vertcat(val1,val2);
-        actual2 = cat(1,val1,val2);
         reference = test_case.references.column.vertcat{dim1,dim2};
 
-        test_case.verifyEqualPolynomial(actual1, reference);
-        test_case.verifyEqualPolynomial(actual2, reference);
+        test_case.evaluate_vertcat(value1,value2,reference);
     end
 end
 
@@ -121,46 +99,22 @@ methods (Test, ParameterCombination="pairwise", TestTags=["vector" "row"])
 
     function test_horzcat_row(test_case, dim1, dim2)
         % Test horizontal concatenation of row vectors.
-        val1 = test_case.values.vector{1,dim1}';
-        val2 = test_case.values.vector{2,dim2}';
+        value1 = test_case.values.vector{1,dim1}';
+        value2 = test_case.values.vector{2,dim2}';
 
-        if ~isempty(val1) && ~isempty(val2) && size(val1,1) ~= size(val2,1)
-            % first dimension mismatch
-            diagtext = sprintf('First dimension mismatch expected: %d vs. %d.',size(val1,1),size(val2,1));
-            test_case.verifyError(@() horzcat(val1,val2),?MException,diagtext);
-            test_case.verifyError(@() cat(2,val1,val2),?MException,diagtext);
-            return
-        end
-
-        % else
-        actual1 = horzcat(val1,val2);
-        actual2 = cat(2,val1,val2);
         reference = test_case.references.row.horzcat{dim1,dim2};
 
-        test_case.verifyEqualPolynomial(actual1, reference);
-        test_case.verifyEqualPolynomial(actual2, reference);
+        test_case.evaluate_horzcat(value1,value2,reference);
     end
 
     function test_vertcat_row(test_case, dim1, dim2)
         % Test vertical concatenation of row vectors.
-        val1 = test_case.values.vector{1,dim1}';
-        val2 = test_case.values.vector{2,dim2}';
+        value1 = test_case.values.vector{1,dim1}';
+        value2 = test_case.values.vector{2,dim2}';
 
-        if ~isempty(val1) && ~isempty(val2) && size(val1,2) ~= size(val2,2)
-            % second dimension mismatch
-            diagtext = sprintf('Second dimension mismatch expected: %d vs. %d.',size(val1,2),size(val2,2));
-            test_case.verifyError(@() vertcat(val1,val2),?MException,diagtext);
-            test_case.verifyError(@() cat(1,val1,val2),?MException,diagtext);
-            return
-        end
-
-        % else
-        actual1 = vertcat(val1,val2);
-        actual2 = cat(1,val1,val2);
         reference = test_case.references.row.vertcat{dim1,dim2};
-
-        test_case.verifyEqualPolynomial(actual1, reference);
-        test_case.verifyEqualPolynomial(actual2, reference);
+        
+        test_case.evaluate_vertcat(value1,value2,reference);
     end
 end
 
@@ -180,43 +134,57 @@ methods (Test, ParameterCombination="pairwise", TestTags="matrix")
 
     function test_horzcat_matrix(test_case, dim1, dim2)
         % Test horizontal concatenation of matrices.
-        val1 = test_case.values.matrix{1,dim1};
-        val2 = test_case.values.matrix{2,dim2};
+        value1 = test_case.values.matrix{1,dim1};
+        value2 = test_case.values.matrix{2,dim2};
 
-        if ~isempty(val1) && ~isempty(val2) && size(val1,1) ~= size(val2,1)
+        reference = test_case.references.matrix.horzcat{dim1,dim2};
+
+        test_case.evaluate_horzcat(value1,value2,reference);
+    end
+
+    function test_vertcat_matrix(test_case, dim1, dim2)
+        % Test vertical concatenation of matrices.
+        value1 = test_case.values.matrix{1,dim1};
+        value2 = test_case.values.matrix{2,dim2};
+
+        reference = test_case.references.matrix.vertcat{dim1,dim2};
+
+        test_case.evaluate_vertcat(value1,value2,reference);
+    end
+end
+
+methods
+    function evaluate_horzcat(test_case, value1, value2, reference)
+        % Evaluate horizontal concatenation.
+        if ~isempty(value1) && ~isempty(value2) && size(value1,1) ~= size(value2,1)
             % first dimension mismatch
-            diagtext = sprintf('First dimension mismatch expected: %d vs. %d.',size(val1,1),size(val2,1));
-            test_case.verifyError(@() horzcat(val1,val2),?MException,diagtext);
-            test_case.verifyError(@() cat(2,val1,val2),?MException,diagtext);
+            diagtext = sprintf('First dimension mismatch expected: %d vs. %d.',size(value1,1),size(value2,1));
+            test_case.verifyError(@() horzcat(value1,value2),?MException,diagtext);
+            test_case.verifyError(@() cat(2,value1,value2),?MException,diagtext);
             return
         end
 
         % else
-        actual1 = horzcat(val1,val2);
-        actual2 = cat(2,val1,val2);
-        reference = test_case.references.matrix.horzcat{dim1,dim2};
+        actual1 = horzcat(value1,value2);
+        actual2 = cat(2,value1,value2);
 
         test_case.verifyEqualPolynomial(actual1, reference);
         test_case.verifyEqualPolynomial(actual2, reference);
     end
 
-    function test_vertcat_matrix(test_case, dim1, dim2)
-        % Test vertical concatenation of matrices.
-        val1 = test_case.values.matrix{1,dim1};
-        val2 = test_case.values.matrix{2,dim2};
-
-        if ~isempty(val1) && ~isempty(val2) && size(val1,2) ~= size(val2,2)
+    function evaluate_vertcat(test_case, value1, value2, reference)
+        % Evaluate vertical concatenation.
+        if ~isempty(value1) && ~isempty(value2) && size(value1,2) ~= size(value2,2)
             % second dimension mismatch
-            diagtext = sprintf('Second dimension mismatch expected: %d vs. %d.',size(val1,2),size(val2,2));
-            test_case.verifyError(@() vertcat(val1,val2),?MException,diagtext);
-            test_case.verifyError(@() cat(1,val1,val2),?MException,diagtext);
+            diagtext = sprintf('Second dimension mismatch expected: %d vs. %d.',size(value1,2),size(value2,2));
+            test_case.verifyError(@() vertcat(value1,value2),?MException,diagtext);
+            test_case.verifyError(@() cat(1,value1,value2),?MException,diagtext);
             return
         end
 
         % else
-        actual1 = vertcat(val1,val2);
-        actual2 = cat(1,val1,val2);
-        reference = test_case.references.matrix.vertcat{dim1,dim2};
+        actual1 = vertcat(value1,value2);
+        actual2 = cat(1,value1,value2);
 
         test_case.verifyEqualPolynomial(actual1, reference);
         test_case.verifyEqualPolynomial(actual2, reference);
