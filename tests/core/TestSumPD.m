@@ -4,8 +4,8 @@
 %
 % SPDX-License-Identifier: GPL-3.0-only
 
-classdef TestProd < TestPolynomialOperations
-% Test matrix product.
+classdef (TestTags="PD") TestSumPD < TestPolynomialOperations
+% Test matrix sum on constant polynomials.
 
 properties (SetAccess=protected)
     values       % test polynomials
@@ -14,13 +14,14 @@ end
 
 properties (TestParameter)
     par = {1 2};
+    
     dim = num2cell(1:6);
 end
 
 methods (TestClassSetup)
     function initializeTestData(test_case)
         % Initialize test data for unary operations.
-        test_case.loadTestData("prod");
+        test_case.loadTestData("sum");
 
         test_case.fatalAssertLength(test_case.par,size(test_case.references.matrix.dim,2));
         test_case.fatalAssertLength(test_case.dim,length(test_case.references.matrix.all));
@@ -28,44 +29,52 @@ methods (TestClassSetup)
 end
 
 methods (Test, ParameterCombination="pairwise", TestTags=["vector" "column"])
-    function test_prod_column(test_case, dim)
-        % Test product of column vectors.
-        actual = prod(test_case.values.vector{1,dim});
+    function test_sum_column(test_case, dim)
+        % Test sum of column vectors.
+        value = test_case.values.vector{1,dim};
+        
+        actual = sum(value);
         reference = test_case.references.vector.column{dim};
 
         % perform assertion
-        test_case.verifyEqualPolynomial(actual,reference,"RelTol",1e-12);
+        test_case.verifyEqualPolynomial(actual,reference,"RelTol",1e-15);
     end
 end
 
 methods (Test, ParameterCombination="pairwise", TestTags=["vector" "row"])
-    function test_prod_row(test_case, dim)
-        % Test product of row vectors.
-        actual = prod(test_case.values.vector{2,dim}'); %#ok<UDIM>
+    function test_sum_row(test_case, dim)
+        % Test sum of row vectors.
+        value = test_case.values.vector{2,dim}';
+
+        actual = sum(value); %#ok<UDIM>
         reference = test_case.references.vector.row{dim};
 
         % perform assertion
-        test_case.verifyEqualPolynomial(actual,reference,"RelTol",1e-12);
+        test_case.verifyEqualPolynomial(actual,reference,"RelTol",1e-15);
     end
 end
 
 methods (Test, ParameterCombination="pairwise", TestTags="matrix")
-    function test_prod_matrix_dim(test_case, dim, par)
-        % Test product of matrix along dimension.
-        actual = prod(test_case.values.matrix{par,dim},par);
+    function test_sum_matrix_dim(test_case, dim, par)
+        % Test sum of matrix along dimension.
+        value = test_case.values.matrix{par,dim};
+        
+        actual = sum(value,par);
         reference = test_case.references.matrix.dim{dim,par};
 
         % perform assertion
-        test_case.verifyEqualPolynomial(actual,reference,"RelTol",1e-12);
+        test_case.verifyEqualPolynomial(actual,reference,"RelTol",1e-15);
     end
 
-    function test_prod_matrix_all(test_case, dim)
-        % Test product of all elements in matrix.
-        actual = prod(test_case.values.matrix{3,dim},'all');
+    function test_sum_matrix_all(test_case, dim)
+        % Test sum of all elements in matrix.
+        value = test_case.values.matrix{3,dim};
+        
+        actual = sum(value,'all');
         reference = test_case.references.matrix.all{dim};
 
         % perform assertion
-        test_case.verifyEqualPolynomial(actual,reference,"RelTol",1e-12);
+        test_case.verifyEqualPolynomial(actual,reference,"RelTol",1e-15);
     end
 end
 
