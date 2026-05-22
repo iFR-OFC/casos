@@ -4,8 +4,8 @@
 %
 % SPDX-License-Identifier: GPL-3.0-only
 
-classdef TestNabla < TestPolynomialOperations
-% Test nabla operations.
+classdef (TestTags="PS") TestNablaPS < TestSymbolicOperations
+% Test nabla operations on symbolic polynomials.
 
 properties (SetAccess=protected)
     values       % test polynomials
@@ -14,6 +14,7 @@ end
 
 properties (TestParameter)
     ivar = num2cell(1:4);
+
     dim =  num2cell(1:6);
     arg = num2cell(1:10);
 end
@@ -32,36 +33,20 @@ end
 methods (Test, ParameterCombination="pairwise", TestTags="scalar")
     function test_derivative(test_case, ivar, arg)
         % Test nabla operation with respect to a single variable.
-        val = test_case.values.scalar{1,arg};
-        vars = val.indeterminates;
-        if ivar > length(vars)
-            % variable not in polynomial
-            var = casos.Indeterminates('y');
-        else
-            var = vars(ivar);
-        end
-
-        actual = nabla(val,var);
+        value = test_case.values.scalar{1,arg};
+        
         reference = test_case.references.scalar.derivative{arg,ivar};
 
-        % perform assertion
-        test_case.verifyEqualPolynomial(actual,reference,"RelTol",1e-15);
+        test_case.evaluate_derivative(ivar,value,reference);
     end
 
     function test_gradient(test_case, ivar, arg)
         % Test nabla operation with respect to multiple variables.
-        val = test_case.values.scalar{2,arg};
-        vars = val.indeterminates;
-        if ivar <= length(vars)
-            % replace variable
-            vars(ivar) = casos.Indeterminates('y');
-        end
-
-        actual = nabla(val,vars);
+        value = test_case.values.scalar{2,arg};
+        
         reference = test_case.references.scalar.gradient{arg,ivar};
 
-        % perform assertion
-        test_case.verifyEqualPolynomial(actual,reference,"RelTol",1e-15);
+        test_case.evaluate_gradient(ivar,value,reference);
     end
 end
 
@@ -69,37 +54,21 @@ methods (Test, ParameterCombination="pairwise", TestTags=["vector" "column"])
     function test_derivative_column(test_case, ivar, dim)
         % Test nabla operation on column vector
         % with respect to a single variable.
-        val = test_case.values.vector{1,dim};
-        vars = val.indeterminates;
-        if ivar > length(vars)
-            % variable not in polynomial
-            var = casos.Indeterminates('y');
-        else
-            var = vars(ivar);
-        end
-
-        actual = nabla(val,var);
+        value = test_case.values.vector{1,dim};
+        
         reference = test_case.references.column.derivative{dim,ivar};
 
-        % perform assertion
-        test_case.verifyEqualPolynomial(actual,reference,"RelTol",1e-15);
+        test_case.evaluate_derivative(ivar,value,reference);
     end
 
     function test_gradient_column(test_case, ivar, dim)
         % Test nabla operation on column vector 
         % with respect to multiple variables.
-        val = test_case.values.vector{2,dim};
-        vars = val.indeterminates;
-        if ivar <= length(vars)
-            % replace variable
-            vars(ivar) = casos.Indeterminates('y');
-        end
-
-        actual = nabla(val,vars);
+        value = test_case.values.vector{2,dim};
+        
         reference = test_case.references.column.gradient{dim,ivar};
 
-        % perform assertion
-        test_case.verifyEqualPolynomial(actual,reference,"RelTol",1e-15);
+        test_case.evaluate_gradient(ivar,value,reference);
     end
 end
 
@@ -107,45 +76,49 @@ methods (Test, ParameterCombination="pairwise", TestTags=["vector" "row"])
     function test_derivative_row(test_case, ivar, dim)
         % Test nabla operation on row vector
         % with respect to a single variable.
-        val = test_case.values.vector{2,dim}';
-        vars = val.indeterminates;
-        if ivar > length(vars)
-            % variable not in polynomial
-            var = casos.Indeterminates('y');
-        else
-            var = vars(ivar);
-        end
-
-        actual = nabla(val,var);
+        value = test_case.values.vector{2,dim}';
+        
         reference = test_case.references.row.derivative{dim,ivar};
 
-        % perform assertion
-        test_case.verifyEqualPolynomial(actual,reference,"RelTol",1e-15);
+        test_case.evaluate_derivative(ivar,value,reference);
     end
 
     function test_gradient_row(test_case, ivar, dim)
         % Test nabla operation on row vector 
         % with respect to multiple variables.
-        val = test_case.values.vector{1,dim}';
-        vars = val.indeterminates;
-        if ivar <= length(vars)
-            % replace variable
-            vars(ivar) = casos.Indeterminates('y');
-        end
-
-        actual = nabla(val,vars);
+        value = test_case.values.vector{1,dim}';
+        
         reference = test_case.references.row.gradient{dim,ivar};
 
-        % perform assertion
-        test_case.verifyEqualPolynomial(actual,reference,"RelTol",1e-15);
+        test_case.evaluate_gradient(ivar,value,reference);
     end
 end
 
 methods (Test, ParameterCombination="pairwise", TestTags="matrix")
     function test_derivative_matrix(test_case, ivar, dim)
         % Test nabla operation on matrix with respect to a single variable.
-        val = test_case.values.matrix{1,dim};
-        vars = val.indeterminates;
+        value = test_case.values.matrix{1,dim};
+        
+        reference = test_case.references.matrix.derivative{dim,ivar};
+
+        test_case.evaluate_derivative(ivar,value,reference);
+    end
+
+    function test_gradient_matrix(test_case, ivar, dim)
+        % Test nabla operation on matrix with respect to multiple variables.
+        value = test_case.values.matrix{2,dim};
+        
+        reference = test_case.references.matrix.gradient{dim,ivar};
+
+        test_case.evaluate_gradient(ivar,value,reference);
+    end
+end
+
+methods
+    function evaluate_derivative(test_case, ivar, value, reference)
+        % Evaluate nabla operation in single variable (derivative).
+        vars = value.indeterminates;
+
         if ivar > length(vars)
             % variable not in polynomial
             var = casos.Indeterminates('y');
@@ -153,24 +126,36 @@ methods (Test, ParameterCombination="pairwise", TestTags="matrix")
             var = vars(ivar);
         end
 
-        actual = nabla(val,var);
-        reference = test_case.references.matrix.derivative{dim,ivar};
+        % symbolic polynomial
+        [p,symbol,argument] = test_case.get_operand(true,value);
+
+        % build symbolic function
+        expression = nabla(p,var);
+        f = casos.Function('f',symbol,{expression});
+
+        actual = f(argument{:});
 
         % perform assertion
         test_case.verifyEqualPolynomial(actual,reference,"RelTol",1e-15);
     end
 
-    function test_gradient_matrix(test_case, ivar, dim)
-        % Test nabla operation on matrix with respect to multiple variables.
-        val = test_case.values.matrix{2,dim};
-        vars = val.indeterminates;
+    function evaluate_gradient(test_case, ivar, value, reference)
+        % Evaluate nabla operation in multiple variables (gradient).
+        vars = value.indeterminates;
+
         if ivar <= length(vars)
             % replace variable
             vars(ivar) = casos.Indeterminates('y');
         end
 
-        actual = nabla(val,vars);
-        reference = test_case.references.matrix.gradient{dim,ivar};
+        % symbolic polynomial
+        [p,symbol,argument] = test_case.get_operand(true,value);
+
+        % build symbolic function
+        expression = nabla(p,vars);
+        f = casos.Function('f',symbol,{expression});
+
+        actual = f(argument{:});
 
         % perform assertion
         test_case.verifyEqualPolynomial(actual,reference,"RelTol",1e-15);
