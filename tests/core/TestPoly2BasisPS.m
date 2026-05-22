@@ -4,8 +4,8 @@
 %
 % SPDX-License-Identifier: GPL-3.0-only
 
-classdef TestPoly2Basis < TestPolynomialOperations
-% Test poly2basis operation.
+classdef (TestTags="PS") TestPoly2BasisPS < TestSymbolicOperations
+% Test poly2basis operation on symbolic polynomials.
 
 properties (SetAccess=protected)
     values       % test polynomials
@@ -37,12 +37,9 @@ methods (Test, ParameterCombination="pairwise", TestTags="scalar")
         value = test_case.values.scalar{1,arg1};
         basis = sparsity(test_case.values.scalar{2,arg2});
 
-        actual = poly2basis(value,basis);
         reference = test_case.references.scalar{arg1,arg2};
 
-        % perform assertion
-        test_case.verifyClass(actual,?casadi.DM);
-        test_case.verifyEqual(full(actual),reference,"RelTol",1e-15);
+        test_case.evaluate_poly2basis(value,basis,reference);
     end
 end
 
@@ -52,20 +49,9 @@ methods (Test, ParameterCombination="pairwise", TestTags=["vector" "column"])
         value = test_case.values.vector{1,dim1};
         basis = sparsity(test_case.values.vector{2,dim2});
         
-        if ~isequal(size(value),size(basis))
-            % size mismatch
-            diagtext = sprintf('Dimension mismatch expected: %s vs. %s.',mat2str(size(value)),mat2str(size(basis)));
-            test_case.verifyError(@() poly2basis(value,basis),?MException,diagtext);
-            return
-        end
-
-        % else
-        actual = poly2basis(value,basis);
         reference = test_case.references.column{dim1,dim2};
 
-        % perform assertion
-        test_case.verifyClass(actual,?casadi.DM);
-        test_case.verifyEqual(full(actual),reference,"RelTol",1e-15);
+        test_case.evaluate_poly2basis(value,basis,reference);
     end
 end
 
@@ -75,20 +61,9 @@ methods (Test, ParameterCombination="pairwise", TestTags=["vector" "row"])
         value = test_case.values.vector{1,dim1}';
         basis = sparsity(test_case.values.vector{2,dim2}');
         
-        if ~isequal(size(value),size(basis))
-            % size mismatch
-            diagtext = sprintf('Dimension mismatch expected: %s vs. %s.',mat2str(size(value)),mat2str(size(basis)));
-            test_case.verifyError(@() poly2basis(value,basis),?MException,diagtext);
-            return
-        end
-
-        % else
-        actual = poly2basis(value,basis);
         reference = test_case.references.row{dim1,dim2};
 
-        % perform assertion
-        test_case.verifyClass(actual,?casadi.DM);
-        test_case.verifyEqual(full(actual),reference,"RelTol",1e-15);
+        test_case.evaluate_poly2basis(value,basis,reference);
     end
 end
 
@@ -98,19 +73,35 @@ methods (Test, ParameterCombination="pairwise", TestTags="matrix")
         value = test_case.values.matrix{1,dim1};
         basis = sparsity(test_case.values.matrix{2,dim2});
         
+        reference = test_case.references.matrix{dim1,dim2};
+
+        test_case.evaluate_poly2basis(value,basis,reference);
+    end
+end
+
+methods
+    function evaluate_poly2basis(test_case, value, basis, reference)
+        % Evaluate poly2basis operation.
+
+        % symbolic polynomial
+        [p,symbol,argument] = test_case.get_operand(true,value);
+
         if ~isequal(size(value),size(basis))
             % size mismatch
             diagtext = sprintf('Dimension mismatch expected: %s vs. %s.',mat2str(size(value)),mat2str(size(basis)));
-            test_case.verifyError(@() poly2basis(value,basis),?MException,diagtext);
+            test_case.verifyError(@() poly2basis(p,basis),?MException,diagtext);
             return
         end
 
-        % else
-        actual = poly2basis(value,basis);
-        reference = test_case.references.matrix{dim1,dim2};
+        % else:
+        % build symbolic function
+        expression = poly2basis(p,basis);
+        f = casos.Function('f',symbol,{expression});
+
+        actual = f(argument{:});
 
         % perform assertion
-        test_case.verifyClass(actual,?casadi.DM);
+        test_case.verifyClass(expression,?casadi.SX);
         test_case.verifyEqual(full(actual),reference,"RelTol",1e-15);
     end
 end
