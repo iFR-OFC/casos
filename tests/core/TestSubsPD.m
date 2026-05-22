@@ -35,7 +35,7 @@ methods (TestClassSetup)
 end
 
 methods (Test, ParameterCombination="pairwise", TestTags="scalar")
-    function test_subs_single(test_case, ivar, arg)
+    function test_subs_single_scalar(test_case, ivar, arg)
         % Test substitution of a single variable.
         value1 = test_case.values.scalar{1,arg};
         value2 = test_case.values.scalar{2,arg};
@@ -45,7 +45,7 @@ methods (Test, ParameterCombination="pairwise", TestTags="scalar")
         test_case.evaluate_subs_single(ivar,value1,value2,reference);
     end
 
-    function test_subs_multiple(test_case, ivar, arg)
+    function test_subs_multiple_scalar(test_case, ivar, arg)
         % Test substitution of multiple variables.
         value1 = test_case.values.scalar{2,arg};
         value2 = test_case.values.vector{2,value1.nvars+1};

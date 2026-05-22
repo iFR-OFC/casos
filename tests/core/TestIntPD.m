@@ -31,7 +31,7 @@ methods (TestClassSetup)
 end
 
 methods (Test, ParameterCombination="pairwise", TestTags="scalar")
-    function test_int1(test_case, ivar, arg)
+    function test_int1_scalar(test_case, ivar, arg)
         % Test integral operation with respect to a single variable.
         value = test_case.values.scalar{1,arg};
 
@@ -40,7 +40,7 @@ methods (Test, ParameterCombination="pairwise", TestTags="scalar")
         test_case.evaluate_int1(ivar,value,reference);
     end
 
-    function test_intN(test_case, ivar, arg)
+    function test_intN_scalar(test_case, ivar, arg)
         % Test integral operation with respect to multiple variables.
         value = test_case.values.scalar{2,arg};
 

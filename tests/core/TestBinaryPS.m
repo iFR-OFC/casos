@@ -145,21 +145,21 @@ methods (Test, ParameterCombination="pairwise", TestTags=["matrix"])
         switch (op)
             case {"plus" "minus" "times"}
                 % element-wise addition, subtraction, multiplication
-                test_case.evaluate_binary_matrix(op,symb1,symb2,value1,value2,reference);
+                test_case.evaluate_binary(op,symb1,symb2,value1,value2,reference);
 
             case "ldivide"
                 % left-divide by constant polynomial
                 vars = value1.indeterminates;
                 value1_deg0 = 1+subs(value1,vars,ones(length(vars),1));
                 
-                test_case.evaluate_binary_matrix(op,symb1,symb2,value1_deg0,value2,reference);
+                test_case.evaluate_binary(op,symb1,symb2,value1_deg0,value2,reference);
 
             case "rdivide"
                 % right-divide by constant polynomial
                 vars = value2.indeterminates;
                 value2_deg0 = 1+subs(value2,vars,ones(length(vars),1));
                 
-                test_case.evaluate_binary_matrix(op,symb1,symb2,value1,value2_deg0,reference);
+                test_case.evaluate_binary(op,symb1,symb2,value1,value2_deg0,reference);
 
             otherwise
                 test_case.assertFail(sprintf("Not implemented: %s.",op));
@@ -169,25 +169,7 @@ end
 
 methods
     function evaluate_binary(test_case, op, symb1, symb2, value1, value2, reference)
-        % Evaluate binary operation on non-matrices.
-        test_case.assumeTrue(symb1 || symb2, "Operands not symbolic.");
-        
-        % symbolic polynomials
-        [p1,symbol1,argument1] = test_case.get_operand(symb1,value1);
-        [p2,symbol2,argument2] = test_case.get_operand(symb2,value2);
-
-        % build symbolic function
-        expression = feval(op,p1,p2);
-        f = casos.Function('f',[symbol1 symbol2],{expression});
-
-        actual = f(argument1{:},argument2{:});
-
-        % perform assertion
-        test_case.verifyEqualPolynomial(actual,reference,"RelTol",1e-15);
-    end
-
-    function evaluate_binary_matrix(test_case, op, symb1, symb2, value1, value2, reference)
-        % Evaluate binary operation on matrices.
+        % Evaluate binary operation.
         test_case.assumeTrue(symb1 || symb2, "Operands not symbolic.");
         
         % symbolic polynomials

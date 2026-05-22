@@ -32,7 +32,7 @@ methods (TestClassSetup)
 end
 
 methods (Test, ParameterCombination="pairwise", TestTags="scalar")
-    function test_project(test_case, arg1, arg2)
+    function test_project_scalar(test_case, arg1, arg2)
         % Test project operation.
         value = test_case.values.scalar{1,arg1};
         basis = sparsity(test_case.values.scalar{2,arg2});

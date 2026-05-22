@@ -32,7 +32,7 @@ methods (TestClassSetup)
 end
 
 methods (Test, ParameterCombination="pairwise", TestTags="scalar")
-    function test_poly2basis(test_case, arg1, arg2)
+    function test_poly2basis_scalar(test_case, arg1, arg2)
         % Test poly2basis operation.
         value = test_case.values.scalar{1,arg1};
         basis = sparsity(test_case.values.scalar{2,arg2});

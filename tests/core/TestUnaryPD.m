@@ -36,22 +36,18 @@ methods (Test, ParameterCombination="pairwise", TestTags="scalar")
         % Test unary operation on scalars.
         value = test_case.values.scalar{1,arg};
 
-        actual = feval(op,value);
         reference = test_case.references.scalar.(op){arg};
 
-        % perform assertion
-        test_case.verifyEqualPolynomial(actual,reference,"RelTol",1e-15);
+        test_case.evaluate_unary(op,value,reference);
     end
 
     function test_power_scalar(test_case, arg, pow)
         % Test power operation on scalars (single exponent).
         value = test_case.values.scalar{1,arg};
 
-        actual = power(value,pow);
         reference = test_case.references.scalar.power{arg,pow+1};
 
-        % perform assertion
-        test_case.verifyEqualPolynomial(actual,reference,"RelTol",1e-12);
+        test_case.evaluate_unary(@(p) power(p,pow),value,reference);
     end
 end
 
@@ -60,19 +56,25 @@ methods (Test, ParameterCombination="pairwise", TestTags="matrix")
         % Test unary operation on matrices.
         value = test_case.values.matrix{1,dim};
 
-        actual = feval(op,value);
         reference = test_case.references.matrix.(op){dim};
 
-        % perform assertion
-        test_case.verifyEqualPolynomial(actual,reference,"RelTol",1e-15);
+        test_case.evaluate_unary(op,value,reference);
     end
 
     function test_power_matrix(test_case, dim, pow)
         % Test power operation on matrices (single exponent).
         value = test_case.values.matrix{1,dim};
         
-        actual = power(value,pow);
         reference = test_case.references.matrix.power{dim,pow+1};
+
+        test_case.evaluate_unary(@(p) power(p,pow),value,reference);
+    end
+end
+   
+methods
+    function evaluate_unary(test_case, op, value, reference)
+        % Evaluate unary operation.
+        actual = feval(op,value);
 
         % perform assertion
         test_case.verifyEqualPolynomial(actual,reference,"RelTol",1e-12);

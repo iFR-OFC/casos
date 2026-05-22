@@ -44,28 +44,25 @@ methods (Test, ParameterCombination="pairwise", TestTags="scalar")
         switch (op)
             case {"plus" "minus" "times"}
                 % element-wise addition, subtraction, multiplication
-                actual = feval(op,value1,value2);
+                test_case.evaluate_binary(op,value1,value2,reference);
 
             case "ldivide"
                 % left-divide by constant polynomial
                 vars = value1.indeterminates;
                 value1_deg0 = 1+subs(value1,vars,ones(length(vars),1));
                 
-                actual = ldivide(value1_deg0,value2);
+                test_case.evaluate_binary(op,value1_deg0,value2,reference);
 
             case "rdivide"
                 % right-divide by constant polynomial
                 vars = value2.indeterminates;
                 value2_deg0 = 1+subs(value2,vars,ones(length(vars),1));
                 
-                actual = rdivide(value1,value2_deg0);
+                test_case.evaluate_binary(op,value1,value2_deg0,reference);
 
             otherwise
                 test_case.assertFail(sprintf("Not implemented: %s.",op));
         end
-
-        % perform assertion
-        test_case.verifyEqualPolynomial(actual,reference,"RelTol",1e-15);
     end
 end
 
@@ -80,28 +77,25 @@ methods (Test, ParameterCombination="pairwise", TestTags=["vector" "inner"])
         switch (op)
             case {"plus" "minus" "times"}
                 % element-wise addition, subtraction, multiplication
-                actual = feval(op,value1,value2);
+                test_case.evaluate_binary(op,value1,value2,reference);
 
             case "ldivide"
                 % left-divide by constant polynomial
                 vars = value1.indeterminates;
                 value1_deg0 = 1+subs(value1,vars,ones(length(vars),1));
                 
-                actual = ldivide(value1_deg0,value2);
+                test_case.evaluate_binary(op,value1_deg0,value2,reference);
 
             case "rdivide"
                 % right-divide by constant polynomial
                 vars = value2.indeterminates;
                 value2_deg0 = 1+subs(value2,vars,ones(length(vars),1));
                 
-                actual = rdivide(value1,value2_deg0);
+                test_case.evaluate_binary(op,value1,value2_deg0,reference);
 
             otherwise
                 test_case.assertFail(sprintf("Not implemented: %s.",op));
         end
-
-        % perform assertion
-        test_case.verifyEqualPolynomial(actual,reference,"RelTol",1e-15);
     end
 end
 
@@ -116,28 +110,25 @@ methods (Test, ParameterCombination="pairwise", TestTags=["vector" "outer"])
         switch (op)
             case {"plus" "minus" "times"}
                 % element-wise addition, subtraction, multiplication
-                actual = feval(op,value1,value2);
+                test_case.evaluate_binary(op,value1,value2,reference);
 
             case "ldivide"
                 % left-divide by constant polynomial
                 vars = value1.indeterminates;
                 value1_deg0 = 1+subs(value1,vars,ones(length(vars),1));
                 
-                actual = ldivide(value1_deg0,value2);
+                test_case.evaluate_binary(op,value1_deg0,value2,reference);
 
             case "rdivide"
                 % right-divide by constant polynomial
                 vars = value2.indeterminates;
                 value2_deg0 = 1+subs(value2,vars,ones(length(vars),1));
                 
-                actual = rdivide(value1,value2_deg0);
+                test_case.evaluate_binary(op,value1,value2_deg0,reference);
 
             otherwise
                 test_case.assertFail(sprintf("Not implemented: %s.",op));
         end
-
-        % perform assertion
-        test_case.verifyEqualPolynomial(actual,reference,"RelTol",1e-15);
     end
 end
 
@@ -152,21 +143,21 @@ methods (Test, ParameterCombination="pairwise", TestTags=["matrix"])
         switch (op)
             case {"plus" "minus" "times"}
                 % element-wise addition, subtraction, multiplication
-                test_case.evaluate_binary_matrix(op,value1,value2,reference);
+                test_case.evaluate_binary(op,value1,value2,reference);
 
             case "ldivide"
                 % left-divide by constant polynomial
                 vars = value1.indeterminates;
                 value1_deg0 = 1+subs(value1,vars,ones(length(vars),1));
                 
-                test_case.evaluate_binary_matrix(op,value1_deg0,value2,reference);
+                test_case.evaluate_binary(op,value1_deg0,value2,reference);
 
             case "rdivide"
                 % right-divide by constant polynomial
                 vars = value2.indeterminates;
                 value2_deg0 = 1+subs(value2,vars,ones(length(vars),1));
                 
-                test_case.evaluate_binary_matrix(op,value1,value2_deg0,reference);
+                test_case.evaluate_binary(op,value1,value2_deg0,reference);
 
             otherwise
                 test_case.assertFail(sprintf("Not implemented: %s.",op));
@@ -175,8 +166,8 @@ methods (Test, ParameterCombination="pairwise", TestTags=["matrix"])
 end
 
 methods
-    function evaluate_binary_matrix(test_case, op, value1, value2, reference)
-        % Evaluate binary operation on matrices.
+    function evaluate_binary(test_case, op, value1, value2, reference)
+        % Evaluate binary operation.
         if (~isrow(value1) && ~isrow(value2) && size(value1,1) ~= size(value2,1)) ...
                     || (~iscolumn(value1) && ~iscolumn(value2) && size(value1,2) ~= size(value2,2))
             % dimension mismatch

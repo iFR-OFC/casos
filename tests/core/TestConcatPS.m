@@ -35,7 +35,7 @@ methods (TestClassSetup)
 end
 
 methods (Test, ParameterCombination="pairwise", TestTags="scalar")
-    function test_concat(test_case, nrow, arg)
+    function test_concat_scalar(test_case, nrow, arg)
         % Test concatenation to m-by-n matrix.
         ncol = 6-nrow;
         all_values = test_case.values.scalar(arg,1:(nrow*ncol));

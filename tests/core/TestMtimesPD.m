@@ -46,25 +46,22 @@ methods (Test, ParameterCombination="pairwise", TestTags="scalar")
         switch (op)
             case {"mtimes" "kron"}
                 % matrix multiplication, Kronecker product
-                actual = feval(op,value1,value2);
+                test_case.evaluate_mtimes(op,value1,value2,reference);
 
             case {"mldivide"}
                 % matrix left-divide
                 vars = value1.indeterminates;
                 value1_deg0 = subs(value1,vars,ones(length(vars),1));
         
-                actual = mldivide(value1_deg0,value2);
+                test_case.evaluate_mtimes(op,value1_deg0,value2,reference);
 
             case {"mrdivide"}
                 % matrix right-divide
                 vars = value2.indeterminates;
                 value2_deg0 = subs(value2,vars,ones(length(vars),1));
         
-                actual = mrdivide(value1,value2_deg0);
+                test_case.evaluate_mtimes(op,value1,value2_deg0,reference);
         end
-
-        % perform assertion
-        test_case.verifyEqualPolynomial(actual,reference,"RelTol",1e-15)
     end
 
     function test_mpower_scalar(test_case, pow, arg1)
@@ -85,19 +82,9 @@ methods (Test, ParameterCombination="pairwise", TestTags=["vector" "inner"])
         value1 = test_case.values.vector{1,dim1}';
         value2 = test_case.values.vector{2,dim2};
 
-        if (size(value1,2) ~= size(value2,1))
-            % inner dimension mismatch
-            diagtext = sprintf('Inner dimension mismatch expected: %d vs. %d.',size(value1,2),size(value2,1));
-            test_case.verifyError(@() mtimes(value1,value2),?MException,diagtext);
-            return
-        end
-
-        % else
-        actual = mtimes(value1,value2);
         reference = test_case.references.inner.mtimes{dim1,dim2};
 
-        % perform assertion
-        test_case.verifyEqualPolynomial(actual,reference,"RelTol",1e-15);
+        test_case.evaluate_mtimes("mtimes",value1,value2,reference);
     end
 
     function test_kron_inner(test_case, dim1, dim2)
@@ -105,11 +92,9 @@ methods (Test, ParameterCombination="pairwise", TestTags=["vector" "inner"])
         value1 = test_case.values.vector{1,dim1}';
         value2 = test_case.values.vector{2,dim2};
 
-        actual = kron(value1,value2);
         reference = test_case.references.inner.kron{dim1,dim2};
 
-        % perform assertion
-        test_case.verifyEqualPolynomial(actual,reference,"RelTol",1e-15);
+        test_case.evaluate_mtimes("kron",value1,value2,reference);
     end
 end
 
@@ -119,11 +104,9 @@ methods (Test, ParameterCombination="pairwise", TestTags=["vector" "outer"])
         value1 = test_case.values.vector{1,dim1};
         value2 = test_case.values.vector{2,dim2}';
 
-        actual = mtimes(value1,value2);
         reference = test_case.references.outer.mtimes{dim1,dim2};
 
-        % perform assertion
-        test_case.verifyEqualPolynomial(actual,reference,"RelTol",1e-15);
+        test_case.evaluate_mtimes("mtimes",value1,value2,reference);
     end
 
     function test_kron_outer(test_case, dim1, dim2)
@@ -131,11 +114,9 @@ methods (Test, ParameterCombination="pairwise", TestTags=["vector" "outer"])
         value1 = test_case.values.vector{1,dim1};
         value2 = test_case.values.vector{2,dim2}';
 
-        actual = kron(value1,value2);
         reference = test_case.references.outer.kron{dim1,dim2};
 
-        % perform assertion
-        test_case.verifyEqualPolynomial(actual,reference,"RelTol",1e-15);
+        test_case.evaluate_mtimes("kron",value1,value2,reference);
     end
 end
 
@@ -145,19 +126,9 @@ methods (Test, ParameterCombination="pairwise", TestTags="matrix")
         value1 = test_case.values.matrix{1,dim1};
         value2 = test_case.values.matrix{3,dim2};
 
-        if (size(value1,2) ~= size(value2,1))
-            % inner dimension mismatch
-            diagtext = sprintf('Inner dimension mismatch expected: %d vs. %d.',size(value1,2),size(value2,1));
-            test_case.verifyError(@() mtimes(value1,value2),?MException,diagtext);
-            return
-        end
-
-        % else
-        actual = mtimes(value1,value2);
         reference = test_case.references.matrix.mtimes{dim1,dim2};
 
-        % perform assertion
-        test_case.verifyEqualPolynomial(actual,reference,"RelTol",1e-15);
+        test_case.evaluate_mtimes("mtimes",value1,value2,reference);
     end
 
     function test_kron_matrix(test_case, dim1, dim2)
@@ -165,11 +136,28 @@ methods (Test, ParameterCombination="pairwise", TestTags="matrix")
         value1 = test_case.values.matrix{1,dim1};
         value2 = test_case.values.matrix{3,dim2};
 
-        actual = kron(value1,value2);
         reference = test_case.references.matrix.kron{dim1,dim2};
+
+        test_case.evaluate_mtimes("kron",value1,value2,reference);
+    end
+end
+
+methods
+    function evaluate_mtimes(test_case, op, value1, value2, reference)
+        % Evaluate matrix multiplication operation.
+        if strcmp(op,"mtimes") && (size(value1,2) ~= size(value2,1))
+            % inner dimension mismatch
+            diagtext = sprintf('Inner dimension mismatch expected: %d vs. %d.',size(value1,2),size(value2,1));
+            test_case.verifyError(@() feval(op,value1,value2),?MException,diagtext);
+            return
+        end
+
+        % else
+        actual = mtimes(value1,value2);
 
         % perform assertion
         test_case.verifyEqualPolynomial(actual,reference,"RelTol",1e-15);
+
     end
 end
 

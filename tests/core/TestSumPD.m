@@ -33,11 +33,9 @@ methods (Test, ParameterCombination="pairwise", TestTags=["vector" "column"])
         % Test sum of column vectors.
         value = test_case.values.vector{1,dim};
         
-        actual = sum(value);
         reference = test_case.references.vector.column{dim};
 
-        % perform assertion
-        test_case.verifyEqualPolynomial(actual,reference,"RelTol",1e-15);
+        test_case.evaluate_sum(value,reference);
     end
 end
 
@@ -46,11 +44,9 @@ methods (Test, ParameterCombination="pairwise", TestTags=["vector" "row"])
         % Test sum of row vectors.
         value = test_case.values.vector{2,dim}';
 
-        actual = sum(value); %#ok<UDIM>
         reference = test_case.references.vector.row{dim};
 
-        % perform assertion
-        test_case.verifyEqualPolynomial(actual,reference,"RelTol",1e-15);
+        test_case.evaluate_sum(value,reference);
     end
 end
 
@@ -59,19 +55,25 @@ methods (Test, ParameterCombination="pairwise", TestTags="matrix")
         % Test sum of matrix along dimension.
         value = test_case.values.matrix{par,dim};
         
-        actual = sum(value,par);
         reference = test_case.references.matrix.dim{dim,par};
 
-        % perform assertion
-        test_case.verifyEqualPolynomial(actual,reference,"RelTol",1e-15);
+        test_case.evaluate_sum(value,reference,par);
     end
 
     function test_sum_matrix_all(test_case, dim)
         % Test sum of all elements in matrix.
         value = test_case.values.matrix{3,dim};
         
-        actual = sum(value,'all');
         reference = test_case.references.matrix.all{dim};
+
+        test_case.evaluate_sum(value,reference,'all');
+    end
+end
+
+methods
+    function evaluate_sum(test_case, value, reference, varargin)
+        % Evaluate sum of matrix.
+        actual = sum(value,varargin{:});
 
         % perform assertion
         test_case.verifyEqualPolynomial(actual,reference,"RelTol",1e-15);

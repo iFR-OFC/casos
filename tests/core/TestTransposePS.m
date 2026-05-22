@@ -30,18 +30,9 @@ methods (Test, ParameterCombination="pairwise", TestTags=["vector" "column"])
         % Test transpose on column vectors.
         value = test_case.values.vector{1,dim};
         
-        % symbolic polynomial
-        [p,symbol,argument] = test_case.get_operand(true,value);
-
-        % build symbolic function
-        expression = transpose(p);
-        f = casos.Function('f',symbol,{expression});
-
-        actual = f(argument{:});
         reference = test_case.references.column{dim};
 
-        % perform assertion
-        test_case.verifyEqualPolynomial(actual,reference,"RelTol",1e-15);
+        test_case.evaluate_transpose(value,reference);
     end
 end
 
@@ -50,18 +41,9 @@ methods (Test, ParameterCombination="pairwise", TestTags=["vector" "row"])
         % Test transpose on row vectors.
         value = test_case.values.vector{2,dim}';
         
-        % symbolic polynomial
-        [p,symbol,argument] = test_case.get_operand(true,value);
-
-        % build symbolic function
-        expression = transpose(p);
-        f = casos.Function('f',symbol,{expression});
-
-        actual = f(argument{:});
         reference = test_case.references.row{dim};
 
-        % perform assertion
-        test_case.verifyEqualPolynomial(actual,reference,"RelTol",1e-15);
+        test_case.evaluate_transpose(value,reference);
     end
 end
 
@@ -70,6 +52,16 @@ methods (Test, ParameterCombination="pairwise", TestTags="matrix")
         % Test transpose on matrix values.
         value = test_case.values.matrix{3,dim};
 
+        reference = test_case.references.matrix{dim};
+
+        test_case.evaluate_transpose(value,reference);
+    end
+end
+
+methods
+    function evaluate_transpose(test_case, value, reference)
+        % Evaluate transpose.
+
         % symbolic polynomial
         [p,symbol,argument] = test_case.get_operand(true,value);
 
@@ -78,7 +70,6 @@ methods (Test, ParameterCombination="pairwise", TestTags="matrix")
         f = casos.Function('f',symbol,{expression});
 
         actual = f(argument{:});
-        reference = test_case.references.matrix{dim};
 
         % perform assertion
         test_case.verifyEqualPolynomial(actual,reference,"RelTol",1e-15);

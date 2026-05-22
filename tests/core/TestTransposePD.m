@@ -30,11 +30,9 @@ methods (Test, ParameterCombination="pairwise", TestTags=["vector" "column"])
         % Test transpose on column vectors.
         value = test_case.values.vector{1,dim};
         
-        actual = transpose(value);
         reference = test_case.references.column{dim};
 
-        % perform assertion
-        test_case.verifyEqualPolynomial(actual,reference,"RelTol",1e-15);
+        test_case.evaluate_transpose(value,reference);
     end
 end
 
@@ -43,11 +41,9 @@ methods (Test, ParameterCombination="pairwise", TestTags=["vector" "row"])
         % Test transpose on row vectors.
         value = test_case.values.vector{2,dim}';
         
-        actual = transpose(value);
         reference = test_case.references.row{dim};
 
-        % perform assertion
-        test_case.verifyEqualPolynomial(actual,reference,"RelTol",1e-15);
+        test_case.evaluate_transpose(value,reference);
     end
 end
 
@@ -56,8 +52,16 @@ methods (Test, ParameterCombination="pairwise", TestTags="matrix")
         % Test transpose on matrix values.
         value = test_case.values.matrix{3,dim};
 
-        actual = transpose(value);
         reference = test_case.references.matrix{dim};
+
+        test_case.evaluate_transpose(value,reference);
+    end
+end
+
+methods
+    function evaluate_transpose(test_case, value, reference)
+        % Evaluate transpose.
+        actual = transpose(value);
 
         % perform assertion
         test_case.verifyEqualPolynomial(actual,reference,"RelTol",1e-15);

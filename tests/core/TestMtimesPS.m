@@ -163,7 +163,7 @@ methods
         if strcmp(op,"mtimes") && (size(value1,2) ~= size(value2,1))
             % inner dimension mismatch for matrix multiplication
             diagtext = sprintf('Inner dimension mismatch expected: %d vs. %d.',size(value1,2),size(value2,1));
-            test_case.verifyError(@() fevel(op,p1,p2),?MException,diagtext);
+            test_case.verifyError(@() feval(op,p1,p2),?MException,diagtext);
             return
         end
 

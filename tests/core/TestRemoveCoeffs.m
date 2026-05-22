@@ -4,8 +4,8 @@
 %
 % SPDX-License-Identifier: GPL-3.0-only
 
-classdef TestRemoveCoeffs < TestPolynomialOperations
-% Test remove_coeffs operation.
+classdef (TestTags="PD") TestRemoveCoeffs < TestPolynomialOperations
+% Test remove_coeffs operation on constant polynomials.
 
 properties (SetAccess=protected)
     values       % test polynomials
@@ -30,59 +30,58 @@ methods (TestClassSetup)
 end
 
 methods (Test, ParameterCombination="pairwise", TestTags="scalar")
-    function test_remove_coeffs(test_case, decade, arg)
-        % Test remove_coeff operation.
-        val1 = test_case.values.scalar{1,arg};
-        val2 = test_case.values.scalar{2,arg};
+    function test_remove_coeffs_scalar(test_case, decade, arg)
+        % Test remove_coeffs operation.
+        value1 = test_case.values.scalar{1,arg};
+        value2 = test_case.values.scalar{2,arg};
 
-        tol = prctile([0; full(poly2basis(val2))],10*decade);
-        actual = remove_coeffs(val1,tol);
         reference = test_case.references.scalar.remove_coeffs{arg,decade};
 
-        % perform assertion
-        test_case.verifyEqualPolynomial(actual,reference,"RelTol",1e-12);
+        test_case.evaluate_remove_coeffs(decade,value1,value2,reference);
     end
 end
 
 methods (Test, ParameterCombination="pairwise", TestTags=["vector" "column"])
     function test_remove_coeffs_column(test_case, decade, dim)
-        % Test remove_coeff operation on column vectors.
-        val1 = test_case.values.vector{1,dim};
-        val2 = test_case.values.vector{2,dim};
+        % Test remove_coeffs operation on column vectors.
+        value1 = test_case.values.vector{1,dim};
+        value2 = test_case.values.vector{2,dim};
 
-        tol = prctile([0; full(poly2basis(val2))],10*decade);
-        actual = remove_coeffs(val1,tol);
         reference = test_case.references.column.remove_coeffs{dim,decade};
 
-        % perform assertion
-        test_case.verifyEqualPolynomial(actual,reference,"RelTol",1e-12);
+        test_case.evaluate_remove_coeffs(decade,value1,value2,reference);
     end
 end
 
 methods (Test, ParameterCombination="pairwise", TestTags=["vector" "row"])
     function test_remove_coeffs_row(test_case, decade, dim)
-        % Test remove_coeff operation on row vectors.
-        val1 = test_case.values.vector{1,dim}';
-        val2 = test_case.values.vector{2,dim}';
+        % Test remove_coeffs operation on row vectors.
+        value1 = test_case.values.vector{1,dim}';
+        value2 = test_case.values.vector{2,dim}';
 
-        tol = prctile([0; full(poly2basis(val2))],10*decade);
-        actual = remove_coeffs(val1,tol);
         reference = test_case.references.row.remove_coeffs{dim,decade};
 
-        % perform assertion
-        test_case.verifyEqualPolynomial(actual,reference,"RelTol",1e-12);
+        test_case.evaluate_remove_coeffs(decade,value1,value2,reference);
     end
 end
 
 methods (Test, ParameterCombination="pairwise", TestTags="matrix")
     function test_remove_coeffs_matrix(test_case, decade, dim)
-        % Test remove_coeff operation on matrices.
-        val1 = test_case.values.matrix{1,dim};
-        val2 = test_case.values.matrix{2,dim};
+        % Test remove_coeffs operation on matrices.
+        value1 = test_case.values.matrix{1,dim};
+        value2 = test_case.values.matrix{2,dim};
 
-        tol = prctile([0; full(poly2basis(val2))],10*decade);
-        actual = remove_coeffs(val1,tol);
         reference = test_case.references.matrix.remove_coeffs{dim,decade};
+
+        test_case.evaluate_remove_coeffs(decade,value1,value2,reference);
+    end
+end
+
+methods
+    function evaluate_remove_coeffs(test_case, decade, value1, value2, reference)
+        % Evaluate remove_coeffs operation.
+        tol = prctile([0; full(poly2basis(value2))],10*decade);
+        actual = remove_coeffs(value1,tol);
 
         % perform assertion
         test_case.verifyEqualPolynomial(actual,reference,"RelTol",1e-12);

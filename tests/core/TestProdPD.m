@@ -33,11 +33,9 @@ methods (Test, ParameterCombination="pairwise", TestTags=["vector" "column"])
         % Test product of column vectors.
         value = test_case.values.vector{1,dim};
         
-        actual = prod(value);
         reference = test_case.references.vector.column{dim};
 
-        % perform assertion
-        test_case.verifyEqualPolynomial(actual,reference,"RelTol",1e-12);
+        test_case.evaluate_prod(value,reference);
     end
 end
 
@@ -46,11 +44,9 @@ methods (Test, ParameterCombination="pairwise", TestTags=["vector" "row"])
         % Test product of row vectors.
         value = test_case.values.vector{2,dim}';
         
-        actual = prod(value); %#ok<UDIM>
         reference = test_case.references.vector.row{dim};
 
-        % perform assertion
-        test_case.verifyEqualPolynomial(actual,reference,"RelTol",1e-12);
+        test_case.evaluate_prod(value,reference);
     end
 end
 
@@ -59,19 +55,25 @@ methods (Test, ParameterCombination="pairwise", TestTags="matrix")
         % Test product of matrix along dimension.
         value = test_case.values.matrix{par,dim};
         
-        actual = prod(value,par);
         reference = test_case.references.matrix.dim{dim,par};
 
-        % perform assertion
-        test_case.verifyEqualPolynomial(actual,reference,"RelTol",1e-12);
+        test_case.evaluate_prod(value,reference,par);
     end
 
     function test_prod_matrix_all(test_case, dim)
         % Test product of all elements in matrix.
         value = test_case.values.matrix{3,dim};
-        
-        actual = prod(value,'all');
+
         reference = test_case.references.matrix.all{dim};
+
+        test_case.evaluate_prod(value,reference,'all');
+    end
+end
+
+methods
+    function evaluate_prod(test_case, value, reference, varargin)
+        % Evaluate product of matrix.
+        actual = prod(value,varargin{:});
 
         % perform assertion
         test_case.verifyEqualPolynomial(actual,reference,"RelTol",1e-12);

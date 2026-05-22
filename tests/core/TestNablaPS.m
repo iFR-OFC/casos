@@ -31,7 +31,7 @@ methods (TestClassSetup)
 end
 
 methods (Test, ParameterCombination="pairwise", TestTags="scalar")
-    function test_derivative(test_case, ivar, arg)
+    function test_derivative_scalar(test_case, ivar, arg)
         % Test nabla operation with respect to a single variable.
         value = test_case.values.scalar{1,arg};
         
@@ -40,7 +40,7 @@ methods (Test, ParameterCombination="pairwise", TestTags="scalar")
         test_case.evaluate_derivative(ivar,value,reference);
     end
 
-    function test_gradient(test_case, ivar, arg)
+    function test_gradient_scalar(test_case, ivar, arg)
         % Test nabla operation with respect to multiple variables.
         value = test_case.values.scalar{2,arg};
         
