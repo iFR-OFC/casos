@@ -4,11 +4,11 @@
 %
 % SPDX-License-Identifier: GPL-3.0-only
 
-classdef FilterLinesearch < casos.package.solvers.SequentialCommon
+classdef Sequential < casos.package.solvers.SequentialCommon
     % A simple sequential sum-of-squares algorithm.
 
     properties (SetAccess=private)
-        class_name = 'FilterLinesearch';
+        class_name = 'Sequential';
     end
 
     properties(Access=protected)
