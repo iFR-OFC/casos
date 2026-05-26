@@ -1,4 +1,4 @@
-classdef (Abstract) AbstractProblem
+classdef (Abstract) AbstractProblem < handle
     % Shared base container for SOS problem definitions.
     %
     % Keep this class minimal so it can serve both nonconvex and
@@ -51,11 +51,17 @@ classdef (Abstract) AbstractProblem
         
         %% Getters
         function Df = jacobian_f(obj)
-            Df = jacobian(obj.f, obj.x)
+            if isempty(obj.Df)
+                obj.Df = jacobian(obj.f, obj.x);
+            end
+            Df = obj.Df;
         end
 
         function Dg = jacobian_g(obj)
-            Dg = jacobian(obj.f, obj.x)
+            if isempty(obj.Dg)
+                obj.Dg = jacobian(obj.g, obj.x);
+            end
+            Dg = obj.Dg;
         end
     end
 end
