@@ -4,7 +4,7 @@ classdef (Abstract) AbstractProblem < handle
     % Keep this class minimal so it can serve both nonconvex and
     % quasiconvex subclasses.
 
-    properties
+    properties (SetAccess = protected)
         name % char/string
         n    % number of decision variables
         m    % number of constraints
@@ -16,36 +16,46 @@ classdef (Abstract) AbstractProblem < handle
         Dg % jacobian of constraints
     end
 
-    methods
+    methods (Access = public)
         function obj = AbstractProblem(nlsos)
             arguments
                 nlsos struct = struct()
             end
 
             % problem size
-            if isfield(sos,'x')
-                obj.numel_x = length(sos.x);
+            if isfield(nlsos,'x')
+                obj.n = length(nlsos.x);
             else
-                obj.numel_x = 0;
+                obj.n = 0;
             end
             
-            if isfield(sos,'g')
-                obj.numel_g = length(sos.g);
+            if isfield(nlsos,'g')
+                obj.m = length(nlsos.g);
             else
-                obj.numel_g = 0;
+                obj.m = 0;
             end
 
             % Valid decision variable
             % TODO
-            obj.x = nlsos.x;
+            if isfield(nlsos,'x')
+                obj.x = nlsos.x;
+            end
 
             % valid constraints
             % TODO
-            obj.g = nlsos.g;
+            if isfield(nlsos,'g')
+                obj.g = nlsos.g;
+            end
 
             % valid cost function
             % TODO
-            obj.f = nlsos.f;
+            if isfield(nlsos,'f')
+                obj.f = nlsos.f;
+            end
+
+            if isfield(nlsos,'p')
+                obj.p = nlsos.p;
+            end
 
         end
         
@@ -62,6 +72,14 @@ classdef (Abstract) AbstractProblem < handle
                 obj.Dg = jacobian(obj.g, obj.x);
             end
             Dg = obj.Dg;
+        end
+
+        function n = numel_x(obj)
+            n = obj.n;
+        end
+
+        function m = numel_g(obj)
+            m = obj.m;
         end
     end
 end
