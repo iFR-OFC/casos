@@ -3,22 +3,20 @@ classdef (Abstract) AbstractProblem < handle
     %
     % Keep this class minimal so it can serve both nonconvex and
     % quasiconvex subclasses.
-
-    properties (SetAccess = protected)
-        name    % char/string
-
-        % Dimensions and count
-        n_x     % number of decision variables
-        n_g     % number of constraints
-        n_p     % number of parameters
-
+    properties (SetAccess = immutable)
         % Core symbolic objects
         x       % primal decision variables
         f       % objective
         g       % constraints
         p       % parameters
+    end
+    properties (SetAccess = protected)
+        % Dimensions and count
+        n_x     % number of decision variables
+        n_g     % number of constraints
+        n_p     % number of parameters
 
-        % Derivatives (gradients and jacobians)
+        % Derivative operators (gradients and jacobians)
         Df      % jacobian of cost function
         Dg      % jacobian of constraints
 
