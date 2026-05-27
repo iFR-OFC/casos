@@ -57,19 +57,22 @@ classdef (Abstract) AbstractProblem < handle
             if isfield(nlsos,'g')
                 obj.g = nlsos.g;
             else
-                obj.g = 
+                obj.g = casos.PS(0);
             end
 
             % valid cost function
             % TODO
             if isfield(nlsos,'f')
                 obj.f = nlsos.f;
+            else
+                obj.f = casos.PS(0);
             end
 
             if isfield(nlsos,'p')
                 obj.p = nlsos.p;
+            else
+                obj.p = casos.PS;
             end
-
         end
         
         %% Getters (returns symbolic values)
