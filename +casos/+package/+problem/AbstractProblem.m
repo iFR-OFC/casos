@@ -49,13 +49,13 @@ classdef (Abstract) AbstractProblem < handle
             % Valid decision variable
             % TODO
             if isfield(nlsos,'x')
-                obj.x = nlsos.x;
+                obj.x = casos.PS(nlsos.x);
             end
 
             % valid constraints
             % TODO
             if isfield(nlsos,'g')
-                obj.g = nlsos.g;
+                obj.g = casos.PS(nlsos.g);
             else
                 obj.g = casos.PS(0);
             end
@@ -63,15 +63,15 @@ classdef (Abstract) AbstractProblem < handle
             % valid cost function
             % TODO
             if isfield(nlsos,'f')
-                obj.f = nlsos.f;
+                obj.f = casos.PS(nlsos.f);
             else
                 obj.f = casos.PS(0);
             end
 
             if isfield(nlsos,'p')
-                obj.p = nlsos.p;
+                obj.p = casos.PS(nlsos.p);
             else
-                obj.p = casos.PS;
+                obj.p = casos.PS(0);
             end
         end
         
