@@ -76,14 +76,15 @@ classdef (Abstract) AbstractProblem < handle
         end
         
         %% Getters (returns symbolic values)
-        function Df = grad_f(obj)
+        function Df = get_Df(obj)
             if isempty(obj.Df)
                 obj.Df = jacobian(obj.f, obj.x);
             end
             Df = obj.Df;
         end
 
-        function Dg = jacobian_g(obj)
+        function Dg = get_Dg(obj)
+            % get gradient of g as operator
             if isempty(obj.Dg)
                 obj.Dg = jacobian(obj.g, obj.x);
             end
@@ -117,7 +118,7 @@ classdef (Abstract) AbstractProblem < handle
                     {sparsity(obj.x), sparsity(obj.p)}, ...
                     {obj.g}, {'x', 'p'}, {'f_val'});
             end
-            % Return evaluated value for f
+            % Return evaluated value for g
             val = obj.ghan(x, p);
         end
     end
