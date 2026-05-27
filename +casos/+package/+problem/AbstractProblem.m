@@ -121,5 +121,23 @@ classdef (Abstract) AbstractProblem < handle
             % Return evaluated value for g
             val = obj.ghan(x, p);
         end
+
+        function val = eval_Df(obj, x, p)
+            if isempty(obj.Dfhan)
+                obj.Dfhan = casos.Function('Dfhan', ...
+                    {sparsity(obj.x), sparsity(obj.p)}, ...
+                    {obj.get_Df}, {'x', 'p'}, {'Df_val'});
+            end
+            val = obj.Dfhan(x, p);
+        end
+
+        function val = eval_Dg(obj, x, p)
+            if isempty(obj.Dghan)
+                obj.Dghan = casos.Function('Dghan', ...
+                    {sparsity(obj.x), sparsity(obj.p)}, ...
+                    {obj.get_Dg}, {'x', 'p'}, {'Dg_val'});
+            end
+            val = obj.Dghan(x, p);
+        end
     end
 end
