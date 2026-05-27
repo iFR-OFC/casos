@@ -5,15 +5,28 @@ classdef (Abstract) AbstractProblem < handle
     % quasiconvex subclasses.
 
     properties (SetAccess = protected)
-        name % char/string
-        n    % number of decision variables
-        m    % number of constraints
-        x % decision variables
-        f % objective (defaults to 0)
-        g % constraints (defaults to empty polynomial)
-        p % optional parameters (defaults to empty polynomial)
-        Df % jacobian of cost function
-        Dg % jacobian of constraints
+        name    % char/string
+
+        % Dimensions and count
+        n_x     % number of decision variables
+        n_g     % number of constraints
+        n_p     % number of parameters
+
+        % Core symbolic objects
+        x       % primal decision variables
+        f       % objective
+        g       % constraints
+        p       % parameters
+
+        % Derivatives (gradients and jacobians)
+        Df      % jacobian of cost function
+        Dg      % jacobian of constraints
+
+        % Evaluation objects (casos.function handles)
+        fhan
+        ghan
+        Dfhan
+        Dghan
     end
 
     methods (Access = public)
@@ -24,15 +37,15 @@ classdef (Abstract) AbstractProblem < handle
 
             % problem size
             if isfield(nlsos,'x')
-                obj.n = length(nlsos.x);
+                obj.n_x = length(nlsos.x);
             else
-                obj.n = 0;
+                obj.n_x = 0;
             end
             
             if isfield(nlsos,'g')
-                obj.m = length(nlsos.g);
+                obj.n_g = length(nlsos.g);
             else
-                obj.m = 0;
+                obj.n_g = 0;
             end
 
             % Valid decision variable
@@ -45,6 +58,8 @@ classdef (Abstract) AbstractProblem < handle
             % TODO
             if isfield(nlsos,'g')
                 obj.g = nlsos.g;
+            else
+                obj.g = 
             end
 
             % valid cost function
@@ -59,8 +74,8 @@ classdef (Abstract) AbstractProblem < handle
 
         end
         
-        %% Getters
-        function Df = jacobian_f(obj)
+        %% Getters (returns symbolic values)
+        function Df = grad_f(obj)
             if isempty(obj.Df)
                 obj.Df = jacobian(obj.f, obj.x);
             end
@@ -75,11 +90,34 @@ classdef (Abstract) AbstractProblem < handle
         end
 
         function n = numel_x(obj)
-            n = obj.n;
+            n = obj.n_x;
         end
 
         function m = numel_g(obj)
-            m = obj.m;
+            m = obj.n_g;
+        end
+
+        %% Evaluators (input x, p -> f, g, ...)
+        function val = eval_f(obj, x, p)
+            % Question: move to constructor?
+            if isempty(obj.fhan)
+                obj.fhan = casos.Function('fhan', ...
+                    {sparsity(obj.x), sparsity(obj.p)}, ...
+                    {obj.f}, {'x', 'p'}, {'f_val'});
+            end
+            % Return evaluated value for f
+            val = obj.fhan(x, p);
+        end
+
+        function val = eval_g(obj, x, p)
+            % Question: move to constructor?
+            if isempty(obj.ghan)
+                obj.ghan = casos.Function('ghan', ...
+                    {sparsity(obj.x), sparsity(obj.p)}, ...
+                    {obj.g}, {'x', 'p'}, {'f_val'});
+            end
+            % Return evaluated value for f
+            val = obj.ghan(x, p);
         end
     end
 end
