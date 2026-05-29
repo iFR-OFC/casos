@@ -1,16 +1,11 @@
 classdef (Abstract) AbstractProblem < handle
-    % Shared base container for SOS problem definitions.
-    %
-    % Keep this class minimal so it can serve both nonconvex and
-    % quasiconvex subclasses.
-    properties (SetAccess = immutable)
+    properties (SetAccess = protected)
         % Core symbolic objects
         x       % primal decision variables
         f       % objective
         g       % constraints
         p       % parameters
-    end
-    properties (SetAccess = protected)
+
         % Dimensions and count
         n_x     % number of decision variables
         n_g     % number of constraints
@@ -21,10 +16,10 @@ classdef (Abstract) AbstractProblem < handle
         Dg      % jacobian of constraints
 
         % Evaluation objects (casos.function handles)
-        fhan
-        ghan
-        Dfhan
-        Dghan
+        ffun
+        gfun
+        Dffun
+        Dgfun
     end
 
     methods (Access = public)
@@ -76,20 +71,20 @@ classdef (Abstract) AbstractProblem < handle
         end
         
         %% Getters (returns symbolic values)
-        function Df = get_Df(obj)
-            if isempty(obj.Df)
-                obj.Df = jacobian(obj.f, obj.x);
-            end
-            Df = obj.Df;
-        end
-
-        function Dg = get_Dg(obj)
-            % get gradient of g as operator
-            if isempty(obj.Dg)
-                obj.Dg = jacobian(obj.g, obj.x);
-            end
-            Dg = obj.Dg;
-        end
+        % function Df = get_Df(obj)
+        %     if isempty(obj.Df)
+        %         obj.Df = jacobian(obj.f, obj.x);
+        %     end
+        %     Df = obj.Df;
+        % end
+        % 
+        % function Dg = get_Dg(obj)
+        %     % get gradient of g as operator
+        %     if isempty(obj.Dg)
+        %         obj.Dg = jacobian(obj.g, obj.x);
+        %     end
+        %     Dg = obj.Dg;
+        % end
 
         function n = numel_x(obj)
             n = obj.n_x;
@@ -102,42 +97,31 @@ classdef (Abstract) AbstractProblem < handle
         %% Evaluators (input x, p -> f, g, ...)
         function val = eval_f(obj, x, p)
             % Question: move to constructor?
-            if isempty(obj.fhan)
-                obj.fhan = casos.Function('fhan', ...
+            if isempty(obj.ffun)
+                obj.ffun = casos.Function('ffun', ...
                     {sparsity(obj.x), sparsity(obj.p)}, ...
                     {obj.f}, {'x', 'p'}, {'f_val'});
             end
             % Return evaluated value for f
-            val = obj.fhan(x, p);
+            val = full(obj.ffun(x, p));
         end
 
-        function val = eval_g(obj, x, p)
-            % Question: move to constructor?
-            if isempty(obj.ghan)
-                obj.ghan = casos.Function('ghan', ...
-                    {sparsity(obj.x), sparsity(obj.p)}, ...
-                    {obj.g}, {'x', 'p'}, {'f_val'});
-            end
-            % Return evaluated value for g
-            val = obj.ghan(x, p);
-        end
-
-        function val = eval_Df(obj, x, p)
-            if isempty(obj.Dfhan)
-                obj.Dfhan = casos.Function('Dfhan', ...
-                    {sparsity(obj.x), sparsity(obj.p)}, ...
-                    {obj.get_Df}, {'x', 'p'}, {'Df_val'});
-            end
-            val = obj.Dfhan(x, p);
-        end
-
-        function val = eval_Dg(obj, x, p)
-            if isempty(obj.Dghan)
-                obj.Dghan = casos.Function('Dghan', ...
-                    {sparsity(obj.x), sparsity(obj.p)}, ...
-                    {obj.get_Dg}, {'x', 'p'}, {'Dg_val'});
-            end
-            val = obj.Dghan(x, p);
-        end
+        % function val = eval_Df(obj, x, p)
+        %     if isempty(obj.Dffun)
+        %         obj.Dffun = casos.Function('Dffun', ...
+        %             {sparsity(obj.x), sparsity(obj.p)}, ...
+        %             {obj.get_Df}, {'x', 'p'}, {'Df_val'});
+        %     end
+        %     val = obj.Dffun(x, p);
+        % end
+        % 
+        % function val = eval_Dg(obj, x, p)
+        %     if isempty(obj.Dgfun)
+        %         obj.Dgfun = casos.Function('Dgfun', ...
+        %             {sparsity(obj.x), sparsity(obj.p)}, ...
+        %             {obj.get_Dg}, {'x', 'p'}, {'Dg_val'});
+        %     end
+        %     val = obj.Dgfun(x, p);
+        % end
     end
 end
