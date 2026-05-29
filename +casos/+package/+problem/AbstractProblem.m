@@ -78,15 +78,25 @@ classdef (Abstract) AbstractProblem < handle
             m = length(obj.g);
         end
 
-        %% Evaluators (input x, p -> f, g, ...)
+        %% Evaluators
         function val = eval_f(obj, x, p)
-            if isempty(obj.ffun)
+            if isempty(obj.ffun) % lazy caching
                 obj.ffun = casos.Function('ffun', ...
-                    {sparsity(obj.x), sparsity(obj.p)}, ...
+                    {poly2basis(obj.x), poly2basis(obj.p)}, ...
                     {obj.f}, {'x', 'p'}, {'f_val'});
             end
-            % Return evaluated value for f
-            val = full(obj.ffun(x, p));
+            % Return evaluated value for f (numerical)
+            val = full(obj.ffun(poly2basis(x), poly2basis(p)));
+        end
+
+        function val = eval_g(obj, x, p)
+            if isempty(obj.gfun) % lazy caching
+                obj.gfun = casos.Function('gfun', ...
+                    {poly2basis(obj.x), poly2basis(obj.p)}, ...
+                    {obj.g}, {'x', 'p'}, {'g_val'});
+            end
+            % Return casos.PD polynomial for g
+            val = casos.PD(obj.gfun(poly2basis(x), poly2basis(p)));
         end
 
         
