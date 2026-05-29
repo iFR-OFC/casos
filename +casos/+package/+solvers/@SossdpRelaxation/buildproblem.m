@@ -75,7 +75,7 @@ Qvar_sdp = [Qvar_l; Qvar_G];
 
 if (Nds + Nsds + Mds + Msds) > 0
     % create reordering map (for DSOS/SDSOS)
-    permute_x = process_reorder(Qvar_G,Qcon_G,Ksdp_x_s,Ksdp_g_s,Qvar_l,Ns,Ms,Nds,Mds);
+    permute_x = process_reorder(Qvar_G,Qcon_G,Ksdp_x_s,Ksdp_g_s,Qvar_l,Ns,Ms,Nds,Mds)';
 else
     permute_x = speye(nnz_sdp_x + nnz_gram_g);
 end
@@ -117,18 +117,15 @@ Qvar_mapped = map_x*Qvar_sdp;
 map_g = blkdiag(sparse(nnz_lin_g,0), Mp_g);
 
 % build SDP problem
-sdp.x = permute_x*[Qvar_sdp; Qcon_G];
+sdp.x = permute_x'*[Qvar_sdp; Qcon_G];
 sdp.f = sdp_f;
 sdp.g = sdp_g - map_g*Qcon_G;
 sdp.p = Qpar;
 
-% transpose of permutation matrix
-permMat_t = permute_x';
-
 % store derivatives
-sdp.derivatives.Hf = permMat_t(1:nnz_sdp_x,:)'*map_x'*sdp_Hf*map_x*permMat_t(1:(nnz_sdp_x),:);
-sdp.derivatives.Jf = sdp_Jf*map_x*permMat_t(1:nnz_sdp_x,:);
-sdp.derivatives.Jg = sdp_Jg*map_x*permMat_t(1:nnz_sdp_x,:)-map_g*permMat_t(nnz_sdp_x+1:end,:);
+sdp.derivatives.Hf = permute_x(1:nnz_sdp_x,:)'*map_x'*sdp_Hf*map_x*permute_x(1:(nnz_sdp_x),:);
+sdp.derivatives.Jf = sdp_Jf*map_x*permute_x(1:nnz_sdp_x,:);
+sdp.derivatives.Jg = sdp_Jg*map_x*permute_x(1:nnz_sdp_x,:)-map_g*permute_x(nnz_sdp_x+1:end,:);
 
 % SDP options
 sdpopt = opts.sdpsol_options;
@@ -158,7 +155,7 @@ end
 sdpopt.Kc = struct('lin', nnz_lin_g + nnz_sos_g);
 
 % inverse permutation of Hessian for Cholesky decomposition
-sdpopt.hessian_permute = map_x*permMat_t(1:(nnz_sdp_x),:);
+sdpopt.hessian_permute = map_x*permute_x(1:(nnz_sdp_x),:);
 
 % initialize SDP solver
 obj.sdpsolver = casos.package.solvers.SdpsolInternal('SDP',solver,sdp,sdpopt);
@@ -183,16 +180,16 @@ sdpsol.lam_g = casadi.SX.sym('sol_lam_g',size(sdp.g));
 sdpsol.lam_p = casadi.SX.sym('sol_lam_p',size(sdp.p));
 
 % % coordinates of SOS solution
-sossol.x = blkdiag(speye(nnz_lin_x), Mp_x, sparse(0,nnz_gram_g))*permute_x'*sdpsol.x;
+sossol.x = blkdiag(speye(nnz_lin_x), Mp_x, sparse(0,nnz_gram_g))*permute_x*sdpsol.x;
 sossol.f = sdpsol.f;
 sossol.g = [
     blkdiag(speye(nnz_lin_g), sparse(0,nnz_sos_g))*sdpsol.g
-    blkdiag(sparse(0,nnz_lin_x+nnz_gram_x),  Mp_g)*permute_x'*sdpsol.x
+    blkdiag(sparse(0,nnz_lin_x+nnz_gram_x),  Mp_g)*permute_x*sdpsol.x
 ];
-sossol.lam_x = blkdiag(speye(nnz_lin_x), Md_x, sparse(0,nnz_gram_g))*permute_x'*sdpsol.lam_x;
+sossol.lam_x = blkdiag(speye(nnz_lin_x), Md_x, sparse(0,nnz_gram_g))*permute_x*sdpsol.lam_x;
 sossol.lam_g = [
     blkdiag(speye(nnz_lin_g), sparse(0,nnz_sos_g))*sdpsol.lam_g
-    blkdiag(sparse(0,nnz_lin_x+nnz_gram_x),  Md_g)*permute_x'*sdpsol.lam_x
+    blkdiag(sparse(0,nnz_lin_x+nnz_gram_x),  Md_g)*permute_x*sdpsol.lam_x
 ];
 
 % options for Casadi functions
