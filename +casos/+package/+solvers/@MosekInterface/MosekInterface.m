@@ -10,6 +10,8 @@ end
 
 properties (Access=private)
     info = struct;
+
+    fhan_pre;   % precomputation (numerical Hessian workaround)
 end
 
 properties (Constant, Access=protected)

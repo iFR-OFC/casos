@@ -166,9 +166,13 @@ prob.bux = [ubx; +inf(Nx_q,1)];
 % arguments to problem
 args_in = obj.args_in;
 
+% options for Casadi functions
+% NOTE: As per Casadi v3.6.5, functions' input and output names 
+% must be mutually exclusive unless explicity permitted.
+fopt = struct('allow_duplicate_io_names',true);
+
 % handle quadratic cost function
 % MOSEK cannot solve conic problems with quadratic cost
-
 if nnz(h) > 0
     % inverse permutation matrix for Cholesky decomposition
     Pinv = obj.opts.hessian_permute;
@@ -176,11 +180,9 @@ if nnz(h) > 0
 
     % permute Hessian
     hPerm = P'*h*P;
-    
-    % only SX supports Cholesky decomposition
-    H = casadi.SX.sym('H',sparsity(hPerm));
-    % performs a Cholesky decomposition R'*R = (P'*H*P)
-    chol_f = casadi.Function('chol',{H},{chol(H)});
+
+    % number of variables after permutation
+    nP = length(hPerm);
 
     % rewrite quadratic cost
     %
@@ -191,10 +193,37 @@ if nnz(h) > 0
     %   min_{x,y} c'*x + y, s.t. 1 + y >= ||(sqrt(2)*U*x, 1 - y)||
     %
     % with additional variable y and Cholesky decomposition U'*U = Q
-    U = chol_f(hPerm);
-    
-    % number of variables after permutation
-    nP = length(U);
+
+    %NOTE: symbolic Cholesky decomposition via SX is temporarily disabled
+    if (false)
+        % only SX supports Cholesky decomposition
+        H = casadi.SX.sym('H',sparsity(hPerm)); %#ok<UNRCH>
+        % performs a Cholesky decomposition R'*R = (P'*H*P)
+        chol_f = casadi.Function('chol',{H},{chol(H)});
+        % apply Cholesky decomposition symbolically
+        U = chol_f(hPerm);
+
+    else
+        % workaround to compute Cholesky decomposition online
+        [rows,~] = get_triplet(sparsity(hPerm));
+        % identify nonzero blocks of (permuted) Hessian
+        min_row = min(rows);
+        max_row = max(rows);
+        % upper triangular sparsity pattern
+        spU = casadi.Sparsity.upper(max_row - min_row + 1);
+        % enlarge to size of (permuted) Hessian
+        spU.enlarge(nP, nP, min_row:max_row, min_row:max_row);
+        
+        % symbolic variable for Cholesky decomposition
+        U = casadi.MX.sym('U',spU);
+
+        % evaluate decomposition online
+        args_pre = setfield(args_in,'h',hPerm); %#ok<SFLD>
+        % return permuted Hessian for decomposition
+        obj.fhan_pre = casadi.Function('f_pre',struct2cell(args_in),struct2cell(args_pre),fieldnames(args_in),fieldnames(args_pre),fopt);
+        % use symbolic variable in lieu of Hessian
+        args_in.h = U;
+    end
 
     % build affine cone constraint 
     % L(y,x) + k = (1+y, sqrt(2)*U/P*x, 1-y) in SOC
@@ -233,10 +262,6 @@ else
     acc_cost = [];
 end
 
-% options for Casadi functions
-% NOTE: As per Casadi v3.6.5, functions' input and output names 
-% must be mutually exclusive unless explicity permitted.
-fopt = struct('allow_duplicate_io_names',true);
 % return MOSEK prob structure
 obj.fhan = casadi.Function('f',struct2cell(args_in),struct2cell(prob),fieldnames(args_in),fieldnames(prob),fopt);
 % return bar values
@@ -274,7 +299,7 @@ sol.bars = casadi.MX.sym('bars',[sum(Nx_S) 1]);
 [~,Slx,~] = separate(sol.slx,[Nx_cost Nx.l Nx_q],1);
 [~,Slu,~] = separate(sol.sux,[Nx_cost Nx.l Nx_q],1);
 % dual variables corresponding to affine conic constraints
-[Yaq,Yas,Yxq,Ycost] = separate(sol.doty,[Na_q sum(Na_S) Nx_q Na_cost],1);
+[Yaq,Yas,Yxq,Ycost] = separate(sol.doty,[Na_q sum(Na_S) Nx_q Na_cost],1); %#ok<ASGLU>
 % de-vectorize SDP primal and dual variables (no scaling)
 Xc_s = obj.sdp_mat(sol.barx,Nx.s,1) + cbx_s;
 Sc_s = obj.sdp_mat(sol.bars,Nx.s,1);
