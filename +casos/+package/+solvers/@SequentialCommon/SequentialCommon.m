@@ -1,3 +1,9 @@
+% SPDX-FileCopyrightText: 2025 Institute of Flight Mechanics and Controls, University of Stuttgart
+% SPDX-FileCopyrightText: Author(s): Torbjørn Cunis and Jan Olucak <tcunis@ifr.uni-stuttgart.de>
+% SPDX-FileContributor: For a full list of contributors, see <https://github.com/ifr-ofc/casos>
+%
+% SPDX-License-Identifier: GPL-3.0-only
+
 classdef (Abstract) SequentialCommon < casos.package.solvers.SosoptCommon
     % Base class for sequential sum-of-squares algorithms.
 
@@ -57,7 +63,7 @@ classdef (Abstract) SequentialCommon < casos.package.solvers.SosoptCommon
 
         % logging & info
         log;
-        info = struct('iter',[]);
+        sequential_stats = struct('iter',[]);
     end
 
     methods (Static)
@@ -147,9 +153,10 @@ classdef (Abstract) SequentialCommon < casos.package.solvers.SosoptCommon
             if ~isfield(obj.opts,'enable_SOC'), obj.opts.enable_SOC                             = true; end
             if ~isfield(obj.opts,'filter_struct'), obj.opts.filter_struct                       = filter_struct; end
             if ~isfield(obj.opts,'max_iter'), obj.opts.max_iter                                 = 100; end
-            if ~isfield(obj.opts,'almostOptCount'), obj.opts.almostOptCount                     = 100; end
+            if ~isfield(obj.opts,'almostOptCount'), obj.opts.almostOptCount                     = 5; end
             if ~isfield(obj.opts,'conVioCheck'), obj.opts.conVioCheck                           = 'signed-distance'; end
             if ~isfield(obj.opts,'userSample'), obj.opts.userSample                             = []; end
+            if ~isfield(obj.opts,'verbose'), obj.opts.verbose                                   = 1; end
 
             % set up logger
             if ~isfield(obj.opts,'verbose') || ~obj.opts.verbose
@@ -160,17 +167,24 @@ classdef (Abstract) SequentialCommon < casos.package.solvers.SosoptCommon
                 obj.log = casos.package.Logger.Debug;
             end
 
+            assert(is_empty(obj.get_cones,obj.opts.Kc,'lin'), 'Nonlinear (in)equality constraints are currently not supported.')
+
             % Initialize solvers
             buildproblem(obj,nlsos);
         end
 
         function s = get_stats(obj)
             % Return stats.
-            s = obj.info;
+            s = obj.sequential_stats;
             s = addfield(obj.status,s);
         end
 
+        function s = get_info(obj)
+            % Return info.
+            s = get_info@casos.package.solvers.SosoptCommon(obj);
+            s.sossol_convex = obj.solver_convex.get_info;
+            s.sossol_constraint = obj.solver_conVio.get_info;
+            s.sossol_correction = obj.solver_soc.get_info;
+        end
     end
-
-
 end

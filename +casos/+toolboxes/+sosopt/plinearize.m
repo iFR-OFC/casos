@@ -1,3 +1,15 @@
+% SPDX-FileCopyrightText: 2024 Institute of Flight Mechanics and Controls, University of Stuttgart
+% SPDX-FileCopyrightText: Author(s): Torbjørn Cunis <tcunis@ifr.uni-stuttgart.de>
+% SPDX-FileContributor: For a full list of contributors, see <https://github.com/ifr-ofc/casos>
+%
+% Adapted from multipoly
+% Source: <https://github.com/SOSAnalysis/multipoly/blob/a3d7c9ef55bebb08c38a5dcf8811c16d7e77f3a1/%40polynomial/plinearize.m>
+% Version history:
+% PJS 9/29/2009   Initial Coding
+% PJS 10/05/2009  Update for linearizing f(x,u)
+%
+% SPDX-License-Identifier: GPL-3.0-only
+
 function [A,B,f0] = plinearize(f,x,u,x0,u0)
 % Linearize polynomial function.
 

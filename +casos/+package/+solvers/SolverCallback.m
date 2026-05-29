@@ -1,3 +1,9 @@
+% SPDX-FileCopyrightText: 2023 Institute of Flight Mechanics and Controls, University of Stuttgart
+% SPDX-FileCopyrightText: Author(s): Torbjørn Cunis <tcunis@ifr.uni-stuttgart.de>
+% SPDX-FileContributor: For a full list of contributors, see <https://github.com/ifr-ofc/casos>
+%
+% SPDX-License-Identifier: GPL-3.0-only
+
 classdef (Abstract) SolverCallback < casadi.Callback & casos.package.solvers.SolverCommon
 % Common Callback interface for custom solvers.
 
@@ -25,17 +31,17 @@ methods
     %% Common function interface
     function print_options(obj)
         % Print list of options.
-        print_options@casos.package.functions.FunctionCommon(obj);
+        print_options@casos.package.solvers.SolverCommon(obj);
     end
 
     function print_option(obj,name)
         % Print information about an option.
-        print_option@casos.package.functions.FunctionCommon(obj,name);
+        print_option@casos.package.solvers.SolverCommon(obj,name);
     end
 
     function tf = has_option(obj,name)
         % Check if option "name" exists.
-        tf = has_option@casos.package.functions.FunctionCommon(obj,name);
+        tf = has_option@casos.package.solvers.SolverCommon(obj,name);
     end
 
     %% Common Callback interface

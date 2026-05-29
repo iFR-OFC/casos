@@ -1,3 +1,9 @@
+% SPDX-FileCopyrightText: 2023 Institute of Flight Mechanics and Controls, University of Stuttgart
+% SPDX-FileCopyrightText: Author(s): Torbjørn Cunis <tcunis@ifr.uni-stuttgart.de>
+% SPDX-FileContributor: For a full list of contributors, see <https://github.com/ifr-ofc/casos>
+%
+% SPDX-License-Identifier: GPL-3.0-only
+
 classdef CasadiFunction < casos.package.functions.FunctionInternal
 % Casadi function interface.
 
@@ -29,6 +35,49 @@ methods
     function cls = get.class_name(obj)
         % Return function class name.
         cls = obj.func.class_name;
+    end
+
+    %% Options & Cones
+    function print_options(obj)
+        % Print list of options.
+        print_options(obj.func);
+    end
+
+    function print_option(obj,name)
+        % Print information about an option.
+        print_option(obj.func,name);
+    end
+
+    function tf = has_option(obj,name)
+        % Check if option "name" exists.
+        tf = has_option(obj.func,name);
+    end
+
+    function print_cones(obj)
+        % Print list of supported cones.
+        if isa(obj.func,'casos.package.functions.FunctionCommon')
+            print_cones(obj.func);
+        else
+            error('Not implemented for class %s.',obj.class_name)
+        end
+    end
+
+    function print_cone(obj,name)
+        % Print information about a cone.
+        if isa(obj.func,'casos.package.functions.FunctionCommon')
+            print_cone(obj.func,name);
+        else
+            error('Not implemented for class %s.',obj.class_name)
+        end
+    end
+
+    function tf = has_cone(obj,name)
+        % Check if cone "name" is supported.
+        if isa(obj.func,'casos.package.functions.FunctionCommon')
+            tf = has_cone(obj.func,name);
+        else
+            error('Not implemented for class %s.',obj.class_name)
+        end
     end
 
     %% Implement FunctionInternal
@@ -90,6 +139,11 @@ methods
     function s = get_stats(obj)
         % Return stats.
         s = stats(obj.func);
+    end
+
+    function s = get_info(obj)
+        % Return info.
+        s = info(obj.func);
     end
 end
 

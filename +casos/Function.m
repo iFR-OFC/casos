@@ -1,3 +1,9 @@
+% SPDX-FileCopyrightText: 2023 Institute of Flight Mechanics and Controls, University of Stuttgart
+% SPDX-FileCopyrightText: Author(s): Torbjørn Cunis <tcunis@ifr.uni-stuttgart.de>
+% SPDX-FileContributor: For a full list of contributors, see <https://github.com/ifr-ofc/casos>
+%
+% SPDX-License-Identifier: GPL-3.0-only
+
 classdef Function < casos.package.functions.FunctionWrapper
 % Multiple-input, multiple-output function between polynomials.
 
@@ -6,6 +12,7 @@ methods
         % Create a new function.
         import casos.package.functions.*
 
+        try
         if nargin < 1
             % null function
             wrap = [];
@@ -46,6 +53,10 @@ methods
             error('No matching function for inputs (%s).', [str{:}]);
         end
 
+        end
+
+        catch e
+            throwAsCaller(e)
         end
 
         f@casos.package.functions.FunctionWrapper(wrap);

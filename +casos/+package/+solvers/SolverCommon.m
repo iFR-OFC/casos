@@ -1,3 +1,9 @@
+% SPDX-FileCopyrightText: 2024 Institute of Flight Mechanics and Controls, University of Stuttgart
+% SPDX-FileCopyrightText: Author(s): Torbjørn Cunis <tcunis@ifr.uni-stuttgart.de>
+% SPDX-FileContributor: For a full list of contributors, see <https://github.com/ifr-ofc/casos>
+%
+% SPDX-License-Identifier: GPL-3.0-only
+
 classdef (Abstract) SolverCommon < casos.package.functions.FunctionCommon
 % Common solver interface.
 
@@ -32,6 +38,7 @@ methods
         end
     end
 
+    %% Options & Cones
     function print_cones(obj)
         % Print list of supported cones.
         disp('Supported Cones:')
@@ -63,7 +70,7 @@ methods
 
         % print specified cone, if any
         if ~ismember(names{1},{'Kx' 'Kc'}) %TODO: check for type rather than name
-            assert(length(names) == 1,'Undefined behaviour.')
+            assert(isscalar(names), 'Undefined behaviour.')
         elseif length(names) > 1
             print_cone(obj,names{2});
         else

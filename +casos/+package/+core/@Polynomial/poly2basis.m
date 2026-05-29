@@ -1,3 +1,9 @@
+% SPDX-FileCopyrightText: 2024 Institute of Flight Mechanics and Controls, University of Stuttgart
+% SPDX-FileCopyrightText: Author(s): Torbjørn Cunis <tcunis@ifr.uni-stuttgart.de>
+% SPDX-FileContributor: For a full list of contributors, see <https://github.com/ifr-ofc/casos>
+%
+% SPDX-License-Identifier: GPL-3.0-only
+
 function [c,S] = poly2basis(obj,S)
 % Return a vector of nonzero coordinates for a given basis (sparsity).
 % If no basis is given, the polynomial's sparsity pattern is used.
@@ -11,7 +17,7 @@ elseif isempty(obj) || (isscalar(obj) && isempty(S)) || (islogical(S) && all(~S)
     % empty polynomial, selection, or projection
     assert(~isempty(obj) || isempty(S),'Cannot project empty polynomial.')
 
-    c = sparse(0,1);
+    c = obj.new_coeff(0,1);
     S = casos.Sparsity(0,0);
     return
 

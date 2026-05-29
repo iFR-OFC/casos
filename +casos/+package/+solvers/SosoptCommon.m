@@ -1,3 +1,9 @@
+% SPDX-FileCopyrightText: 2023, 2025 Institute of Flight Mechanics and Controls, University of Stuttgart
+% SPDX-FileCopyrightText: Author(s): Torbjørn Cunis and Fabian Geyer <tcunis@ifr.uni-stuttgart.de>
+% SPDX-FileContributor: For a full list of contributors, see <https://github.com/ifr-ofc/casos>
+%
+% SPDX-License-Identifier: GPL-3.0-only
+
 classdef (Abstract) SosoptCommon < casos.package.solvers.SolverCommon & casos.package.functions.FunctionInternal
 % Common superclass for sum-of-squares optimization problems.
 %
@@ -23,6 +29,8 @@ properties (Constant,Access=protected)
     sosopt_cones = casos.package.Cones([
         casos.package.Cones.LIN
         casos.package.Cones.SOS
+        casos.package.Cones.DSOS
+        casos.package.Cones.SDSOS
     ]);
 
     name_i = {'x0' 'p' 'lbx' 'ubx' 'cbx' 'lbg' 'ubg' 'cbg' 'lam_x0' 'lam_g0'};
@@ -38,6 +46,8 @@ properties (Access=protected)
     sparsity_g;
     sparsity_gl;
     sparsity_gs;
+
+    sosopt_info;
 end
 
 methods (Static)
@@ -72,6 +82,12 @@ methods
         % default options
         if ~isfield(obj.opts,'Kx'), obj.opts.Kx = struct('lin',n); end
         if ~isfield(obj.opts,'Kc'), obj.opts.Kc = struct('lin',m); end
+
+        % common interface info
+        obj.sosopt_info.numel_x = n;
+        obj.sosopt_info.numel_g = m;
+        obj.sosopt_info.Kx = obj.opts.Kx;
+        obj.sosopt_info.Kc = obj.opts.Kc;
     end
 
     %% Getter
@@ -153,6 +169,11 @@ methods
 
         % zero-based index
         idx = ii - 1;
+    end
+
+    function s = get_info(obj)
+        % Return info.
+        s = obj.sosopt_info;
     end
 
     function argout = call(obj,argin,on_basis)

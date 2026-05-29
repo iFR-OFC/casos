@@ -1,3 +1,9 @@
+% SPDX-FileCopyrightText: 2024 Institute of Flight Mechanics and Controls, University of Stuttgart
+% SPDX-FileCopyrightText: Author(s): Torbjørn Cunis <tcunis@ifr.uni-stuttgart.de>
+% SPDX-FileContributor: For a full list of contributors, see <https://github.com/ifr-ofc/casos>
+%
+% SPDX-License-Identifier: GPL-3.0-only
+
 function obj = parenAssign(obj,indexOp,varargin)
 % Implementing matlab.mixin.indexing.RedefinesParen.parenAssign
 
@@ -7,7 +13,7 @@ if length(indexOp) > 1
     % perform parentheses reference
     v = obj.(idx);
     % forward assign
-    [p.(indexOp(2:end))] = varargin{:};
+    [v.(indexOp(2:end))] = varargin{:};
     % re-assign modified element
     obj.(idx) = v;
 
@@ -15,7 +21,7 @@ if length(indexOp) > 1
 end
 
 % else
-assert(length(varargin) == 1, 'Too many arguments on right-hand side.')
+assert(isscalar(varargin), 'Too many arguments on right-hand side.')
 
 % assignment
 args = casos.Indeterminates(varargin{:});

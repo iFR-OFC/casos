@@ -1,3 +1,9 @@
+% SPDX-FileCopyrightText: 2023 Institute of Flight Mechanics and Controls, University of Stuttgart
+% SPDX-FileCopyrightText: Author(s): Torbjørn Cunis <tcunis@ifr.uni-stuttgart.de>
+% SPDX-FileContributor: For a full list of contributors, see <https://github.com/ifr-ofc/casos>
+%
+% SPDX-License-Identifier: GPL-3.0-only
+
 classdef (Sealed) MosekInterface < casos.package.solvers.ConicSolver
 % Interface for conic solver MOSEK.
 
@@ -6,18 +12,27 @@ properties (Access=protected)
     ghan;
     barv;
     cone;
+
+    solver_info  = struct;
+    solver_stats = struct;
 end
 
 properties (Access=private)
-    info = struct;
-
     fhan_pre;   % precomputation (numerical Hessian workaround)
 end
 
 properties (Constant, Access=protected)
     mosek_options = [casos.package.solvers.ConicSolver.conic_options
         {'mosek_param', 'Parameters to be passed to MOSEK.'
-         'mosek_echo',  'Verbosity level passed to MOSEK (default: 0).'}
+         'mosek_echo',  'Verbosity level passed to MOSEK (default: 0).'
+         'augmented_check', 'Struct with lowered tolerances to find an acceptable solution.'}
+    ];
+
+    mosek_cones = [casos.package.solvers.ConicSolver.conic_cones
+        [casos.package.Cones.POW
+         casos.package.Cones.DPOW
+         casos.package.Cones.EXP
+         casos.package.Cones.DEXP]
     ];
 end
 
@@ -25,6 +40,11 @@ methods (Static)
     function options = get_options
         % Return static options.
         options = casos.package.solvers.MosekInterface.mosek_options;
+    end
+
+    function cones = get_cones
+        % Return supported cones.
+        cones = casos.package.solvers.MosekInterface.mosek_cones;
     end
 end
 
@@ -35,16 +55,29 @@ methods
     function obj = MosekInterface(name,conic,varargin)
         % Construct MOSEK interface.
         obj@casos.package.solvers.ConicSolver(name,conic,varargin{:});
-
+        
         % default options
         if ~isfield(obj.opts,'mosek_param'), obj.opts.mosek_param = struct; end
         if ~isfield(obj.opts,'mosek_echo'), obj.opts.mosek_echo = 0; end
+        if ~isfield(obj.opts,'augmented_check')
+            % default values for augmented solution check, in case mosek returns unknown as solution status
+            obj.opts.augmented_check.optMeas     = 0.5;  % threshold for Mosek's optimality measure (should converge to +1 to be optimal)
+            obj.opts.augmented_check.feasTol     = 1e-6; % relaxed tolerance for primal/dual feasibility
+            obj.opts.augmented_check.relativeGap = 0.05; % ensure relative gap is less than X percent (default 5%)
+            obj.opts.augmented_check.maxNorm     = 1e10; % avoid using solutions with extremely large norms (ill-conditioning)             
+        end
     end
 
     function s = stats(obj)
         % Return stats.
-        s = obj.info;
+        s = obj.solver_stats;
         s = addfield(obj.status,s);
+    end
+
+    function s = info(obj)
+        % Overwriting ConicSolver.info
+        s = info@casos.package.solvers.ConicSolver(obj);
+        s.mosek = obj.solver_info;
     end
 
     function sp = get_sparsity_in(obj,i)

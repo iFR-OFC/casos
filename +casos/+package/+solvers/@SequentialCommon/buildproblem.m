@@ -1,22 +1,14 @@
+% SPDX-FileCopyrightText: 2025 Institute of Flight Mechanics and Controls, University of Stuttgart
+% SPDX-FileCopyrightText: Author(s): Torbjørn Cunis and Jan Olucak <tcunis@ifr.uni-stuttgart.de>
+% SPDX-FileContributor: For a full list of contributors, see <https://github.com/ifr-ofc/casos>
+%
+% SPDX-License-Identifier: GPL-3.0-only
+
 function buildproblem(obj,nlsos)
 % Build convex subprobems for sequential algorithms.
 buildTime_in = tic;
 
 opts = obj.opts;
-
-% problem size
-n = length(nlsos.x);
-m = length(nlsos.g);
-
-% get cone dimensions
-Nl = get_dimension(obj.get_cones,opts.Kx,'lin');
-Ns = get_dimension(obj.get_cones,opts.Kx,'sos');
-Ml = get_dimension(obj.get_cones,opts.Kc,'lin');
-Ms = get_dimension(obj.get_cones,opts.Kc,'sos');
-
-assert(n == (Nl + Ns), 'Dimension of Kx must be equal to number of variables (%d).', n);
-assert(m == (Ml + Ms), 'Dimension of Kc must be equal to number of constraints (%d).', m)
-
 
 % sparsity patterns
 base_x = sparsity(nlsos.x);
@@ -101,9 +93,8 @@ if strcmpi(obj.opts.conVioCheck,'signed-distance')
 
     % SOS options
     sosopt               = opts.sossol_options;
-    sosopt.Kx.lin        = length(r);
-    sosopt.Kx.sos        = 0;
-    sosopt.Kc.sos        = length(sos_conVio.g);
+    sosopt.Kx            = struct('lin',length(r));
+    sosopt.Kc            = opts.Kc;
     sosopt.error_on_fail = true;
 
     % initialize convex SOS solver

@@ -1,3 +1,9 @@
+% SPDX-FileCopyrightText: 2023 Institute of Flight Mechanics and Controls, University of Stuttgart
+% SPDX-FileCopyrightText: Author(s): Torbjørn Cunis <tcunis@ifr.uni-stuttgart.de>
+% SPDX-FileContributor: For a full list of contributors, see <https://github.com/ifr-ofc/casos>
+%
+% SPDX-License-Identifier: GPL-3.0-only
+
 classdef (Abstract) FunctionCommon < handle
 % Common superclass for casos and casadi-derived functions.
 
@@ -32,6 +38,7 @@ methods
         end
     end
 
+    %% Options & Cones
     function print_options(obj)
         % Print list of options.
         disp('Available Options:')
@@ -46,6 +53,21 @@ methods
     function tf = has_option(obj,name)
         % Check if option "name" exists.
         tf = has(obj.get_options,name);
+    end
+
+    function print_cones(obj)
+        % Print list of supported cones.
+        error('Not implemented for class %s.',class(obj))
+    end
+
+    function print_cone(obj,~)
+        % Print information about a cone.
+        error('Not implemented for class %s.',class(obj))
+    end
+
+    function has_cone(obj)
+        % Print list of supported cones.
+        error('Not implemented for class %s.',class(obj))
     end
 end
 
