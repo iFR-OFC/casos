@@ -67,6 +67,20 @@ classdef (Abstract) AbstractProblem < handle
             else
                 obj.Kc = struct('sos', obj.numel_g);
             end
+
+            % Validate cone descriptions and dimensions early.
+            cones = obj.get_supported_cones();
+
+            assert(isstruct(obj.Kx), 'Kx must be specified as a struct.');
+            assert(isstruct(obj.Kc), 'Kc must be specified as a struct.');
+
+            check(cones, obj.Kx);
+            check(cones, obj.Kc);
+
+            assert(get_length(cones, obj.Kx) == obj.numel_x, ...
+                'Dimension of Kx must equal number of decision variables (%d).', obj.numel_x);
+            assert(get_length(cones, obj.Kc) == obj.numel_g, ...
+                'Dimension of Kc must equal number of constraints (%d).', obj.numel_g);
         end
         
         %% Dependent properties
@@ -102,6 +116,16 @@ classdef (Abstract) AbstractProblem < handle
         
     end
     methods (Access=protected)
+        function cones = get_supported_cones(~)
+            % Supported cones for nonlinear/sum-of-squares problem interface.
+            cones = casos.package.Cones([
+                casos.package.Cones.LIN
+                casos.package.Cones.SOS
+                casos.package.Cones.DSOS
+                casos.package.Cones.SDSOS
+            ]);
+        end
+
         %% Getters for lazy caching
         function Df = get_Df(obj)
             % get gradient of f as an operator
