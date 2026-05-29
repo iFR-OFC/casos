@@ -6,11 +6,6 @@ classdef (Abstract) AbstractProblem < handle
         g       % constraints
         p       % parameters
 
-        % Dimensions and count
-        n_x     % number of decision variables
-        n_g     % number of constraints
-        n_p     % number of parameters
-
         % Derivative operators (gradients and jacobians)
         Df      % jacobian of cost function
         Dg      % jacobian of constraints
@@ -26,19 +21,6 @@ classdef (Abstract) AbstractProblem < handle
         function obj = AbstractProblem(nlsos)
             arguments
                 nlsos struct = struct()
-            end
-
-            % problem size
-            if isfield(nlsos,'x')
-                obj.n_x = length(nlsos.x);
-            else
-                obj.n_x = 0;
-            end
-            
-            if isfield(nlsos,'g')
-                obj.n_g = length(nlsos.g);
-            else
-                obj.n_g = 0;
             end
 
             % Valid decision variable
@@ -71,32 +53,16 @@ classdef (Abstract) AbstractProblem < handle
         end
         
         %% Getters (returns symbolic values)
-        % function Df = get_Df(obj)
-        %     if isempty(obj.Df)
-        %         obj.Df = jacobian(obj.f, obj.x);
-        %     end
-        %     Df = obj.Df;
-        % end
-        % 
-        % function Dg = get_Dg(obj)
-        %     % get gradient of g as operator
-        %     if isempty(obj.Dg)
-        %         obj.Dg = jacobian(obj.g, obj.x);
-        %     end
-        %     Dg = obj.Dg;
-        % end
-
         function n = numel_x(obj)
-            n = obj.n_x;
+            n = length(obj.x);
         end
 
         function m = numel_g(obj)
-            m = obj.n_g;
+            m = length(obj.g);
         end
 
         %% Evaluators (input x, p -> f, g, ...)
         function val = eval_f(obj, x, p)
-            % Question: move to constructor?
             if isempty(obj.ffun)
                 obj.ffun = casos.Function('ffun', ...
                     {sparsity(obj.x), sparsity(obj.p)}, ...
