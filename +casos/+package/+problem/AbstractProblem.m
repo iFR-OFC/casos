@@ -69,7 +69,7 @@ classdef (Abstract) AbstractProblem < handle
             end
         end
         
-        %% Getters (returns symbolic values)
+        %% Dependent properties
         function n = numel_x(obj)
             n = length(obj.x);
         end
