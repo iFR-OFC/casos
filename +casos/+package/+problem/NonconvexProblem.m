@@ -1,5 +1,5 @@
 classdef NonconvexProblem < casos.package.problem.AbstractProblem
-    properties (SetAccess = protected)
+    properties (SetAccess = protected) % TODO change to Access later
         % Core symbolic objects (in addition to AbstractProblem properties)
         lambda_g    % multipliers for g
 
@@ -51,8 +51,10 @@ classdef NonconvexProblem < casos.package.problem.AbstractProblem
             %     {'x', 'p', 'lambda'}, {'DDL'} ...
             %     );
         end
+    end
 
-        %% Getters
+    methods (Access=protected)
+        %% Getters for lazy caching
         function L = get_L(obj)
             if isempty(obj.L)
                 obj.L = obj.f + dot(obj.lambda_g, obj.g);

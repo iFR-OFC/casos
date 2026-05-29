@@ -1,5 +1,5 @@
 classdef (Abstract) AbstractProblem < handle
-    properties (SetAccess = protected)
+    properties (SetAccess = protected) % TODO change to Access later
         % Core symbolic objects
         x       % primal decision variables
         f       % objective
