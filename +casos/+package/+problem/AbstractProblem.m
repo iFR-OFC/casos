@@ -106,22 +106,42 @@ classdef (Abstract) AbstractProblem < handle
             val = full(obj.ffun(x, p));
         end
 
-        % function val = eval_Df(obj, x, p)
-        %     if isempty(obj.Dffun)
-        %         obj.Dffun = casos.Function('Dffun', ...
-        %             {sparsity(obj.x), sparsity(obj.p)}, ...
-        %             {obj.get_Df}, {'x', 'p'}, {'Df_val'});
-        %     end
-        %     val = obj.Dffun(x, p);
-        % end
-        % 
-        % function val = eval_Dg(obj, x, p)
-        %     if isempty(obj.Dgfun)
-        %         obj.Dgfun = casos.Function('Dgfun', ...
-        %             {sparsity(obj.x), sparsity(obj.p)}, ...
-        %             {obj.get_Dg}, {'x', 'p'}, {'Dg_val'});
-        %     end
-        %     val = obj.Dgfun(x, p);
-        % end
+        
+    end
+    methods (Access=protected)
+        %% Getters for lazy caching
+        function Df = get_Df(obj)
+            % get gradient of f as an operator
+            if isempty(obj.Df)
+                obj.Df = jacobian(obj.f, obj.x);
+            end
+            Df = obj.Df;
+        end
+
+        function Dg = get_Dg(obj)
+            % get jacobian of g as operator
+            if isempty(obj.Dg)
+                obj.Dg = jacobian(obj.g, obj.x);
+            end
+            Dg = obj.Dg;
+        end
+
+        function val = eval_Df(obj, x, p)
+            if isempty(obj.Dffun)
+                obj.Dffun = casos.Function('Dffun', ...
+                    {sparsity(obj.x), sparsity(obj.p)}, ...
+                    {obj.get_Df}, {'x', 'p'}, {'Df_val'});
+            end
+            val = obj.Dffun(x, p);
+        end
+
+        function val = eval_Dg(obj, x, p)
+            if isempty(obj.Dgfun)
+                obj.Dgfun = casos.Function('Dgfun', ...
+                    {sparsity(obj.x), sparsity(obj.p)}, ...
+                    {obj.get_Dg}, {'x', 'p'}, {'Dg_val'});
+            end
+            val = obj.Dgfun(x, p);
+        end
     end
 end
