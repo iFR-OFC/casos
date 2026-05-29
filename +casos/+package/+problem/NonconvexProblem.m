@@ -17,13 +17,14 @@ classdef NonconvexProblem < casos.package.problem.AbstractProblem
     end
 
     methods
-        function obj = NonconvexProblem(nlsos)
+        function obj = NonconvexProblem(nlsos, opts)
             arguments
                 nlsos struct = struct()
+                opts struct = struct()
             end
 
             % Call constructor of AbstractProblem
-            obj = obj@casos.package.problem.AbstractProblem(nlsos);
+            obj = obj@casos.package.problem.AbstractProblem(nlsos, opts);
 
             % Check if problem is defined with correct dimensions etc. 
             %TODO

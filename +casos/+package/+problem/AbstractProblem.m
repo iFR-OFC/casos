@@ -10,6 +10,10 @@ classdef (Abstract) AbstractProblem < handle
         Df      % jacobian of cost function
         Dg      % jacobian of constraints
 
+        % Cones
+        Kx      % decision variable cone
+        Kc      % constraint cone
+
         % Evaluation objects (casos.function handles)
         ffun
         gfun
@@ -18,9 +22,10 @@ classdef (Abstract) AbstractProblem < handle
     end
 
     methods (Access = public)
-        function obj = AbstractProblem(nlsos)
+        function obj = AbstractProblem(nlsos, opts)
             arguments
                 nlsos struct = struct()
+                opts struct = struct()
             end
 
             % Valid decision variable
@@ -49,6 +54,18 @@ classdef (Abstract) AbstractProblem < handle
                 obj.p = casos.PS(nlsos.p);
             else
                 obj.p = casos.PS(0);
+            end
+
+            if isfield(opts, 'Kx')
+                obj.Kx = opts.Kx;
+            else
+                obj.Kx = struct('lin', obj.numel_x);
+            end
+
+            if isfield(opts, 'Kc')
+                obj.Kc = opts.Kc;
+            else
+                obj.Kc = struct('sos', obj.numel_g);
             end
         end
         
