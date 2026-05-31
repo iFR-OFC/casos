@@ -65,8 +65,22 @@ if strcmpi(obj.opts.conVioCheck,'signed-distance')
     %% constrained violation check via signed distance
     % sparsity patterns of nonlinear constraints
 
-    % check only the nonlinear constraints
-    I = true(length(nlsos.g),1);
+    % get cone dimensions
+    Ml = get_dimension(obj.get_cones,opts.Kc,'lin');
+    Ms = get_dimension(obj.get_cones,opts.Kc,'sos');
+
+    % create logical indices for SOS
+    Is = [false(Ml,1); true(Ms,1)];
+
+    % combined nonlinear constraints (SOS)
+    I = Is;
+
+    % create function to check the linear equality contraints violation
+    lincoord   = poly2basis(nlsos.g(~I));
+    ub = casadi.SX.sym('ub', size(lincoord,1), 1);
+    lb = casadi.SX.sym('lb', size(lincoord,1), 1);
+    temp = [lincoord - ub, lb - lincoord, zeros(size(lincoord,1), 1)];
+    obj.linvio = casadi.Function('linvio', {poly2basis(nlsos.x), poly2basis(nlsos.p), lb, ub}, {temp});
 
     % for idx = 1:length(nlsos.g)
     %     I(idx) = ~is_linear(nlsos.g(idx),nlsos.x);

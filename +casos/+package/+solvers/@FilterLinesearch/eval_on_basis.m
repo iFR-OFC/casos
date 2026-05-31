@@ -80,10 +80,19 @@ if strcmpi(obj.opts.conVioCheck,'signed-distance')
     args_conVio{3}  = -inf(obj.init_para.conVio.no_con,1);
     args_conVio{4}  =  inf(obj.init_para.conVio.no_con,1);
 
+    args_conVio{6} = [];
+    args_conVio{7} = [];
+
     % compute constraint violation of initial guess
     sol_convio = eval_on_basis(obj.solver_conVio, args_conVio);
 
-    theta_x_k = full(max(0,max(sol_convio{1})));
+    lb = args{6};
+    ub = args{7};
+    linviolation = max(full(obj.linvio(x_k,p0,lb,ub)),[],'all');
+
+    % extract signed-distances
+    all_violations = [sol_convio{1}; linviolation];
+    theta_x_k = full(max(0,max(all_violations)));   % theta_x_k = full(max(0,max(sol_convio{1})));
 else
     g_val = full(obj.eval_constraintSamples(x_k,obj.opts.userSample));
 

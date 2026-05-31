@@ -36,12 +36,18 @@ if strcmpi(obj.opts.conVioCheck,'signed-distance')
     args_conVio{3}  = -inf(obj.init_para.conVio.no_con,1);
     args_conVio{4}  =  inf(obj.init_para.conVio.no_con,1);
 
+    args_conVio{6} = [];
+    args_conVio{7} = [];
 
     sol_convio = eval_on_basis(obj.solver_conVio, args_conVio);
 
+    % violation of the linear constraints
+    lb = zeros(size(args{6},1),1); 
+    ub = zeros(size(args{7},1),1); 
+    linviolation = max(full(obj.linvio(x_k,p0,lb,ub)),[],'all');
 
     % extract signed-distances
-    all_violations = sol_convio{1};
+    all_violations = [sol_convio{1}; linviolation];
 
     % get the largest one
     theta_x_k1 = full(max(0,max(all_violations)));

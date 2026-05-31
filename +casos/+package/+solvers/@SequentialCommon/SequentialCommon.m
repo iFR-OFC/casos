@@ -35,6 +35,9 @@ classdef (Abstract) SequentialCommon < casos.package.solvers.SosoptCommon
         solver_conVio;
         solver_soc;
 
+        % evaluation of linear cone constraints
+        linvio;
+
         % Lagrangian and derivative
         eval_L;
         eval_dLdx;
