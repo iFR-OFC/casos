@@ -44,7 +44,7 @@ if strcmpi(obj.opts.conVioCheck,'signed-distance')
     % violation of the linear constraints
     lb = args{6}; 
     ub = args{7}; 
-    linviolation = max(full(obj.linvio(x_k,p0,lb,ub)),[],'all');
+    linviolation = obj.linvio(x_k,p0,lb,ub);
 
     % extract signed-distances
     all_violations = [sol_convio{1}; linviolation];

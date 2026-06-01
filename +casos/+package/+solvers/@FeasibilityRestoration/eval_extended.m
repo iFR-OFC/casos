@@ -54,12 +54,15 @@ sol_convio = eval_on_basis(obj.solver_conVio, args_conVio);
 
 lb = args{6};
 ub = args{7};
-linviolation = max(full(obj.linvio(x_k,p0,lb,ub)),[],'all');
+linviolation = obj.linvio(x_k,p0,lb,ub);
 
 % extract signed-distances
 all_violations = [sol_convio{1}; linviolation];
 
-theta_x_k = full(max(0,max(all_violations)));   % theta_x_k = full(max(0,max(sol_convio{1})));
+% constraint violation
+theta_x_k = full(max(0,max(all_violations)));   
+
+% compute cost
 f_x_k     = full(obj.eval_cost(x_k,p0));
 
 filter = [max(1,theta_x_k)*10, inf];
