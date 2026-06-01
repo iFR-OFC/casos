@@ -8,33 +8,35 @@ classdef IncompatibleSizesError < MException
 % Error thrown if inputs have compatible sizes for an operation.
 
 methods (Access=protected)
-    function err = IncompatibleSizesError(id,a,b)
+    function err = IncompatibleSizesError(id,msg,a,b)
         % New error with identifier.
-        errsz = 'Polynomials have incompatible sizes for this operation ([%s] vs. [%s]).';
-        
-        err@MException(id,errsz,size2str(a),size2str(b));
+        err@MException(id,msg,size2str(a),size2str(b));
     end
 end
 
 methods (Static)
     function err = basic(a,b)
         % New error for basic operation.
-        err = casos.package.core.IncompatibleSizesError('MATLAB:sizeDimensionsMustMatch',a,b);
+        err = casos.package.core.IncompatibleSizesError('MATLAB:sizeDimensionsMustMatch', ...
+                'Polynomials have incompatible sizes for this operation: [%s] vs. [%s].',a,b);
     end
 
     function err = concat(a,b)
         % New error for concatenation.
-        err = casos.package.core.IncompatibleSizesError('MATLAB:catenate:dimensionMismatch',a,b);
+        err = casos.package.core.IncompatibleSizesError('MATLAB:catenate:dimensionMismatch', ...
+                'Dimensions of polynomials being concatenated are not consistent: [%s] vs. [%s].',a,b);
     end
 
     function err = matrix(a,b)
         % New error for matrix operation.
-        err = casos.package.core.IncompatibleSizesError('MATLAB:innerdim',a,b);
+        err = casos.package.core.IncompatibleSizesError('MATLAB:innerdim', ...
+                'Incorrect dimensions for polynomial matrix multiplication: [%s] vs. [%s].',a,b);
     end
 
     function err = other(a,b)
         % New error for other operations.
-        err = casos.package.core.IncompatibleSizesError('',a,b);
+        err = casos.package.core.IncompatibleSizesError('', ...
+                'Polynomial dimension mismatch: [%s] vs. [%s].',a,b);
     end
 end
 
