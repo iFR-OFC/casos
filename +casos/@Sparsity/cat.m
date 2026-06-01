@@ -19,8 +19,14 @@ end
 a = casos.Sparsity(varargin{1});
 b = casos.Sparsity(varargin{2});
 
-% detect empty polynomials
-if isempty(a)
+% concatenation with empty polynomial
+if (isempty(a) && isempty(b))
+    sz = size(a) + size(b);
+    sz(dim) = 0;            % result is empty along dimension
+    c = casos.Sparsity(sz);
+    return
+
+elseif isempty(a)
     c = b;
     return
 

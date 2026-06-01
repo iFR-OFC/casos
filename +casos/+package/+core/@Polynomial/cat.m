@@ -29,12 +29,20 @@ switch (dim)
         c = blockcat(a,ul,rl,b);
 
     otherwise
-        if isempty(a)
-            % concatenation with empty polynomial
+        if (isempty(a) && isempty(b))
+            % concatenation of empty polynomials
+            sz = size(a) + size(b);
+            sz(dim) = 0;        % result is empty along dimension
+            c = a.empty(sz);
+            return
+
+        elseif isempty(a)
+            % concatenation of b with empty polynomial
             c = b;
             return
         
         elseif isempty(b)
+            % concatenation of a with empty polynomial
             c = a;
             return
 
