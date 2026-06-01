@@ -250,7 +250,7 @@ for op = ["mtimes" "kron"]
             arg1 = reference_values.vector{1,d1}';
             arg2 = reference_values.vector{2,d2};
 
-            if ~isequal(op,"kron") && (size(arg1,2) ~= size(arg2,1))
+            if ~isequal(op,"kron") && (~isscalar(arg1) && ~isscalar(arg2) && size(arg1,2) ~= size(arg2,1))
                 % dimension mismatch
                 continue
             end
@@ -277,7 +277,7 @@ for op = ["mtimes" "kron"]
             arg1 = reference_values.matrix{1,d1};
             arg2 = reference_values.matrix{3,d2};
 
-            if ~isequal(op,"kron") && (size(arg1,2) ~= size(arg2,1))
+            if ~isequal(op,"kron") && (~isscalar(arg1) && ~isscalar(arg2) && size(arg1,2) ~= size(arg2,1))
                 % dimension mismatch
                 continue
             end
