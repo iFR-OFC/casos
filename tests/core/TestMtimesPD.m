@@ -145,7 +145,11 @@ end
 methods
     function evaluate_mtimes(test_case, op, value1, value2, reference)
         % Evaluate matrix multiplication operation.
-        if strcmp(op,"mtimes") && (size(value1,2) ~= size(value2,1))
+        if strcmp(op,"mtimes") && ~any([
+                isscalar(value1)
+                isscalar(value2)
+                size(value1,2) == size(value2,1)
+            ])
             % inner dimension mismatch
             diagtext = sprintf('Inner dimension mismatch expected: %d vs. %d.',size(value1,2),size(value2,1));
             test_case.verifyError(@() feval(op,value1,value2),?MException,diagtext);
@@ -153,11 +157,10 @@ methods
         end
 
         % else
-        actual = mtimes(value1,value2);
+        actual = feval(op,value1,value2);
 
         % perform assertion
         test_case.verifyEqualPolynomial(actual,reference,"RelTol",1e-15);
-
     end
 end
 

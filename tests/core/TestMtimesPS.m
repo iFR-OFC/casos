@@ -160,7 +160,11 @@ methods
         [p1,symbol1,argument1] = test_case.get_operand(symb1,value1);
         [p2,symbol2,argument2] = test_case.get_operand(symb2,value2);
 
-        if strcmp(op,"mtimes") && (size(value1,2) ~= size(value2,1))
+        if strcmp(op,"mtimes") && ~any([
+                isscalar(value1)
+                isscalar(value2)
+                size(value1,2) == size(value2,1)
+            ])
             % inner dimension mismatch for matrix multiplication
             diagtext = sprintf('Inner dimension mismatch expected: %d vs. %d.',size(value1,2),size(value2,1));
             test_case.verifyError(@() feval(op,p1,p2),?MException,diagtext);
