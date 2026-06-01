@@ -7,6 +7,12 @@
 function res = eval_repmat(arg,m,n)
 % Evaluate repmat operation.
 
+if (nargin < 3)
+    % single dimension or size array given
+    n = m(end);
+    m = m(1);
+end
+
 if (m == 0 || n == 0)
     % return empty polynomial
     res = polynomial(zeros(size(arg).*[m n]));

@@ -497,7 +497,11 @@ for d1 = 1:maxdim
         arg1 = reference_values.vector{1,d1};
         arg2 = reference_values.vector{2,d2};
 
-        if ~isequal(size(arg1),size(arg2))
+        if isscalar(arg1)
+            % repeat scalar argument
+            arg1 = eval_repmat(arg1,size(arg2));
+
+        elseif ~isequal(size(arg1),size(arg2))
             % size mismatch
             continue;
         end
@@ -513,7 +517,11 @@ for d1 = 1:maxdim
         arg1 = reference_values.vector{1,d1}';
         arg2 = reference_values.vector{2,d2}';
 
-        if ~isequal(size(arg1),size(arg2))
+        if isscalar(arg1)
+            % repeat scalar argument
+            arg1 = eval_repmat(arg1,size(arg2));
+
+        elseif ~isequal(size(arg1),size(arg2))
             % size mismatch
             continue;
         end
@@ -529,7 +537,11 @@ for d1 = 1:maxdim
         arg1 = reference_values.matrix{1,d1};
         arg2 = reference_values.matrix{2,d2};
 
-        if ~isequal(size(arg1),size(arg2))
+        if isscalar(arg1)
+            % repeat scalar argument
+            arg1 = eval_repmat(arg1,size(arg2));
+
+        elseif ~isequal(size(arg1),size(arg2))
             % size mismatch
             continue;
         end
