@@ -109,6 +109,9 @@ if strcmpi(obj.opts.conVioCheck,'signed-distance')
     sosopt               = opts.sossol_options;
     sosopt.Kx            = struct('lin',length(r));
     sosopt.Kc            = opts.Kc;
+    if isfield(sosopt.Kc, 'lin')
+        sosopt.Kc = rmfield(sosopt.Kc, 'lin');
+    end
     sosopt.error_on_fail = true;
 
     % initialize convex SOS solver
