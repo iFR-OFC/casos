@@ -802,11 +802,11 @@ for d1 = 1:maxdim
         reference_concat.column.diagcat{d1,d2} = multipoly2struct(blkdiag(arg1,arg2));
         % horizontal concatenation
         if isempty(arg1) || isempty(arg2) || size(arg1,1) == size(arg2,1)
-            reference_concat.column.horzcat{d1,d2} = multipoly2struct(horzcat(arg1,arg2));
+            reference_concat.column.horzcat{d1,d2} = multipoly2struct(eval_horzcat(arg1,arg2));
         end
         % vertical concatenation 
         if isempty(arg1) || isempty(arg2) || size(arg1,2) == size(arg2,2)
-            reference_concat.column.vertcat{d1,d2} = multipoly2struct(vertcat(arg1,arg2));
+            reference_concat.column.vertcat{d1,d2} = multipoly2struct(eval_vertcat(arg1,arg2));
         end
     end
 end
@@ -825,11 +825,11 @@ for d1 = 1:maxdim
         reference_concat.row.diagcat{d1,d2} = multipoly2struct(blkdiag(arg1,arg2));
         % horizontal concatenation
         if isempty(arg1) || isempty(arg2) || size(arg1,1) == size(arg2,1)
-            reference_concat.row.horzcat{d1,d2} = multipoly2struct(horzcat(arg1,arg2));
+            reference_concat.row.horzcat{d1,d2} = multipoly2struct(eval_horzcat(arg1,arg2));
         end
         % vertical concatenation 
         if isempty(arg1) || isempty(arg2) || size(arg1,2) == size(arg2,2)
-            reference_concat.row.vertcat{d1,d2} = multipoly2struct(vertcat(arg1,arg2));
+            reference_concat.row.vertcat{d1,d2} = multipoly2struct(eval_vertcat(arg1,arg2));
         end
     end
 end
@@ -846,19 +846,13 @@ for d1 = 1:maxdim
 
         % diagonal concatenation
         reference_concat.matrix.diagcat{d1,d2} = multipoly2struct(blkdiag(arg1,arg2));
-        if isempty(arg1) && isempty(arg2)
-            % empty concatenation
-            reference_concat.matrix.horzcat{d1,d2} = multipoly2struct(polynomial);
-            reference_concat.matrix.vertcat{d1,d2} = multipoly2struct(polynomial);
-            continue
-        end
         % horizontal concatenation
         if isempty(arg1) || isempty(arg2) || size(arg1,1) == size(arg2,1)
-            reference_concat.matrix.horzcat{d1,d2} = multipoly2struct(horzcat(arg1,arg2));
+            reference_concat.matrix.horzcat{d1,d2} = multipoly2struct(eval_horzcat(arg1,arg2));
         end
         % vertical concatenation 
         if isempty(arg1) || isempty(arg2) || size(arg1,2) == size(arg2,2)
-            reference_concat.matrix.vertcat{d1,d2} = multipoly2struct(vertcat(arg1,arg2));
+            reference_concat.matrix.vertcat{d1,d2} = multipoly2struct(eval_vertcat(arg1,arg2));
         end
     end
 end
