@@ -22,6 +22,11 @@ methods (Static)
         err = casos.package.core.IncompatibleSizesError('MATLAB:sizeDimensionsMustMatch',a,b);
     end
 
+    function err = concat(a,b)
+        % New error for concatenation.
+        err = casos.package.core.IncompatibleSizesError('MATLAB:catenate:dimensionMismatch',a,b);
+    end
+
     function err = matrix(a,b)
         % New error for matrix operation.
         err = casos.package.core.IncompatibleSizesError('MATLAB:innerdim',a,b);
