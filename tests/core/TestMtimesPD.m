@@ -152,7 +152,7 @@ methods
             ])
             % inner dimension mismatch
             diagtext = sprintf('Inner dimension mismatch expected: %d vs. %d.',size(value1,2),size(value2,1));
-            test_case.verifyError(@() feval(op,value1,value2),?MException,diagtext);
+            test_case.verifyError(@() feval(op,value1,value2),?casos.package.core.IncompatibleSizesError,diagtext);
             return
         end
 

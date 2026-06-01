@@ -172,7 +172,7 @@ methods
                     || (~iscolumn(value1) && ~iscolumn(value2) && size(value1,2) ~= size(value2,2))
             % dimension mismatch
             diagtext = sprintf('Dimension mismatch expected: %s vs. %s.',mat2str(size(value1)),mat2str(size(value2)));
-            test_case.verifyError(@() feval(op,value1,value2),?MException,diagtext);
+            test_case.verifyError(@() feval(op,value1,value2),?casos.package.core.IncompatibleSizesError,diagtext);
             return
         end
 
