@@ -90,11 +90,8 @@ if strcmpi(obj.opts.conVioCheck,'signed-distance')
     ub = args{7};
     linviolation = obj.linvio(x_k,p0,lb,ub);
 
-    % extract signed-distances
-    all_violations = [sol_convio{1}; linviolation];
-
     % get constraint violation
-    theta_x_k = full(max(0,max(all_violations)));   
+    theta_x_k = full(max(0,max([sol_convio{1}; linviolation])));   
 else
     g_val = full(obj.eval_constraintSamples(x_k,obj.opts.userSample));
 

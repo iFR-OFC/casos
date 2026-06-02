@@ -73,17 +73,16 @@ if strcmpi(obj.opts.conVioCheck,'signed-distance')
     I = [false(Ml,1); true(Ms,1)];
 
     % create function to check the linear equality contraints violation
-    lincoord = poly2basis(nlsos.g(~I));
-    nnz_lin = lincoord.nnz;
-    lb_ub = [lincoord; -lincoord];
+    coordinates_lin = poly2basis(nlsos.g,~I);
+    nnz_lin = coordinates_lin.nnz;
+    bounds_stack = [coordinates_lin; -coordinates_lin];
 
     % set upper and lower bounds
     ub = casadi.SX.sym('ub', nnz_lin, 1);
     lb = casadi.SX.sym('lb', nnz_lin, 1);
-    bounds = [ub; -lb];
 
     % create function to evaluate the violation of the linear cone 
-    obj.linvio = casadi.Function('linvio', {poly2basis(nlsos.x), poly2basis(nlsos.p), lb, ub}, {lb_ub-bounds});
+    obj.linvio = casadi.Function('linvio', {poly2basis(nlsos.x), poly2basis(nlsos.p), lb, ub}, {bounds_stack-[ub; -lb]});
 
     % for idx = 1:length(nlsos.g)
     %     I(idx) = ~is_linear(nlsos.g(idx),nlsos.x);

@@ -56,11 +56,8 @@ lb = args{6};
 ub = args{7};
 linviolation = obj.linvio(x_k,p0,lb,ub);
 
-% extract signed-distances
-all_violations = [sol_convio{1}; linviolation];
-
 % constraint violation
-theta_x_k = full(max(0,max(all_violations)));   
+theta_x_k = full(max(0,max([sol_convio{1}; linviolation])));   
 
 % compute cost
 f_x_k     = full(obj.eval_cost(x_k,p0));
