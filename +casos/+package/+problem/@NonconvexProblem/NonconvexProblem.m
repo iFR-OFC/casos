@@ -61,14 +61,22 @@ classdef NonconvexProblem < casos.package.problem.AbstractProblem
                 opts_g_vio = struct();
                 opts_g_vio.Kx = struct('lin',length(r));
                 opts_g_vio.Kc = obj.Kc;
-                % obj.g_violation_solver = casos.package.solvers.sossolInternal( ...
-                %     'g_vio_signed', 'mosek', sos_g_vio, opts_g_vio);
-                obj.g_violation_solver = casos.sossol('sdsol', 'mosek', ... 
-                    sos_g_vio, opts_g_vio)
+                obj.g_violation_solver = casos.package.solvers.sossolInternal( ...
+                    'g_vio_signed', 'mosek', sos_g_vio, opts_g_vio);
             end
 
             % Evaluate constraint violation
-            % ...
+            n_dec = obj.numel_g;
+            args_g_vio = cell(10,1);
+            p_val = poly2basis(p, sparsity(obj.p));
+            x_val = poly2basis(x, sparsity(obj.x));
+            args_g_vio{2} = [p_val; x_val];
+            args_g_vio{3} = -inf(n_dec,1);
+            args_g_vio{4} =  inf(n_dec,1);
+            sol_g_vio = call(obj.g_violation_solver, args_g_vio, true);
+
+            % H_infty norm evaluation: max(0, max(r)).
+            theta = full(max(0, max(sol_g_vio{1})));
         end
     end
 
@@ -96,7 +104,7 @@ classdef NonconvexProblem < casos.package.problem.AbstractProblem
             end
             DDL = obj.DDL;
         end
-        
+
         %% Evaluation methods
         function val = eval_DL(obj, x, p, lam)
             if isempty(obj.DLfun)
