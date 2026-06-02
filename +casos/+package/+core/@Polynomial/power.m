@@ -27,7 +27,7 @@ if isempty(a) || isempty(n)
     % element-wise power with empty polynomial/exponent is empty
     sz(I0) = 0;
 
-    b = a.new_poly(sz);
+    b = a.zeros(sz);
     return
 
 elseif all(n==0)
