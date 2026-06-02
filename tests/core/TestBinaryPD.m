@@ -13,7 +13,7 @@ properties (SetAccess=protected)
 end
 
 properties (TestParameter)
-    op = {"plus" "minus" "times" "ldivide" "rdivide"};
+    op = {"plus" "minus" "times" "ldivide" "rdivide" "power"};
 
     dim1 = num2cell(1:6);
     dim2 = num2cell(1:6);
@@ -60,6 +60,12 @@ methods (Test, ParameterCombination="pairwise", TestTags="scalar")
                 
                 test_case.evaluate_binary(op,value1,value2_deg0,reference);
 
+            case "power"
+                % element-wise power by degree matrix
+                degs = ceil(2*full(project(value2,restrict_terms(sparsity(value2),0))));
+
+                test_case.evaluate_binary(op,value1,degs,reference);
+
             otherwise
                 test_case.assertFail(sprintf("Not implemented: %s.",op));
         end
@@ -92,6 +98,12 @@ methods (Test, ParameterCombination="pairwise", TestTags=["vector" "inner"])
                 value2_deg0 = 1+subs(value2,vars,ones(length(vars),1));
                 
                 test_case.evaluate_binary(op,value1,value2_deg0,reference);
+
+            case "power"
+                % element-wise power by degree matrix
+                degs = ceil(2*full(project(value2,restrict_terms(sparsity(value2),0))));
+
+                test_case.evaluate_binary(op,value1,degs,reference);
 
             otherwise
                 test_case.assertFail(sprintf("Not implemented: %s.",op));
@@ -126,6 +138,12 @@ methods (Test, ParameterCombination="pairwise", TestTags=["vector" "outer"])
                 
                 test_case.evaluate_binary(op,value1,value2_deg0,reference);
 
+            case "power"
+                % element-wise power by degree matrix
+                degs = ceil(2*full(project(value2,restrict_terms(sparsity(value2),0))));
+
+                test_case.evaluate_binary(op,value1,degs,reference);
+
             otherwise
                 test_case.assertFail(sprintf("Not implemented: %s.",op));
         end
@@ -158,6 +176,12 @@ methods (Test, ParameterCombination="pairwise", TestTags=["matrix"])
                 value2_deg0 = 1+subs(value2,vars,ones(length(vars),1));
                 
                 test_case.evaluate_binary(op,value1,value2_deg0,reference);
+
+            case "power"
+                % element-wise power by degree matrix
+                degs = ceil(2*full(project(value2,restrict_terms(sparsity(value2),0))));
+
+                test_case.evaluate_binary(op,value1,degs,reference);
 
             otherwise
                 test_case.assertFail(sprintf("Not implemented: %s.",op));
