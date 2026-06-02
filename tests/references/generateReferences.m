@@ -120,7 +120,7 @@ reference_binary = struct('scalar',struct, ...
 
 % element-wise addition, subtraction, and multiplication
 % as well as left-side (B.\A) and right-side (A./B) division
-for op = ["plus" "minus" "times" "ldivide" "rdivide"]
+for op = ["plus" "minus" "times" "ldivide" "rdivide" "power"]
     % on scalar values
     reference_binary.scalar.(op) = cell(noPoly,noPoly);
     for k1 = 1:noPoly
