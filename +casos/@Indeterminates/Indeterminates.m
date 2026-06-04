@@ -118,8 +118,16 @@ methods
     function tf = is_indet(~), tf = true; end
 
     function z = mpower(obj,deg)
-        % Return monomial(s).
-        z = power(casos.package.polynomial(obj),deg);
+        % Return sum of monomial(s).
+        %
+        % For an even degree p, this corresponds to the p-norm ||x||_p 
+        % of the vector x to the power of p.
+        if ~isscalar(deg)
+            error('Power of indeterminates must be scalar.'); 
+        end
+        
+        % else:
+        z = sum(power(obj,deg));
     end
 
     function z = power(obj,deg)
