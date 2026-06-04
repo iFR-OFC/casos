@@ -4,7 +4,8 @@
 %
 % SPDX-License-Identifier: GPL-3.0-only
 
-classdef Indeterminates < casos.package.core.AlgebraicObject & casos.package.core.Printable
+classdef (InferiorClasses = {?casadi.DM, ?casadi.SX, ?casadi.MX}) ...
+    Indeterminates < casos.package.core.AlgebraicObject & casos.package.core.Printable
 % Indeterminate variables.
 
 properties (GetAccess=protected, SetAccess=private)
