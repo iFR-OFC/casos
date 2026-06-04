@@ -102,6 +102,11 @@ methods (Static)
         % Create empty indeterminate variables.
         v = casos.Indeterminates;
     end
+
+    function varargout = create(varargin)
+        % Create individual indeterminate variables.
+        varargout = tuple2cell(casos.Indeterminates(varargin{:}));
+    end
 end
 
 methods
@@ -144,6 +149,12 @@ methods (Access=protected)
     obj = parenAssign(obj,idx,varargin);
     obj = parenDelete(obj,idx);
     varargout = parenReference(obj,index);
+
+    % Convert to cell of single variables
+    function cell_of_indets = tuple2cell(obj)
+        % Return a cell array of individual indeterminate variables.
+        cell_of_indets = cellfun(@(var) casos.Indeterminates(var), obj.variables, 'UniformOutput', false);
+    end
 end
 
 methods (Access={?casos.package.core.PolynomialInterface})
