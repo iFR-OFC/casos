@@ -15,6 +15,13 @@ methods (Access=protected)
 end
 
 methods (Static)
+    function err = assign(a,b)
+        % New error for assignment operation.
+        err = casos.package.core.IncompatibleSizesError('MATLAB:subsassigndimmismatch', ...
+                ['Unable to perform assignment because the size of the left polynomial is [%s]' ...
+                ' and the size of the right polynomial is [%s].'],a,b);
+    end
+
     function err = basic(a,b)
         % New error for basic operation.
         err = casos.package.core.IncompatibleSizesError('MATLAB:sizeDimensionsMustMatch', ...
@@ -31,6 +38,19 @@ methods (Static)
         % New error for matrix operation.
         err = casos.package.core.IncompatibleSizesError('MATLAB:innerdim', ...
                 'Incorrect dimensions for polynomial matrix multiplication: [%s] vs. [%s].',a,b);
+    end
+
+    function err = mpower(a,b)
+        % New error for matrix power.
+        err = casos.package.core.IncompatibleSizesError('MATLAB:mpower:notScalarAndSquareMatrix', ...
+                'Incorrect dimensions for raising a polynomial matrix to a power: [%s] and [%s].',a,b);
+    end
+
+    function err = substitute(a,b)
+        % New error for substitution.
+        err = casos.package.core.IncompatibleSizesError('', ...
+                ['Unable to perform substitution because the size of the indeterminate variables is [%s]' ...
+                ' and the size of the polynomial to be substituted into is [%s].'],a,b);
     end
 
     function err = other(a,b)
