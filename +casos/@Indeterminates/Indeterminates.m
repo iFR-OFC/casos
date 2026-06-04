@@ -127,6 +127,20 @@ methods
         z = power(casos.package.polynomial(obj),deg);
     end
 
+    function z = prod(obj,~)
+        % Return product of variables.
+        z = prod(casos.package.polynomial(obj));
+    end
+
+    function c = subs(a,x,b)
+        % Substitute indeterminate variables.
+        c = subs(casos.package.polynomial(a),x,casos.package.polynomial(b));
+    end
+
+    function z = sum(obj,~)
+        % Return sum of variables.
+        z = sum(casos.package.polynomial(obj));
+    end
     function obj = transpose(obj)
         % Toggle transpose flag.
         obj.transp = ~obj.transp;
