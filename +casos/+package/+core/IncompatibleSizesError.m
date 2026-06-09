@@ -14,6 +14,15 @@ methods (Access=protected)
     end
 end
 
+methods
+    function msgtext = getReport(err,varargin)
+        % Return formatted error message text.
+        if nargin < 2, varargin = {'basic'}; end % omit stack from report
+
+        msgtext = getReport@MException(err,varargin{:});
+    end
+end
+
 methods (Static)
     function err = assign(a,b)
         % New error for assignment operation.
