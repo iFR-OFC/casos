@@ -20,6 +20,7 @@ variables = casos.Indeterminates('x',5);
 noPoly = 10;
 maxdim = 6;
 maxdeg = 3;
+density = 0.7;
 
 % generate scalar values
 test_values_struct.scalar = cell(2,noPoly);
@@ -28,7 +29,7 @@ reference_values.scalar = cell(2,noPoly);
 for k = 1:numel(test_values_struct.scalar)
     % create scalars
     [test_values_struct.scalar(k),reference_values.scalar(k)] = ...
-                        generateTestPolynomials([1 1],variables,maxdeg);
+                        generateTestPolynomials([1 1],variables,maxdeg,density);
 end
 
 % generate (column) vector values
@@ -38,24 +39,27 @@ reference_values.vector = cell(2,maxdim);
 for dim = 1:maxdim
     % create vectors of same dimensions
     [test_values_struct.vector(1,dim),reference_values.vector(1,dim)] = ...
-                    generateTestPolynomials([dim-1 1],variables,maxdeg);
+                    generateTestPolynomials([dim-1 1],variables,maxdeg,density);
     [test_values_struct.vector(2,dim),reference_values.vector(2,dim)] = ...
-                    generateTestPolynomials([dim-1 1],variables,maxdeg);
+                    generateTestPolynomials([dim-1 1],variables,maxdeg,density);
 end
 
 % generate matrix values
-test_values_struct.matrix = cell(3,maxdim);
-reference_values.matrix = cell(3,maxdim);
+test_values_struct.matrix = cell(4,maxdim);
+reference_values.matrix = cell(4,maxdim);
 
 for dim = 1:maxdim
     % generate matrices of same dimensions
     [test_values_struct.matrix(1,dim),reference_values.matrix(1,dim)] = ...
-        generateTestPolynomials([dim-1 maxdim-dim],variables,maxdeg);
+        generateTestPolynomials([dim-1 maxdim-dim],variables,maxdeg,density);
     [test_values_struct.matrix(2,dim),reference_values.matrix(2,dim)] = ...
-        generateTestPolynomials([dim-1 maxdim-dim],variables,maxdeg);
+        generateTestPolynomials([dim-1 maxdim-dim],variables,maxdeg,density);
     % generate matrices of different dimensions
     [test_values_struct.matrix(3,dim),reference_values.matrix(3,dim)] = ...
-        generateTestPolynomials([dim maxdim-dim],variables,maxdeg);
+        generateTestPolynomials([dim maxdim-dim],variables,maxdeg,density);
+    % generate matrices of monomials
+    [test_values_struct.matrix(4,dim),reference_values.matrix(4,dim)] = ...
+        generateTestPolynomials([dim-1 maxdim-dim],variables,maxdeg,density,true);
 end
 
 save("reference_values.mat","test_values_struct");
@@ -115,7 +119,8 @@ disp("========================================")
 reference_binary = struct('scalar',struct, ...
                              'inner',struct, ...
                              'outer',struct, ...
-                             'matrix',struct ...
+                             'matrix',struct, ...
+                             'monomials',struct ...
 );
 
 % element-wise addition, subtraction, and multiplication
@@ -169,6 +174,23 @@ for op = ["plus" "minus" "times" "ldivide" "rdivide" "power"]
             reference_binary.matrix.(op){d1,d2} = multipoly2struct(eval_binary(op,arg1,arg2));
         end
     end    
+
+    % on matrix of monomials
+    reference_binary.monomials.(op) = cell(maxdim,maxdim);
+    for d1 = 1:maxdim
+        for d2 = 1:maxdim
+            arg1 = reference_values.matrix{4,d1};
+            arg2 = reference_values.matrix{2,d2};
+
+            if (~isrow(arg1) && ~isrow(arg2) && size(arg1,1) ~= size(arg2,1)) ...
+                    || (~iscolumn(arg1) && ~iscolumn(arg2) && size(arg1,2) ~= size(arg2,2))
+                % dimension mismatch
+                continue
+            end
+
+            reference_binary.monomials.(op){d1,d2} = multipoly2struct(eval_binary(op,arg1,arg2));
+        end
+    end 
 end
 
 save("reference_values.mat","reference_binary","-append")
