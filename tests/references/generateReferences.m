@@ -725,6 +725,10 @@ for ivar = 1:4
         arg = reference_values.scalar{1,k};
         new = reference_values.scalar{2,k};
 
+        % reduce order of polynomials
+        arg = cleanpoly(arg,[],0:4);
+        new = cleanpoly(new,[],0:4);
+
         reference_subs.scalar.single{k,ivar} = multipoly2struct(eval_subs("single",arg,ivar,new));
     end
 
@@ -732,6 +736,10 @@ for ivar = 1:4
     for d = 1:maxdim
         arg = reference_values.vector{1,d};
         new = reference_values.scalar{1,d};
+
+        % reduce order of polynomials
+        arg = cleanpoly(arg,[],0:4);
+        new = cleanpoly(new,[],0:4);
 
         reference_subs.column.single{d,ivar} = multipoly2struct(eval_subs("single",arg,ivar,new));
     end
@@ -741,6 +749,10 @@ for ivar = 1:4
         arg = reference_values.vector{2,d}';
         new = reference_values.scalar{2,d};
 
+        % reduce order of polynomials
+        arg = cleanpoly(arg,[],0:4);
+        new = cleanpoly(new,[],0:4);
+
         reference_subs.row.single{d,ivar} = multipoly2struct(eval_subs("single",arg,ivar,new));
     end
 
@@ -748,6 +760,10 @@ for ivar = 1:4
     for d = 1:maxdim
         arg = reference_values.matrix{2,d};
         new = reference_values.scalar{1,d};
+
+        % reduce order of polynomials
+        arg = cleanpoly(arg,[],0:4);
+        new = cleanpoly(new,[],0:4);
 
         reference_subs.matrix.single{d,ivar} = multipoly2struct(eval_subs("single",arg,ivar,new));
     end
@@ -765,6 +781,10 @@ for ivar = 1:4
         arg = reference_values.scalar{2,k};
         new = reference_values.vector{2,arg.nvars+1};
 
+        % reduce order of polynomials
+        arg = cleanpoly(arg,[],0:4);
+        new = cleanpoly(new,[],0:4);
+
         reference_subs.scalar.multiple{k,ivar} = multipoly2struct(eval_subs("multiple",arg,ivar,new));
     end
 
@@ -772,6 +792,10 @@ for ivar = 1:4
     for d = 1:maxdim
         arg = reference_values.vector{2,d};
         new = reference_values.vector{1,arg.nvars+1};
+
+        % reduce order of polynomials
+        arg = cleanpoly(arg,[],0:4);
+        new = cleanpoly(new,[],0:4);
 
         reference_subs.column.multiple{d,ivar} = multipoly2struct(eval_subs("multiple",arg,ivar,new));
     end
@@ -781,6 +805,10 @@ for ivar = 1:4
         arg = reference_values.vector{1,d}';
         new = reference_values.vector{2,arg.nvars+1};
 
+        % reduce order of polynomials
+        arg = cleanpoly(arg,[],0:4);
+        new = cleanpoly(new,[],0:4);
+
         reference_subs.row.multiple{d,ivar} = multipoly2struct(eval_subs("multiple",arg,ivar,new));
     end
 
@@ -788,6 +816,10 @@ for ivar = 1:4
     for d = 1:maxdim
         arg = reference_values.matrix{1,d};
         new = reference_values.vector{1,arg.nvars+1};
+
+        % reduce order of polynomials
+        arg = cleanpoly(arg,[],0:4);
+        new = cleanpoly(new,[],0:4);
 
         reference_subs.matrix.multiple{d,ivar} = multipoly2struct(eval_subs("multiple",arg,ivar,new));
     end
