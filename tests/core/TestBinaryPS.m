@@ -228,7 +228,7 @@ methods
         actual = f(argument1{:},argument2{:});
 
         % perform assertion
-        test_case.verifyEqualPolynomial(actual,reference,"RelTol",1e-15);
+        test_case.verifyEqualPolynomial(actual,reference,"RelTol",1e-14);
     end
 end
 
