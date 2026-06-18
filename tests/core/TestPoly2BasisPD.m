@@ -35,7 +35,7 @@ methods (Test, ParameterCombination="pairwise", TestTags="scalar")
     function test_poly2basis_scalar(test_case, arg1, arg2)
         % Test poly2basis operation.
         value = test_case.values.scalar{1,arg1};
-        basis = sparsity(test_case.values.scalar{2,arg2});
+        basis = sparsity(densify(test_case.values.scalar{2,arg2})); % project onto dense basis
 
         reference = test_case.references.scalar{arg1,arg2};
 
@@ -47,7 +47,7 @@ methods (Test, ParameterCombination="pairwise", TestTags=["vector" "column"])
     function test_poly2basis_column(test_case, dim1, dim2)
         % Test poly2basis operation on column vectors.
         value = test_case.values.vector{1,dim1};
-        basis = sparsity(test_case.values.vector{2,dim2});
+        basis = sparsity(densify(test_case.values.vector{2,dim2})); % project onto dense basis
         
         reference = test_case.references.column{dim1,dim2};
 
@@ -59,7 +59,7 @@ methods (Test, ParameterCombination="pairwise", TestTags=["vector" "row"])
     function test_poly2basis_row(test_case, dim1, dim2)
         % Test poly2basis operation on row vectors.
         value = test_case.values.vector{1,dim1}';
-        basis = sparsity(test_case.values.vector{2,dim2}');
+        basis = sparsity(densify(test_case.values.vector{2,dim2}')); % project onto dense basis
         
         reference = test_case.references.row{dim1,dim2};
 
@@ -71,7 +71,7 @@ methods (Test, ParameterCombination="pairwise", TestTags="matrix")
     function test_poly2basis_matrix(test_case, dim1, dim2)
         % Test poly2basis operation on matrices.
         value = test_case.values.matrix{1,dim1};
-        basis = sparsity(test_case.values.matrix{2,dim2});
+        basis = sparsity(densify(test_case.values.matrix{2,dim2})); % project onto dense basis
         
         reference = test_case.references.matrix{dim1,dim2};
 
