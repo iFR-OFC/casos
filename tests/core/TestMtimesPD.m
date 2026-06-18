@@ -51,14 +51,14 @@ methods (Test, ParameterCombination="pairwise", TestTags="scalar")
             case {"mldivide"}
                 % matrix left-divide
                 vars = value1.indeterminates;
-                value1_deg0 = subs(value1,vars,ones(length(vars),1));
+                value1_deg0 = 1+subs(value1,vars,ones(length(vars),1));
         
                 test_case.evaluate_mtimes(op,value1_deg0,value2,reference);
 
             case {"mrdivide"}
                 % matrix right-divide
                 vars = value2.indeterminates;
-                value2_deg0 = subs(value2,vars,ones(length(vars),1));
+                value2_deg0 = 1+subs(value2,vars,ones(length(vars),1));
         
                 test_case.evaluate_mtimes(op,value1,value2_deg0,reference);
         end

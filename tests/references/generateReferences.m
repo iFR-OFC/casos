@@ -315,7 +315,7 @@ for k1 = 1:noPoly
     arg1 = reference_values.scalar{1,k1};
 
     vars = arg1.varname;
-    reference_value_double = double(subs(arg1,vars,ones(size(vars))));
+    reference_value_double = 1+double(subs(arg1,vars,ones(size(vars))));
 
     for k2 = 1:noPoly
         arg2 = reference_values.scalar{2,k2};
@@ -329,7 +329,7 @@ for k2 = 1:noPoly
     arg2 = reference_values.scalar{2,k2};
 
     vars = arg2.varname;
-    reference_value_double = double(subs(arg2,vars,ones(size(vars))));
+    reference_value_double = 1+double(subs(arg2,vars,ones(size(vars))));
 
     for k1 = 1:noPoly
         arg1 = reference_values.scalar{1,k1};
