@@ -7,6 +7,26 @@
 classdef (InferiorClasses = {?casadi.DM, ?casadi.SX, ?casadi.MX}) ...
     Indeterminates < casos.package.core.AlgebraicObject & casos.package.core.Printable
 % Indeterminate variables.
+%
+%% Constructor summary:
+%
+%   Indeterminates()
+%
+% create empty list of indeterminate variables.
+%
+%   Indeterminates(char, ...)
+%   Indeterminates(char, int)
+%
+% create list of indeterminate variables.
+%
+%% Static constructor summary:
+%
+%   [x1, ...] = create(char, ...)
+%   [x1, ...] = create(char, int)
+%
+% create indeterminate variables individually.
+%
+%%
 
 properties (GetAccess=protected, SetAccess=private)
     % cell array of strings {x1,...,xN}
@@ -105,7 +125,11 @@ methods (Static)
     end
 
     function varargout = create(varargin)
-        % Create individual indeterminate variables.
+        % Create indeterminate variables individually.
+        %
+        %   [x1, ...] = create(char, ...)
+        %   [x1, ...] = create(char, int)
+        %
         varargout = tuple2cell(casos.Indeterminates(varargin{:}));
     end
 end
