@@ -81,6 +81,11 @@ methods (Access=protected)
         % Check if sizes are compatible for matrix multiplication.
         tf = size(a,2) == size(b,1);
     end
+
+    function tf = check_sz_square(a)
+        % Check if matrix is square.
+        tf = isequal(size(a,1),size(a,2));
+    end
 end
 
 end
